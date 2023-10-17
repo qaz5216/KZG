@@ -139,9 +139,7 @@ void AKZGCharacter::InputRun()
 {
 	//auto movement = GetCharacterMovement();
 	// 만약 현재 달리기 상태라면 (released)
-
-	GEngine->AddOnScreenDebugMessage(-1, 0.01, FColor::Black, FString::Printf(TEXT("Run")));
-
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01, FColor::Black, FString::Printf(TEXT("Run")));
 	if (bIsRunning) bIsRunning = false;
 	else bIsRunning = true;
 }

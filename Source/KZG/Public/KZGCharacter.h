@@ -76,5 +76,7 @@ public:
 	bool bIsCrouching = false;
 
 	bool bIsRunning = false;
+
+	bool bOnDamaged = false;
 };
 
