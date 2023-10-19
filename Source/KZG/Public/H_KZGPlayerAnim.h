@@ -35,9 +35,11 @@ public:
 	class UAnimMontage* attackMontage3;
 
 
-	// DieEndNoti 이벤트가 들어오면 그때서야 DieState 가 동작하도록 하고싶다.
 	UFUNCTION()
 	void AnimNotify_AttackEnd1();
+
+	UFUNCTION()
+	void AnimNotify_SoundStep();
 
 	void PlayAttackAnimation1();
 	void PlayAttackAnimation2();
@@ -45,5 +47,4 @@ public:
 
 	class AKZGCharacter* player;
 
-	bool bIsAttacking = false;
 };

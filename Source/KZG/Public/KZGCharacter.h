@@ -40,6 +40,9 @@ class AKZGCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* AttackAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* InterAction;
+
 public:
 	AKZGCharacter();
 	
@@ -55,6 +58,10 @@ protected:
 	void CrouchInput();
 
 	void AttackInput();
+
+	void InteractionInput();
+
+	void JumpInput();
  
 	class UH_KZGPlayerAnim* anim;
 protected:

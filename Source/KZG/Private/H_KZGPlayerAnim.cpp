@@ -32,12 +32,13 @@ void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
 {
 	if (player) player->bIsAttacking = false;
 }
-/*
-void UH_KZGPlayerAnim::AnimNotify_AttackEnd1() // 발소리 노티파이
+
+void UH_KZGPlayerAnim::AnimNotify_SoundStep()
 {
-	//Me->내가만든함수
+	if(player) player->PlayStepSoundPlaying();
+	GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("stepSound")));
 }
-*/
+
 void UH_KZGPlayerAnim::PlayAttackAnimation1()
 {
 	Montage_Play(attackMontage1);
@@ -51,4 +52,5 @@ void UH_KZGPlayerAnim::PlayAttackAnimation2()
 void UH_KZGPlayerAnim::PlayAttackAnimation3()
 {
 	Montage_Play(attackMontage3);
+
 }

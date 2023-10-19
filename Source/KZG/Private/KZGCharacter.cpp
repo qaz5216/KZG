@@ -44,7 +44,6 @@ AKZGCharacter::AKZGCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
 	FollowCamera->bUsePawnControlRotation = false;
 
-	
 }
 
 void AKZGCharacter::BeginPlay()
@@ -114,19 +113,19 @@ void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
 {
 	bIsgrabbed=true;
 	GrabbedEnemy=Enemy;
-	UE_LOG(LogTemp, Warning, TEXT("Grabbedzz"));
+	//UE_LOG(LogTemp, Warning, TEXT("Grabbedzz"));
 }
 
 void AKZGCharacter::EscapebyZombie()
 {
 	bIsgrabbed=false;
 	GrabbedEnemy=nullptr;
-	UE_LOG(LogTemp, Warning, TEXT("Escapezz"));
+	//UE_LOG(LogTemp, Warning, TEXT("Escapezz"));
 }
 
 void AKZGCharacter::TryEscape()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Tryzz"));
+	//UE_LOG(LogTemp, Warning, TEXT("Tryzz"));
 	DamagedStamina(1);
 	GrabbedEnemy->StaminaDamaged(10);
 	if (GrabbedEnemy->Stamina_Cur<=0)
@@ -152,7 +151,7 @@ void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 {
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
 
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &AKZGCharacter::JumpInput);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AKZGCharacter::Move);
@@ -168,16 +167,19 @@ void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AKZGCharacter::AttackInput);
 
+		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &AKZGCharacter::InteractionInput);
 	}
-
 }
 
 void AKZGCharacter::Move(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr && !bIsAttacking)
+	if (Controller != nullptr)
 	{
+		if(bIsgrabbed) return;
+		if(bIsAttacking) return;
+
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
@@ -213,27 +215,40 @@ void AKZGCharacter::InputRun()
 
 void AKZGCharacter::CrouchInput()
 {
+	if (bIsgrabbed) return;
+	if (bIsAttacking) return;
 	if(bIsCrouching) bIsCrouching = false;
 	else bIsCrouching = true;
 }
 
 void AKZGCharacter::AttackInput()
 {	
+	
+	int32 attackNum = FMath::RandRange(1, 100);
+	if (!bIsAttacking) {
+		if (attackNum <= 33) anim->PlayAttackAnimation1();
+		else if (attackNum > 33 && attackNum <= 66) anim->PlayAttackAnimation2();
+		else if (attackNum > 66) anim->PlayAttackAnimation3();
+	}
+	bIsAttacking = true;
+
+	
+}
+void AKZGCharacter::InteractionInput() 
+{
 	if (bIsgrabbed)
 	{
 		TryEscape();
 	}
 	else
 	{
-		if (!bIsAttacking)
-		{
-			PlayStepSoundPlaying();
-		}
-		bIsAttacking = true;
-		int32 attackNum = FMath::RandRange(1, 100);
-		if (attackNum <= 33) anim->PlayAttackAnimation1();
-		else if (attackNum > 33 && attackNum <= 66) anim->PlayAttackAnimation2();
-		else if (attackNum > 66) anim->PlayAttackAnimation3();
+		
 	}
-	
+}
+
+void AKZGCharacter::JumpInput()
+{
+	if (bIsgrabbed) return;
+	if (bIsAttacking) return;
+	Jump();
 }
