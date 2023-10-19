@@ -9,6 +9,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
+#include "H_KZGPlayerAnim.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -58,6 +59,8 @@ void AKZGCharacter::BeginPlay()
 
 	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 	returnSpeed = walkSpeed;
+
+	anim = Cast<UH_KZGPlayerAnim>(GetMesh()->GetAnimInstance());
 }
 
 void AKZGCharacter::Tick(float DeltaTime)
@@ -101,6 +104,9 @@ void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AKZGCharacter::CrouchInput);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AKZGCharacter::CrouchInput);
+
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AKZGCharacter::AttackInput);
+
 	}
 
 }
@@ -148,4 +154,9 @@ void AKZGCharacter::CrouchInput()
 {
 	if(bIsCrouching) bIsCrouching = false;
 	else bIsCrouching = true;
+}
+
+void AKZGCharacter::AttackInput()
+{	
+	anim->PlayAttackAnimation1();
 }
