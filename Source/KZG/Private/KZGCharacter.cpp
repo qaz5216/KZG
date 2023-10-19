@@ -86,12 +86,19 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
+}
+
+void AKZGCharacter::DamagedStamina(int32 value)
+{
+	playerStamina -= value;
 }
 
 void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
 	if (UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
+
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
@@ -104,6 +111,7 @@ void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AKZGCharacter::CrouchInput);
 		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AKZGCharacter::CrouchInput);
+		
 
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AKZGCharacter::AttackInput);
 
@@ -115,7 +123,7 @@ void AKZGCharacter::Move(const FInputActionValue& Value)
 {
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller != nullptr && !bIsAttacking)
 	{
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -158,5 +166,10 @@ void AKZGCharacter::CrouchInput()
 
 void AKZGCharacter::AttackInput()
 {	
-	anim->PlayAttackAnimation1();
+	bIsAttacking = true;
+	int32 attackNum = FMath::RandRange(1,100);
+	if(attackNum <= 33) anim->PlayAttackAnimation1();
+	else if(attackNum > 33 && attackNum <= 66) anim->PlayAttackAnimation2();
+	else if(attackNum > 66) anim->PlayAttackAnimation3();
+
 }

@@ -85,5 +85,11 @@ public:
 
 	bool bOnDamaged = false;
 
+	bool bIsAttacking = false;
+
+	int32 playerStamina = 5;
+
+public:
+	void DamagedStamina(int32 value);
 };
 
