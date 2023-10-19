@@ -87,7 +87,24 @@ public:
 
 	bool bIsAttacking = false;
 
-	int32 playerStamina = 5;
+	int32 playerStamina = 40;
+
+	void PlayStepSoundPlaying();
+
+	float stepSoundrad=1000;
+
+	bool bIsgrabbed = false;
+
+	void GrabbedbyZombie(class AEnemy *Enemy);
+
+	void EscapebyZombie();
+
+	void TryEscape();
+
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	class AEnemy *GrabbedEnemy;
 
 public:
 	void DamagedStamina(int32 value);
