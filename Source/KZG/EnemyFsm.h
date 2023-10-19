@@ -52,4 +52,20 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
 	class AEnemy *Me;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
+	class AKZGCharacter *Target;
+	
+	void ChangeToTrackingState(class AKZGCharacter* Target);
+
+	// 패트롤 하기 위해서 이동가능 위치를 랜덤하게 찾아주기
+	bool GetRandomPosInNavMesh(FVector center, float radius, FVector& dest);
+	// FindPathByAI 
+	void FindPathByAI(FVector destination, struct FPathFindingResult& result);
+
+	UPROPERTY()
+	class AAIController* ai;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float speed = 300;
 };

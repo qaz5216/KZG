@@ -28,4 +28,14 @@ public:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	class UEnemyFsm* FSM;
+
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int32 HP_Max=100;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	int32 HP_Cur=100;
+
+
+	UFUNCTION(BlueprintCallable)
+	void Damaged(int32 damage);
 };
