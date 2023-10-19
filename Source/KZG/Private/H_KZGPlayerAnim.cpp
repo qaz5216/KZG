@@ -2,6 +2,36 @@
 
 
 #include "H_KZGPlayerAnim.h"
+#include "KZGCharacter.h"
+#include <GameFramework/CharacterMovementComponent.h>
+
+
+void UH_KZGPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
+{
+	Super::NativeUpdateAnimation(DeltaSeconds);
+
+	auto ownerPawn = TryGetPawnOwner();
+
+	player = Cast<AKZGCharacter>(ownerPawn);
+
+	if (player)
+	{
+		FVector forward = player->GetActorForwardVector();
+		FVector velocity = player->GetVelocity();
+		speed = FVector::DotProduct(forward, velocity);
+
+		FVector right = player->GetActorRightVector();
+		direction = FVector::DotProduct(right, velocity);
+
+		auto movement = player->GetCharacterMovement();
+		isInAir = movement->IsFalling();
+	}
+}
+
+void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
+{
+	if (player) player->bIsAttacking = false;
+}
 
 void UH_KZGPlayerAnim::PlayAttackAnimation1()
 {
