@@ -103,7 +103,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float attacktime=1;
 
-
+	float startdelay=0;
 
 	//Idle상태일때
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
@@ -117,4 +117,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	FVector RecognitionLoc;
+
+	bool start=false;
 };

@@ -38,9 +38,9 @@ void UEnemyFsm::BeginPlay()
 	
 	//Target=Cast<AKZGCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(),AKZGCharacter::StaticClass()));
 	//mState=EEnemyState::Tracking;
-
 	SearchLoc=Me->GetActorLocation();
 	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
+	start=true;
 }
 
 
@@ -48,8 +48,9 @@ void UEnemyFsm::BeginPlay()
 void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
 	// ...
+	if (start)
+	{
 	switch (mState)
 	{/*-수면 상태
 		-단순 이동 / 순찰
@@ -83,6 +84,8 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	default:
 		break;
 	}
+	}
+	
 }
 
 void UEnemyFsm::IdleState(float DeltaTime)
@@ -109,8 +112,11 @@ void UEnemyFsm::IdleState(float DeltaTime)
 	FPathFindingResult r;
 	FindPathByAI(SearchDest, r);
 	if (r.Result == ENavigationQueryResult::Success) {
-		isAlreadyGoal = ai->MoveToLocation(SearchDest);
-		//UE_LOG(LogTemp, Warning, TEXT("MoveMovezz"));
+		if (ai!=nullptr&&SearchDest!=FVector(0,0,0))
+		{
+			isAlreadyGoal = ai->MoveToLocation(SearchDest);
+			//UE_LOG(LogTemp, Warning, TEXT("MoveMovezz"));
+		}
 	}
 	else
 	{
@@ -234,16 +240,19 @@ bool UEnemyFsm::GetRandomPosInNavMesh(FVector center, float radius, FVector& des
 
 void UEnemyFsm::FindPathByAI(FVector destination, FPathFindingResult& result)
 {
-	// navigation 시스템 세팅
-	auto ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
+	if (ai != nullptr)
+	{
 
-	FPathFindingQuery query;
-	FAIMoveRequest req;
-	req.SetGoalLocation(destination);
-	req.SetAcceptanceRadius(3);
+		// navigation 시스템 세팅
+		auto ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 
-	ai->BuildPathfindingQuery(req, query);
-	result = ns->FindPathSync(query);
+		FPathFindingQuery query;
+		FAIMoveRequest req;
+		req.SetGoalLocation(destination);
+		req.SetAcceptanceRadius(3);
+		ai->BuildPathfindingQuery(req, query);
+		result = ns->FindPathSync(query);
+	}
 }
 
 void UEnemyFsm::ChangeToIdleState()
@@ -258,6 +267,7 @@ void UEnemyFsm::ChangeToAttackState()
 {
 	attacktime_cur=0;
 	Me->Stamina_Cur=Me->Stamina_Max;
+	ai->StopMovement();
 	UE_LOG(LogTemp, Warning, TEXT("GoAttackzz"));
 	Target->GrabbedbyZombie(Me);
 	mState=EEnemyState::Attack;
@@ -275,6 +285,7 @@ void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
 	Target=NewTarget;
 	recognitiontime_cur=0;
 	RecognitionLoc=Target->GetActorLocation();
+	UE_LOG(LogTemp, Warning, TEXT("Turnzz"));
 	Me->SetActorRotation((Target->GetActorLocation()-Me->GetActorLocation()).Rotation().Quaternion());
 	mState=EEnemyState::Recognition;
 }
