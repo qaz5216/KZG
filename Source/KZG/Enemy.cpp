@@ -44,3 +44,15 @@ void AEnemy::Damaged(int32 damage)
 		HP_Cur=0;
 	}
 }
+
+void AEnemy::StaminaDamaged(int32 value)
+{
+	if (Stamina_Cur - value > 0)
+	{
+		Stamina_Cur = Stamina_Cur - value;
+	}
+	else
+	{
+		Stamina_Cur = 0;
+	}
+}

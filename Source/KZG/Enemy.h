@@ -35,7 +35,20 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	int32 HP_Cur=100;
 
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	int32 Stamina_Max=100;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	int32 Stamina_Cur=100;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	bool isGroggy=false;
 
 	UFUNCTION(BlueprintCallable)
 	void Damaged(int32 damage);
+
+	UFUNCTION(BlueprintCallable)
+	void StaminaDamaged(int32 value);
+
+
 };

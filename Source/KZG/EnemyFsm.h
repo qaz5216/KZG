@@ -14,13 +14,13 @@ enum class EEnemyState : uint8
 		- 추적
 	*/
 	Idle UMETA(DisplayName = "Idle State"),
-	Move,
+	Recognition,
 	Tracking,
 	Attack,
 	Damage,
 	Die,
 	Sleep,
-	Search,
+	Groggy,
 };
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class KZG_API UEnemyFsm : public UActorComponent
@@ -39,14 +39,14 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	void IdleState();
+	void IdleState(float DeltaTime);
 	void TrackingState();
-	void MoveState();
+	void RecognitionState(float DeltaTime);
 	void AttackState();
 	void DamageState();
 	void DieState();
 	void SleepState();
-	void SearchState();
+	void GroggyState(float DeltaTime);
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="FSM")
 	EEnemyState mState=EEnemyState::Idle;
 
@@ -56,7 +56,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
 	class AKZGCharacter *Target;
 	
-	void ChangeToTrackingState(class AKZGCharacter* Target);
+	void ChangeToTrackingState(class AKZGCharacter* NewTarget);
 
 	// 패트롤 하기 위해서 이동가능 위치를 랜덤하게 찾아주기
 	bool GetRandomPosInNavMesh(FVector center, float radius, FVector& dest);
@@ -68,4 +68,46 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float speed = 300;
+	
+	void ChangeToIdleState();
+
+	void ChangeToAttackState();
+
+	void ChangeToGroggyState();
+
+	void ChangeToRecognitionState(class AKZGCharacter* NewTarget);
+
+	void Recognition(class AKZGCharacter* NewTarget);
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float recognitiontime_cur=0;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float recognitiontime=5;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float groggytime_cur=0;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float groggytime=3;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float Idletime_cur=0;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float idletime=3;
+
+
+	//Idle상태일때
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
+	FVector SearchLoc;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
+	FVector SearchDest;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
+	float SearchDist=500;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	FVector RecognitionLoc;
 };

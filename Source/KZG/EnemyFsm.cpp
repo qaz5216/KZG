@@ -35,6 +35,12 @@ void UEnemyFsm::BeginPlay()
 	ai = Cast<AAIController>(Me->GetController());
 
 	Me->GetCharacterMovement()->MaxWalkSpeed = speed;
+	
+	Target=Cast<AKZGCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(),AKZGCharacter::StaticClass()));
+	mState=EEnemyState::Tracking;
+
+	SearchLoc=Me->GetActorLocation();
+	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
 }
 
 
@@ -51,13 +57,13 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		- 추적
 	*/
 	case EEnemyState::Idle:
-		IdleState();
+		IdleState(DeltaTime);
 		break;
 	case EEnemyState::Tracking:
 		TrackingState();
 		break;
-	case EEnemyState::Move:
-		MoveState();
+	case EEnemyState::Recognition:
+		RecognitionState(DeltaTime);
 		break;
 	case EEnemyState::Attack:
 		AttackState();
@@ -71,24 +77,56 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	case EEnemyState::Sleep:
 		SleepState();
 		break;
-	case EEnemyState::Search:
-		SearchState();
+	case EEnemyState::Groggy:
+		GroggyState(DeltaTime);
 		break;
 	default:
 		break;
 	}
 }
 
-void UEnemyFsm::IdleState()
+void UEnemyFsm::IdleState(float DeltaTime)
 {
+	//낮일때
+	FVector MyLoc= Me->GetActorLocation();
+	//UE_LOG(LogTemp, Warning, TEXT("Dest:%f,%f,%f MyLoc:%f,%f,%f dist=%f"),SearchDest.X,SearchDest.Y,SearchDest.Z,MyLoc.X,MyLoc.Y,MyLoc.Z, FVector::Dist(MyLoc, SearchDest));
 	
+	if (FVector::Dist(MyLoc, SearchDest) < 100.0f) {
+		// 목표지점도착 3초정도 있다가 다음 탐색지역으로
+		if (Idletime_cur>idletime)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("DestFix"));
+			Idletime_cur=0;
+			GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
+		}
+		else
+		{
+			Idletime_cur+=DeltaTime;
+		}
+		return;
+	}
+	EPathFollowingRequestResult::Type isAlreadyGoal = EPathFollowingRequestResult::Failed;
+	FPathFindingResult r;
+	FindPathByAI(SearchDest, r);
+	if (r.Result == ENavigationQueryResult::Success) {
+		isAlreadyGoal = ai->MoveToLocation(SearchDest);
+		//UE_LOG(LogTemp, Warning, TEXT("MoveMovezz"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Fail Loc"));
+	}
+
+	/*밤일때
+		SleepState();
+	*/
 }
 
 void UEnemyFsm::TrackingState()
 {
-	if (Target!=nullptr)
+	if (Target==nullptr)
 	{
-		////PRINT2SCREEN(TEXT("No CurDestination Pos"));
+		UE_LOG(LogTemp, Warning, TEXT("nullzz"));
 		return;
 	}
 	FVector dest = Target->GetActorLocation();
@@ -102,6 +140,7 @@ void UEnemyFsm::TrackingState()
 	FindPathByAI(dest, r);
 	if (r.Result == ENavigationQueryResult::Success) {
 		isAlreadyGoal = ai->MoveToLocation(dest);
+		UE_LOG(LogTemp, Warning, TEXT("movezz"));
 	}
 	else
 	{
@@ -109,19 +148,40 @@ void UEnemyFsm::TrackingState()
 	}
 }
 
-void UEnemyFsm::MoveState()
+void UEnemyFsm::RecognitionState(float DeltaTime)
 {
-	
+	//5초안에 별일 없으면 다시 idle;
+	if (recognitiontime_cur>recognitiontime)
+	{
+		ChangeToIdleState();
+		return;
+	}
+	else
+	{
+		recognitiontime_cur+=DeltaTime;
+	}
+	//일단 타겟방향으로 몸돌리기
 }
+
 
 void UEnemyFsm::AttackState()
 {
-	UE_LOG(LogTemp,Warning,TEXT("Attack"));
+	if (Me->Stamina_Cur>0)
+	{
+		//플레이어 스테미너 깎기
+		// player->damagedstamina(int32 value)
+		UE_LOG(LogTemp,Warning,TEXT("Attack"));
+	}
+	else
+	{
+		//스턴좀 먹고
+		ChangeToGroggyState();
+	}
 }
 
 void UEnemyFsm::DamageState()
 {
-
+	
 }
 
 void UEnemyFsm::DieState()
@@ -131,21 +191,27 @@ void UEnemyFsm::DieState()
 
 void UEnemyFsm::SleepState()
 {
-
+	
 }
 
-void UEnemyFsm::SearchState()
+void UEnemyFsm::GroggyState(float DeltaTime)
 {
-
+	if (groggytime_cur>groggytime)
+	{
+		Me->isGroggy=false;
+		ChangeToTrackingState(Target);
+	}
+	else
+	{
+		groggytime_cur+=DeltaTime;
+	}
 }
+
 
 void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 {
-	if (mState!=EEnemyState::Tracking)
-	{
-		Target=NewTarget;	
-		mState=EEnemyState::Tracking;
-	}
+	Target=NewTarget;	
+	mState=EEnemyState::Tracking;
 }
 
 bool UEnemyFsm::GetRandomPosInNavMesh(FVector center, float radius, FVector& dest)
@@ -170,4 +236,46 @@ void UEnemyFsm::FindPathByAI(FVector destination, FPathFindingResult& result)
 
 	ai->BuildPathfindingQuery(req, query);
 	result = ns->FindPathSync(query);
+}
+
+void UEnemyFsm::ChangeToIdleState()
+{
+	Target=nullptr;
+	SearchLoc=Me->GetActorLocation();
+	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
+	mState=EEnemyState::Idle;
+}
+
+void UEnemyFsm::ChangeToAttackState()
+{
+	Me->Stamina_Cur=Me->Stamina_Max;
+	mState=EEnemyState::Attack;
+}
+
+void UEnemyFsm::ChangeToGroggyState()
+{
+	Me->isGroggy=true;
+	groggytime_cur=0;
+	mState=EEnemyState::Groggy;
+}
+
+void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
+{
+	Target=NewTarget;
+	recognitiontime_cur=0;
+	RecognitionLoc=Target->GetActorLocation();
+	ai->SetFocalPoint(RecognitionLoc);
+	mState=EEnemyState::Recognition;
+}
+
+void UEnemyFsm::Recognition(class AKZGCharacter* NewTarget)
+{
+	if (mState==EEnemyState::Idle)
+	{
+		ChangeToRecognitionState(NewTarget);
+	}
+	else if(mState==EEnemyState::Recognition)
+	{
+		ChangeToTrackingState(NewTarget);
+	}
 }
