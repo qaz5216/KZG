@@ -16,7 +16,7 @@ AEnemy::AEnemy()
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	HP_Cur=HP_Max;
 }
 
 // Called every frame
@@ -33,3 +33,14 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
+void AEnemy::Damaged(int32 damage)
+{
+	if (HP_Cur-damage>0)
+	{
+		HP_Cur=HP_Cur-damage;
+	}
+	else
+	{
+		HP_Cur=0;
+	}
+}
