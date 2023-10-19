@@ -32,7 +32,12 @@ void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
 {
 	if (player) player->bIsAttacking = false;
 }
-
+/*
+void UH_KZGPlayerAnim::AnimNotify_AttackEnd1() // 발소리 노티파이
+{
+	//Me->내가만든함수
+}
+*/
 void UH_KZGPlayerAnim::PlayAttackAnimation1()
 {
 	Montage_Play(attackMontage1);

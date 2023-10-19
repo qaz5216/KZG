@@ -36,8 +36,8 @@ void UEnemyFsm::BeginPlay()
 
 	Me->GetCharacterMovement()->MaxWalkSpeed = speed;
 	
-	Target=Cast<AKZGCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(),AKZGCharacter::StaticClass()));
-	mState=EEnemyState::Tracking;
+	//Target=Cast<AKZGCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(),AKZGCharacter::StaticClass()));
+	//mState=EEnemyState::Tracking;
 
 	SearchLoc=Me->GetActorLocation();
 	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
@@ -66,7 +66,7 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		RecognitionState(DeltaTime);
 		break;
 	case EEnemyState::Attack:
-		AttackState();
+		AttackState(DeltaTime);
 		break;
 	case EEnemyState::Damage:
 		DamageState();
@@ -132,7 +132,7 @@ void UEnemyFsm::TrackingState()
 	FVector dest = Target->GetActorLocation();
 	if (FVector::Dist(Me->GetActorLocation(), dest) < 100.0f) {
 		//공격
-		mState = EEnemyState::Attack;
+		ChangeToAttackState();
 		return;
 	}
 	EPathFollowingRequestResult::Type isAlreadyGoal = EPathFollowingRequestResult::Failed;
@@ -164,13 +164,21 @@ void UEnemyFsm::RecognitionState(float DeltaTime)
 }
 
 
-void UEnemyFsm::AttackState()
+void UEnemyFsm::AttackState(float DeltaTime)
 {
 	if (Me->Stamina_Cur>0)
 	{
-		//플레이어 스테미너 깎기
-		// player->damagedstamina(int32 value)
-		UE_LOG(LogTemp,Warning,TEXT("Attack"));
+		if (attacktime_cur>attacktime)
+		{
+			Target->DamagedStamina(1);
+			// player->damagedstamina(int32 value)
+			UE_LOG(LogTemp, Warning, TEXT("Attack remain Sta=%d"),Target->playerStamina);
+			attacktime_cur=0;
+		}
+		else
+		{
+			attacktime_cur+=DeltaTime;
+		}
 	}
 	else
 	{
@@ -248,7 +256,10 @@ void UEnemyFsm::ChangeToIdleState()
 
 void UEnemyFsm::ChangeToAttackState()
 {
+	attacktime_cur=0;
 	Me->Stamina_Cur=Me->Stamina_Max;
+	UE_LOG(LogTemp, Warning, TEXT("GoAttackzz"));
+	Target->GrabbedbyZombie(Me);
 	mState=EEnemyState::Attack;
 }
 
@@ -264,7 +275,7 @@ void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
 	Target=NewTarget;
 	recognitiontime_cur=0;
 	RecognitionLoc=Target->GetActorLocation();
-	ai->SetFocalPoint(RecognitionLoc);
+	Me->SetActorRotation((Target->GetActorLocation()-Me->GetActorLocation()).Rotation().Quaternion());
 	mState=EEnemyState::Recognition;
 }
 

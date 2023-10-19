@@ -42,7 +42,7 @@ public:
 	void IdleState(float DeltaTime);
 	void TrackingState();
 	void RecognitionState(float DeltaTime);
-	void AttackState();
+	void AttackState(float DeltaTime);
 	void DamageState();
 	void DieState();
 	void SleepState();
@@ -96,6 +96,13 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float idletime=3;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float attacktime_cur=0;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float attacktime=1;
+
 
 
 	//Idle상태일때

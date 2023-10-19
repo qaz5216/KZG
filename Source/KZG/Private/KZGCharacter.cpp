@@ -10,6 +10,8 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "H_KZGPlayerAnim.h"
+#include "../Enemy.h"
+#include "../EnemyFsm.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -90,9 +92,60 @@ void AKZGCharacter::Tick(float DeltaTime)
 	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
 }
 
+void AKZGCharacter::PlayStepSoundPlaying()
+{
+	TArray<FOverlapResult> hitInfos;
+	if (GetWorld()->OverlapMultiByProfile(hitInfos, GetActorLocation(), FQuat::Identity, FName("StepSound"), FCollisionShape::MakeSphere(stepSoundrad)))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("hitInfo=%d"), hitInfos.Num());
+		for (const FOverlapResult& hitInfo : hitInfos)
+		{
+			if (AEnemy* hitEnemy = Cast<AEnemy>(hitInfo.GetActor()))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("RecoEnemy"));
+				hitEnemy->FSM->Recognition(this);
+			}
+		}
+	}
+	DrawDebugSphere(GetWorld(), GetActorLocation(), stepSoundrad, 30, FColor::Green, false, 1.0f);
+}
+
+void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
+{
+	bIsgrabbed=true;
+	GrabbedEnemy=Enemy;
+	UE_LOG(LogTemp, Warning, TEXT("Grabbedzz"));
+}
+
+void AKZGCharacter::EscapebyZombie()
+{
+	bIsgrabbed=false;
+	GrabbedEnemy=nullptr;
+	UE_LOG(LogTemp, Warning, TEXT("Escapezz"));
+}
+
+void AKZGCharacter::TryEscape()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Tryzz"));
+	DamagedStamina(1);
+	GrabbedEnemy->StaminaDamaged(10);
+	if (GrabbedEnemy->Stamina_Cur<=0)
+	{
+		EscapebyZombie();
+	}
+}
+
 void AKZGCharacter::DamagedStamina(int32 value)
 {
-	playerStamina -= value;
+	if (playerStamina-value>0)
+	{
+		playerStamina -= value;
+	}
+	else
+	{
+		playerStamina=0;
+		//ªÁ∏¡√≥∏Æ
+	}
 }
 
 void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
@@ -166,10 +219,21 @@ void AKZGCharacter::CrouchInput()
 
 void AKZGCharacter::AttackInput()
 {	
-	bIsAttacking = true;
-	int32 attackNum = FMath::RandRange(1,100);
-	if(attackNum <= 33) anim->PlayAttackAnimation1();
-	else if(attackNum > 33 && attackNum <= 66) anim->PlayAttackAnimation2();
-	else if(attackNum > 66) anim->PlayAttackAnimation3();
-
+	if (bIsgrabbed)
+	{
+		TryEscape();
+	}
+	else
+	{
+		if (!bIsAttacking)
+		{
+			PlayStepSoundPlaying();
+		}
+		bIsAttacking = true;
+		int32 attackNum = FMath::RandRange(1, 100);
+		if (attackNum <= 33) anim->PlayAttackAnimation1();
+		else if (attackNum > 33 && attackNum <= 66) anim->PlayAttackAnimation2();
+		else if (attackNum > 66) anim->PlayAttackAnimation3();
+	}
+	
 }
