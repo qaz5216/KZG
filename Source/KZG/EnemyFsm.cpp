@@ -50,6 +50,15 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	// ...
+	if (ai!=nullptr)
+	{
+		UE_LOG(LogTemp,Warning,TEXT("AI NULL zz"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AI YEs zz"));
+	}	
+
 	if (start)
 	{
 	switch (mState)
@@ -146,8 +155,10 @@ void UEnemyFsm::TrackingState()
 	FPathFindingResult r;
 	FindPathByAI(dest, r);
 	if (r.Result == ENavigationQueryResult::Success) {
-		isAlreadyGoal = ai->MoveToLocation(dest);
-		UE_LOG(LogTemp, Warning, TEXT("movezz"));
+		if (ai != nullptr)
+		{
+			isAlreadyGoal = ai->MoveToLocation(dest);
+		}
 	}
 	else
 	{
@@ -270,7 +281,10 @@ void UEnemyFsm::ChangeToAttackState()
 {
 	attacktime_cur=0;
 	Me->Stamina_Cur=Me->Stamina_Max;
-	ai->StopMovement();
+	if (ai != nullptr)
+	{
+		ai->StopMovement();
+	}
 	UE_LOG(LogTemp, Warning, TEXT("GoAttackzz"));
 	Target->GrabbedbyZombie(Me);
 	mState=EEnemyState::Attack;
@@ -287,7 +301,10 @@ void UEnemyFsm::ChangeToGroggyState()
 void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
 {
 	Target=NewTarget;
-	ai->StopMovement();
+	if (ai != nullptr)
+	{
+		ai->StopMovement();
+	}
 	recognitiontime_cur=0;
 	RecognitionLoc=Target->GetActorLocation();
 	UE_LOG(LogTemp, Warning, TEXT("Turnzz"));
