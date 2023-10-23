@@ -90,18 +90,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 			curSP = 0;
 		}
 	}
-	else if (!bIsCrouching && !bIsRunning)
-	{
-		GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
-		curSP += DeltaTime;
-		if (curSP > recoverTime)
-		{
-			currentStamina += recoveryPoint;
-			curSP = 0;
-		}
-	}
-
-	if (bIsCrouching && !bIsRunning)
+	else if (bIsCrouching && !bIsRunning)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 150;
 		curSP += DeltaTime;
@@ -115,7 +104,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 		curSP += DeltaTime;
-		if (curSP > recoverTime)
+		if (curSP > recoverTime * 10)
 		{
 			currentStamina += recoveryPoint;
 			curSP = 0;
@@ -128,7 +117,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 		{
 			EWidget->AddToViewport();
 		}
-		
+		if(bIsCrouching) bIsCrouching = false;
 	}
 	else 
 	{
@@ -278,7 +267,7 @@ void AKZGCharacter::AttackInput()
 {	
 	
 	int32 attackNum = FMath::RandRange(1, 100);
-	if (!bIsAttacking) {
+	if (!bIsAttacking && !bIsgrabbed) {
 		if (attackNum <= 33) anim->PlayAttackAnimation1();
 		else if (attackNum > 33 && attackNum <= 66) anim->PlayAttackAnimation2();
 		else if (attackNum > 66) anim->PlayAttackAnimation3();
