@@ -15,7 +15,7 @@ class KZG_API UH_PlayerInfo : public UUserWidget
 	GENERATED_BODY()
 	
 
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Replicated)
 	class UProgressBar* PB_StaminaPoint;
 
 protected:

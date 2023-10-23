@@ -14,7 +14,7 @@
 #include "../EnemyFsm.h"
 #include "H_EWidget.h"
 #include "H_PlayerInfo.h"
-
+#include "Net/UnrealNetwork.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AKZGCharacter
@@ -46,6 +46,7 @@ AKZGCharacter::AKZGCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
 	FollowCamera->bUsePawnControlRotation = false;
 
+	bReplicates = true;
 }
 
 void AKZGCharacter::BeginPlay()
@@ -96,7 +97,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 		curSP += DeltaTime;
 		if (curSP > recoverTime)
 		{
-			currentStamina += recoveryPoint;
+			currentStamina += recoveryPoint * 10;
 			curSP = 0;
 		}
 	}
@@ -104,7 +105,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 		curSP += DeltaTime;
-		if (curSP > recoverTime * 10)
+		if (curSP > recoverTime)
 		{
 			currentStamina += recoveryPoint;
 			curSP = 0;
@@ -117,7 +118,6 @@ void AKZGCharacter::Tick(float DeltaTime)
 		{
 			EWidget->AddToViewport();
 		}
-		if(bIsCrouching) bIsCrouching = false;
 	}
 	else 
 	{
@@ -161,6 +161,7 @@ void AKZGCharacter::EscapebyZombie()
 {
 	bIsgrabbed=false;
 	GrabbedEnemy=nullptr;
+	if (bIsCrouching) bIsCrouching = false;
 	//UE_LOG(LogTemp, Warning, TEXT("Escapezz"));
 }
 
@@ -209,7 +210,7 @@ void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AKZGCharacter::Server_AttackInput);
 
-		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &AKZGCharacter::InteractionInput);
+		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &AKZGCharacter::Server_InteractionInput);
 	}
 }
 
@@ -257,6 +258,11 @@ void AKZGCharacter::Server_InputRun_Implementation()
 
 void AKZGCharacter::Server_CrouchInput_Implementation()
 {
+	Multicast_CrouchInput();
+}
+
+void AKZGCharacter::Multicast_CrouchInput_Implementation()
+{
 	if (bIsgrabbed) return;
 	if (bIsAttacking) return;
 	if (bIsCrouching) bIsCrouching = false;
@@ -277,6 +283,23 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		else if (attackNum > 66) anim->PlayAttackAnimation3();
 	}
 	bIsAttacking = true;
+}
+
+void AKZGCharacter::Server_InteractionInput_Implementation()
+{
+	Multicast_InteractionUnput();
+}
+
+void AKZGCharacter::Multicast_InteractionUnput_Implementation()
+{
+	if (bIsgrabbed)
+	{
+		TryEscape();
+	}
+	else
+	{
+
+	}
 }
 
 //void AKZGCharacter::InputRun()
@@ -309,21 +332,38 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 //
 //	
 //}
-void AKZGCharacter::InteractionInput() 
-{
-	if (bIsgrabbed)
-	{
-		TryEscape();
-	}
-	else
-	{
-		
-	}
-}
+//void AKZGCharacter::InteractionInput() 
+//{
+//	if (bIsgrabbed)
+//	{
+//		TryEscape();
+//	}
+//	else
+//	{
+//		
+//	}
+//}
 
 void AKZGCharacter::JumpInput()
 {
 	if (bIsgrabbed) return;
 	if (bIsAttacking) return;
 	Jump();
+}
+
+
+void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AKZGCharacter, curSP); 
+	DOREPLIFETIME(AKZGCharacter, recoverTime);
+	DOREPLIFETIME(AKZGCharacter, currentStamina);
+	DOREPLIFETIME(AKZGCharacter, playerStamina);
+	DOREPLIFETIME(AKZGCharacter, bIsCrouching);
+	DOREPLIFETIME(AKZGCharacter, bIsRunning);
+	DOREPLIFETIME(AKZGCharacter, bOnDamaged);
+	DOREPLIFETIME(AKZGCharacter, bIsAttacking);
+	DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
+
 }
