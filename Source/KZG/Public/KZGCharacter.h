@@ -44,6 +44,18 @@ class AKZGCharacter : public ACharacter
 	class UInputAction* InterAction;
 
 public:
+	UPROPERTY(VisibleAnywhere, Category = MySettings, meta = (AllowPrivateAccess = "true"))
+	class UH_EWidget* EWidget;
+	
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	TSubclassOf<class UH_EWidget> BP_EWidget;
+
+	UPROPERTY(VisibleAnywhere, Category = MySettings, meta = (AllowPrivateAccess = "true"))
+	class UH_PlayerInfo* InfoWidget;
+	
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	TSubclassOf<class UH_PlayerInfo> BP_InfoWidget;
+public:
 	AKZGCharacter();
 	
 
@@ -95,6 +107,8 @@ public:
 	bool bIsAttacking = false;
 
 	int32 playerStamina = 40;
+
+	int32 currentStamina = 0;
 
 	void PlayStepSoundPlaying();
 

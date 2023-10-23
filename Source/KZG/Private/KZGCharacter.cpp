@@ -12,6 +12,8 @@
 #include "H_KZGPlayerAnim.h"
 #include "../Enemy.h"
 #include "../EnemyFsm.h"
+#include "H_EWidget.h"
+#include "H_PlayerInfo.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -62,6 +64,14 @@ void AKZGCharacter::BeginPlay()
 	returnSpeed = walkSpeed;
 
 	anim = Cast<UH_KZGPlayerAnim>(GetMesh()->GetAnimInstance());
+
+	EWidget = CreateWidget<UH_EWidget>(GetWorld(), BP_EWidget);
+	InfoWidget = CreateWidget<UH_PlayerInfo>(GetWorld(), BP_InfoWidget);
+	if (InfoWidget != nullptr)
+	{
+		InfoWidget->AddToViewport();
+	}
+	currentStamina = playerStamina;
 }
 
 void AKZGCharacter::Tick(float DeltaTime)
@@ -88,7 +98,23 @@ void AKZGCharacter::Tick(float DeltaTime)
 		GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
+	if (bIsgrabbed)
+	{
+		if (EWidget != nullptr)
+		{
+			EWidget->AddToViewport();
+		}
+		
+	}
+	else 
+	{
+		if (EWidget != nullptr)
+		{
+			EWidget->RemoveFromParent();
+		}
+	}
+
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
 }
 
 void AKZGCharacter::PlayStepSoundPlaying()
@@ -136,13 +162,13 @@ void AKZGCharacter::TryEscape()
 
 void AKZGCharacter::DamagedStamina(int32 value)
 {
-	if (playerStamina-value>0)
+	if (currentStamina -value>0)
 	{
-		playerStamina -= value;
+		currentStamina -= value;
 	}
 	else
 	{
-		playerStamina=0;
+		currentStamina =0;
 		//ªÁ∏¡√≥∏Æ
 	}
 }
