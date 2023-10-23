@@ -122,6 +122,12 @@ public:
 
 	void TryEscape();
 
+	float recoverTime = 3;
+
+	float curSP = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=MySettings)
+	int32 recoveryPoint = 2;
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

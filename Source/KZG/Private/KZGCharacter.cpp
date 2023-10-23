@@ -80,22 +80,46 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, returnSpeed, 5 * DeltaTime);
 
-	if (!bIsCrouching && bIsRunning)
+	if (!bIsCrouching && bIsRunning && currentStamina > 5)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = runSpeed;
+		curSP += DeltaTime;
+		if (curSP > 1)
+		{
+			currentStamina-= recoveryPoint;
+			curSP = 0;
+		}
 	}
-	else if (!bIsCrouching && bIsRunning)
+	else if (!bIsCrouching && !bIsRunning)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+		curSP += DeltaTime;
+		if (curSP > recoverTime)
+		{
+			currentStamina += recoveryPoint;
+			curSP = 0;
+		}
 	}
 
 	if (bIsCrouching && !bIsRunning)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 150;
+		curSP += DeltaTime;
+		if (curSP > recoverTime)
+		{
+			currentStamina += recoveryPoint;
+			curSP = 0;
+		}
 	}
-	else if(bIsCrouching && !bIsRunning)
+	else if(!bIsCrouching && !bIsRunning)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
+		curSP += DeltaTime;
+		if (curSP > recoverTime)
+		{
+			currentStamina += recoveryPoint;
+			curSP = 0;
+		}
 	}
 
 	if (bIsgrabbed)
@@ -113,6 +137,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 			EWidget->RemoveFromParent();
 		}
 	}
+
+	
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
 }
@@ -168,8 +194,9 @@ void AKZGCharacter::DamagedStamina(int32 value)
 	}
 	else
 	{
-		currentStamina =0;
+		currentStamina = 0;
 		//ªÁ∏¡√≥∏Æ
+
 	}
 }
 
