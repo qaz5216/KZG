@@ -47,6 +47,9 @@ public:
 	void DieState();
 	void SleepState();
 	void GroggyState(float DeltaTime);
+
+
+
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="FSM")
 	EEnemyState mState=EEnemyState::Idle;
 
