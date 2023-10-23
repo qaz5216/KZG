@@ -14,6 +14,7 @@
 #include "AITypes.h"
 #include "NavigationSystemTypes.h"
 #include <AIModule/Classes/Navigation/PathFollowingComponent.h>
+#include "EnemyStat.h"
 // Sets default values for this component's properties
 UEnemyFsm::UEnemyFsm()
 {
@@ -189,6 +190,7 @@ void UEnemyFsm::AttackState(float DeltaTime)
 	else
 	{
 		//½ºÅÏÁ» ¸Ô°í
+		Me->StatUI->EImageHidden();
 		ChangeToGroggyState();
 	}
 }
@@ -225,6 +227,7 @@ void UEnemyFsm::GroggyState(float DeltaTime)
 void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 {
 	Target=NewTarget;	
+	Me->AttachUI();
 	mState=EEnemyState::Tracking;
 }
 
@@ -271,6 +274,7 @@ void UEnemyFsm::ChangeToAttackState()
 	UE_LOG(LogTemp, Warning, TEXT("GoAttackzz"));
 	Target->GrabbedbyZombie(Me);
 	mState=EEnemyState::Attack;
+	Me->StatUI->EImageShow();
 }
 
 void UEnemyFsm::ChangeToGroggyState()
@@ -283,6 +287,7 @@ void UEnemyFsm::ChangeToGroggyState()
 void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
 {
 	Target=NewTarget;
+	ai->StopMovement();
 	recognitiontime_cur=0;
 	RecognitionLoc=Target->GetActorLocation();
 	UE_LOG(LogTemp, Warning, TEXT("Turnzz"));

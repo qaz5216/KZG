@@ -27,6 +27,12 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	class UCapsuleComponent* CapsuleComp;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	class USkeletalMeshComponent* SkeletalMeshComp;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	class UEnemyFsm* FSM;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
@@ -50,5 +56,16 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StaminaDamaged(int32 value);
 
+	UFUNCTION(BlueprintCallable)
+	void AttachUI();
+	UFUNCTION(BlueprintCallable)
+	void DetachUI();
 
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|UI")
+	class UEnemyStat* StatUI;
+
+	UPROPERTY(EditDefaultsOnly, Category = "MySettings|UI")
+	class UWidgetComponent* MyWidget;
+
+	bool bisUIShow = false;
 };
