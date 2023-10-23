@@ -213,7 +213,7 @@ void UEnemyFsm::DamageState()
 
 void UEnemyFsm::DieState()
 {
-
+	
 }
 
 void UEnemyFsm::SleepState()

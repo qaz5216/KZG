@@ -14,7 +14,7 @@
 #include "../EnemyFsm.h"
 #include "H_EWidget.h"
 #include "H_PlayerInfo.h"
-
+#include "Net/UnrealNetwork.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AKZGCharacter
@@ -46,6 +46,7 @@ AKZGCharacter::AKZGCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
 	FollowCamera->bUsePawnControlRotation = false;
 
+	bReplicates = true;
 }
 
 void AKZGCharacter::BeginPlay()
@@ -90,24 +91,13 @@ void AKZGCharacter::Tick(float DeltaTime)
 			curSP = 0;
 		}
 	}
-	else if (!bIsCrouching && !bIsRunning)
-	{
-		GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
-		curSP += DeltaTime;
-		if (curSP > recoverTime)
-		{
-			currentStamina += recoveryPoint;
-			curSP = 0;
-		}
-	}
-
-	if (bIsCrouching && !bIsRunning)
+	else if (bIsCrouching && !bIsRunning)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = 150;
 		curSP += DeltaTime;
 		if (curSP > recoverTime)
 		{
-			currentStamina += recoveryPoint;
+			currentStamina += recoveryPoint * 10;
 			curSP = 0;
 		}
 	}
@@ -128,7 +118,6 @@ void AKZGCharacter::Tick(float DeltaTime)
 		{
 			EWidget->AddToViewport();
 		}
-		
 	}
 	else 
 	{
@@ -172,6 +161,7 @@ void AKZGCharacter::EscapebyZombie()
 {
 	bIsgrabbed=false;
 	GrabbedEnemy=nullptr;
+	if (bIsCrouching) bIsCrouching = false;
 	//UE_LOG(LogTemp, Warning, TEXT("Escapezz"));
 }
 
@@ -211,16 +201,16 @@ void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AKZGCharacter::Look);
 
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, this, &AKZGCharacter::InputRun);
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &AKZGCharacter::InputRun);
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, this, &AKZGCharacter::Server_InputRun);
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &AKZGCharacter::Server_InputRun);
 
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AKZGCharacter::CrouchInput);
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AKZGCharacter::CrouchInput);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AKZGCharacter::Server_CrouchInput);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AKZGCharacter::Server_CrouchInput);
 		
 
-		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AKZGCharacter::AttackInput);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AKZGCharacter::Server_AttackInput);
 
-		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &AKZGCharacter::InteractionInput);
+		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &AKZGCharacter::Server_InteractionInput);
 	}
 }
 
@@ -257,7 +247,7 @@ void AKZGCharacter::Look(const FInputActionValue& Value)
 }
 
 
-void AKZGCharacter::InputRun()
+void AKZGCharacter::Server_InputRun_Implementation()
 {
 	//auto movement = GetCharacterMovement();
 	// 만약 현재 달리기 상태라면 (released)
@@ -266,28 +256,41 @@ void AKZGCharacter::InputRun()
 	else bIsRunning = true;
 }
 
-void AKZGCharacter::CrouchInput()
+void AKZGCharacter::Server_CrouchInput_Implementation()
+{
+	Multicast_CrouchInput();
+}
+
+void AKZGCharacter::Multicast_CrouchInput_Implementation()
 {
 	if (bIsgrabbed) return;
 	if (bIsAttacking) return;
-	if(bIsCrouching) bIsCrouching = false;
+	if (bIsCrouching) bIsCrouching = false;
 	else bIsCrouching = true;
 }
 
-void AKZGCharacter::AttackInput()
-{	
-	
+void AKZGCharacter::Server_AttackInput_Implementation()
+{
+	Multicast_AttackInput();
+}
+
+void AKZGCharacter::Multicast_AttackInput_Implementation()
+{
 	int32 attackNum = FMath::RandRange(1, 100);
-	if (!bIsAttacking) {
+	if (!bIsAttacking && !bIsgrabbed) {
 		if (attackNum <= 33) anim->PlayAttackAnimation1();
 		else if (attackNum > 33 && attackNum <= 66) anim->PlayAttackAnimation2();
 		else if (attackNum > 66) anim->PlayAttackAnimation3();
 	}
 	bIsAttacking = true;
-
-	
 }
-void AKZGCharacter::InteractionInput() 
+
+void AKZGCharacter::Server_InteractionInput_Implementation()
+{
+	Multicast_InteractionUnput();
+}
+
+void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 {
 	if (bIsgrabbed)
 	{
@@ -295,13 +298,72 @@ void AKZGCharacter::InteractionInput()
 	}
 	else
 	{
-		
+
 	}
 }
+
+//void AKZGCharacter::InputRun()
+//{
+//	//auto movement = GetCharacterMovement();
+//	// 만약 현재 달리기 상태라면 (released)
+//	//GEngine->AddOnScreenDebugMessage(-1, 0.01, FColor::Black, FString::Printf(TEXT("Run")));
+//	if (bIsRunning) bIsRunning = false;
+//	else bIsRunning = true;
+//}
+
+//void AKZGCharacter::CrouchInput()
+//{
+//	if (bIsgrabbed) return;
+//	if (bIsAttacking) return;
+//	if(bIsCrouching) bIsCrouching = false;
+//	else bIsCrouching = true;
+//}
+
+//void AKZGCharacter::AttackInput()
+//{	
+//	
+//	int32 attackNum = FMath::RandRange(1, 100);
+//	if (!bIsAttacking && !bIsgrabbed) {
+//		if (attackNum <= 33) anim->PlayAttackAnimation1();
+//		else if (attackNum > 33 && attackNum <= 66) anim->PlayAttackAnimation2();
+//		else if (attackNum > 66) anim->PlayAttackAnimation3();
+//	}
+//	bIsAttacking = true;
+//
+//	
+//}
+//void AKZGCharacter::InteractionInput() 
+//{
+//	if (bIsgrabbed)
+//	{
+//		TryEscape();
+//	}
+//	else
+//	{
+//		
+//	}
+//}
 
 void AKZGCharacter::JumpInput()
 {
 	if (bIsgrabbed) return;
 	if (bIsAttacking) return;
 	Jump();
+}
+
+
+void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AKZGCharacter, curSP); 
+	DOREPLIFETIME(AKZGCharacter, recoverTime);
+	DOREPLIFETIME(AKZGCharacter, currentStamina);
+	DOREPLIFETIME(AKZGCharacter, playerStamina);
+	DOREPLIFETIME(AKZGCharacter, bIsCrouching);
+	DOREPLIFETIME(AKZGCharacter, bIsRunning);
+	DOREPLIFETIME(AKZGCharacter, bOnDamaged);
+	DOREPLIFETIME(AKZGCharacter, bIsAttacking);
+	DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
+
 }

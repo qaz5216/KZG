@@ -31,6 +31,8 @@ void UH_KZGPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
 {
 	if (player) player->bIsAttacking = false;
+	if (player) player->currentStamina--;
+
 }
 
 void UH_KZGPlayerAnim::AnimNotify_SoundStep()

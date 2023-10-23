@@ -65,13 +65,26 @@ protected:
 
 	void Look(const FInputActionValue& Value);
 			
-	void InputRun();
+	UFUNCTION(Server, Reliable)
+	void Server_InputRun();
 
-	void CrouchInput();
+	UFUNCTION(Server, Reliable)
+	void Server_CrouchInput();
 
-	void AttackInput();
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_CrouchInput();
 
-	void InteractionInput();
+	UFUNCTION(Server, Reliable)
+	void Server_AttackInput();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_AttackInput();
+
+	UFUNCTION(Server, Reliable)
+	void Server_InteractionInput();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_InteractionUnput();
 
 	void JumpInput();
  
@@ -97,23 +110,29 @@ public:
 	// 다시 바뀔속도
 	float returnSpeed = 0;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings" , Replicated)
 	bool bIsCrouching = false;
 
+	UPROPERTY(Replicated)
 	bool bIsRunning = false;
 
+	UPROPERTY(Replicated)
 	bool bOnDamaged = false;
 
+	UPROPERTY(Replicated)
 	bool bIsAttacking = false;
 
+	UPROPERTY(Replicated)
 	int32 playerStamina = 40;
 
+	UPROPERTY(Replicated)
 	int32 currentStamina = 0;
 
 	void PlayStepSoundPlaying();
 
 	float stepSoundrad=1000;
 
+	UPROPERTY(Replicated)
 	bool bIsgrabbed = false;
 
 	void GrabbedbyZombie(class AEnemy *Enemy);
@@ -122,8 +141,10 @@ public:
 
 	void TryEscape();
 
+	UPROPERTY(Replicated)
 	float recoverTime = 3;
 
+	UPROPERTY(Replicated)
 	float curSP = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=MySettings)
