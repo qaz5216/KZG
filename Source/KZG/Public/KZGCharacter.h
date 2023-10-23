@@ -65,11 +65,17 @@ protected:
 
 	void Look(const FInputActionValue& Value);
 			
-	void InputRun();
+	UFUNCTION(Server, Reliable)
+	void Server_InputRun();
 
-	void CrouchInput();
+	UFUNCTION(Server, Reliable)
+	void Server_CrouchInput();
 
-	void AttackInput();
+	UFUNCTION(Server, Reliable)
+	void Server_AttackInput();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_AttackInput();
 
 	void InteractionInput();
 

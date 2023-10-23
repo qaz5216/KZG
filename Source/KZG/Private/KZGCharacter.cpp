@@ -200,14 +200,14 @@ void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AKZGCharacter::Look);
 
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, this, &AKZGCharacter::InputRun);
-		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &AKZGCharacter::InputRun);
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Started, this, &AKZGCharacter::Server_InputRun);
+		EnhancedInputComponent->BindAction(RunAction, ETriggerEvent::Completed, this, &AKZGCharacter::Server_InputRun);
 
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AKZGCharacter::CrouchInput);
-		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AKZGCharacter::CrouchInput);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Started, this, &AKZGCharacter::Server_CrouchInput);
+		EnhancedInputComponent->BindAction(CrouchAction, ETriggerEvent::Completed, this, &AKZGCharacter::Server_CrouchInput);
 		
 
-		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AKZGCharacter::AttackInput);
+		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AKZGCharacter::Server_AttackInput);
 
 		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &AKZGCharacter::InteractionInput);
 	}
@@ -246,7 +246,7 @@ void AKZGCharacter::Look(const FInputActionValue& Value)
 }
 
 
-void AKZGCharacter::InputRun()
+void AKZGCharacter::Server_InputRun_Implementation()
 {
 	//auto movement = GetCharacterMovement();
 	// 만약 현재 달리기 상태라면 (released)
@@ -255,17 +255,21 @@ void AKZGCharacter::InputRun()
 	else bIsRunning = true;
 }
 
-void AKZGCharacter::CrouchInput()
+void AKZGCharacter::Server_CrouchInput_Implementation()
 {
 	if (bIsgrabbed) return;
 	if (bIsAttacking) return;
-	if(bIsCrouching) bIsCrouching = false;
+	if (bIsCrouching) bIsCrouching = false;
 	else bIsCrouching = true;
 }
 
-void AKZGCharacter::AttackInput()
-{	
-	
+void AKZGCharacter::Server_AttackInput_Implementation()
+{
+	Multicast_AttackInput();
+}
+
+void AKZGCharacter::Multicast_AttackInput_Implementation()
+{
 	int32 attackNum = FMath::RandRange(1, 100);
 	if (!bIsAttacking && !bIsgrabbed) {
 		if (attackNum <= 33) anim->PlayAttackAnimation1();
@@ -273,9 +277,38 @@ void AKZGCharacter::AttackInput()
 		else if (attackNum > 66) anim->PlayAttackAnimation3();
 	}
 	bIsAttacking = true;
-
-	
 }
+
+//void AKZGCharacter::InputRun()
+//{
+//	//auto movement = GetCharacterMovement();
+//	// 만약 현재 달리기 상태라면 (released)
+//	//GEngine->AddOnScreenDebugMessage(-1, 0.01, FColor::Black, FString::Printf(TEXT("Run")));
+//	if (bIsRunning) bIsRunning = false;
+//	else bIsRunning = true;
+//}
+
+//void AKZGCharacter::CrouchInput()
+//{
+//	if (bIsgrabbed) return;
+//	if (bIsAttacking) return;
+//	if(bIsCrouching) bIsCrouching = false;
+//	else bIsCrouching = true;
+//}
+
+//void AKZGCharacter::AttackInput()
+//{	
+//	
+//	int32 attackNum = FMath::RandRange(1, 100);
+//	if (!bIsAttacking && !bIsgrabbed) {
+//		if (attackNum <= 33) anim->PlayAttackAnimation1();
+//		else if (attackNum > 33 && attackNum <= 66) anim->PlayAttackAnimation2();
+//		else if (attackNum > 66) anim->PlayAttackAnimation3();
+//	}
+//	bIsAttacking = true;
+//
+//	
+//}
 void AKZGCharacter::InteractionInput() 
 {
 	if (bIsgrabbed)
