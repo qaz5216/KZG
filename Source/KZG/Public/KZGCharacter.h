@@ -44,6 +44,18 @@ class AKZGCharacter : public ACharacter
 	class UInputAction* InterAction;
 
 public:
+	UPROPERTY(VisibleAnywhere, Category = MySettings, meta = (AllowPrivateAccess = "true"))
+	class UH_EWidget* EWidget;
+	
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	TSubclassOf<class UH_EWidget> BP_EWidget;
+
+	UPROPERTY(VisibleAnywhere, Category = MySettings, meta = (AllowPrivateAccess = "true"))
+	class UH_PlayerInfo* InfoWidget;
+	
+	UPROPERTY(EditAnywhere, Category = MySettings)
+	TSubclassOf<class UH_PlayerInfo> BP_InfoWidget;
+public:
 	AKZGCharacter();
 	
 
@@ -96,6 +108,8 @@ public:
 
 	int32 playerStamina = 40;
 
+	int32 currentStamina = 0;
+
 	void PlayStepSoundPlaying();
 
 	float stepSoundrad=1000;
@@ -108,6 +122,12 @@ public:
 
 	void TryEscape();
 
+	float recoverTime = 3;
+
+	float curSP = 0;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=MySettings)
+	int32 recoveryPoint = 2;
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

@@ -15,7 +15,6 @@ AH_AttackWeapons::AH_AttackWeapons()
 	boxComp->SetBoxExtent(FVector(75, 10, 10));
 	boxComp->SetCollisionProfileName(TEXT("Block"));
 
-
 }
 
 // Called when the game starts or when spawned
