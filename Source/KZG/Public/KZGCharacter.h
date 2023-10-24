@@ -164,5 +164,13 @@ public:
 
 public:
 	void DamagedStamina(int32 value);
+
+	UFUNCTION(Server, Reliable)
+	void Server_GrabbedWidget();
+
+	//UFUNCTION(NetMulticast, Reliable)
+	//void Multicast_GrabbedWidget();
+
+
 };
 

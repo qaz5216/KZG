@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+ // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "KZGCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -112,23 +112,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 		}
 	}
 
-	if (bIsgrabbed)
-	{
-		if (EWidget != nullptr)
-		{
-			EWidget->AddToViewport();
-		}
-	}
-	else 
-	{
-		if (EWidget != nullptr)
-		{
-			EWidget->RemoveFromParent();
-		}
-	}
-
+	Server_GrabbedWidget();
 	
-
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
 }
 
@@ -198,6 +183,43 @@ void AKZGCharacter::DamagedStamina(int32 value)
 
 	}
 }
+
+void AKZGCharacter::Server_GrabbedWidget_Implementation()
+{
+	//Multicast_GrabbedWidget();
+	if (bIsgrabbed)
+	{
+		if (EWidget != nullptr)
+		{
+			EWidget->AddToViewport();
+		}
+	}
+	else
+	{
+		if (EWidget != nullptr)
+		{
+			EWidget->RemoveFromParent();
+		}
+	}
+}
+
+//void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
+//{
+//	if (bIsgrabbed)
+//	{
+//		if (EWidget != nullptr)
+//		{
+//			EWidget->AddToViewport();
+//		}
+//	}
+//	else
+//	{
+//		if (EWidget != nullptr)
+//		{
+//			EWidget->RemoveFromParent();
+//		}
+//	}
+//}
 
 void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -374,5 +396,6 @@ void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AKZGCharacter, bOnDamaged);
 	DOREPLIFETIME(AKZGCharacter, bIsAttacking);
 	DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
+	//DOREPLIFETIME(AKZGCharacter, EWidget);
 
 }
