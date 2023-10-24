@@ -15,6 +15,8 @@
 #include "H_EWidget.h"
 #include "H_PlayerInfo.h"
 #include "Net/UnrealNetwork.h"
+#include <Kismet/GameplayStatics.h>
+#include <Camera/PlayerCameraManager.h>
 
 //////////////////////////////////////////////////////////////////////////
 // AKZGCharacter
@@ -73,6 +75,8 @@ void AKZGCharacter::BeginPlay()
 		InfoWidget->AddToViewport();
 	}
 	currentStamina = playerStamina;
+	CameraLocation = FollowCamera->GetComponentLocation();
+	CameraRot = FollowCamera->GetComponentRotation();
 }
 
 void AKZGCharacter::Tick(float DeltaTime)
@@ -113,6 +117,12 @@ void AKZGCharacter::Tick(float DeltaTime)
 	}
 
 	Server_GrabbedWidget();
+	
+	
+	if (bIsgrabbed)
+	{
+		StartCameraBlending();
+	}
 	
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
 }
@@ -200,6 +210,95 @@ void AKZGCharacter::Server_GrabbedWidget_Implementation()
 		{
 			EWidget->RemoveFromParent();
 		}
+	}
+}
+
+void AKZGCharacter::StartCameraBlending()
+{
+	FollowCamera->SetRelativeLocation(CameraMoveLoc);
+	//// 이미 블렌딩 중이라면 중복 시작을 방지
+	//if (bIsBlending) return;
+
+	if (!bIsgrabbed)
+	{
+		StartCameraBlendToFirst();
+	}
+	//// 월드 포인터를 가져와서 블렌딩 시작
+	//UWorld* World = GetWorld();
+	//if (World)
+	//{
+	//	World->GetTimerManager().SetTimer(BlendTimerHandle, this, &AKZGCharacter::DoingCameraBlending, 0.05f, false);
+	//	bIsBlending = true;
+	//}
+
+}
+
+void AKZGCharacter::DoingCameraBlending()
+{
+	// 현재 시간과 블렌딩의 비율 계산
+	float CurrentTime = GetWorld()->GetTimerManager().GetTimerElapsed(BlendTimerHandle);
+	float BlendAlpha = FMath::Clamp(CurrentTime / blendTime, 0.0f, 1.0f);
+
+	// 현재 카메라의 위치를 가져옴
+	FVector StartLocation = CameraLocation;
+	FRotator StartRot = CameraRot;
+	// 블렌딩된 위치 계산
+	FVector BlendedLocation = FMath::Lerp(StartLocation, CameraMoveLoc, BlendAlpha);
+	FRotator BlendedRotation = FMath::Lerp(StartRot, CameraMoveRot, BlendAlpha);
+
+	// 카메라의 위치를 설정
+	FollowCamera->SetRelativeLocationAndRotation(BlendedLocation, BlendedRotation);
+
+	if (BlendAlpha >= 0.9f)
+	{
+		// 블렌딩이 완료되면 타이머를 정지하고 블렌딩 중인 상태를 해제
+		GetWorld()->GetTimerManager().ClearTimer(BlendTimerHandle);
+		bIsBlending = false;
+
+		GetWorld()->GetTimerManager().SetTimer(BlendTimerHandle, this, &AKZGCharacter::StartCameraBlendToFirst, 0.05f, false);
+
+	}
+}
+
+
+
+void AKZGCharacter::StartCameraBlendToFirst()
+{
+	FollowCamera->SetRelativeLocation(CameraLocation);
+	//// 이미 블렌딩 중이라면 중복 시작을 방지
+	//if (bIsBlending) return;
+
+
+	//// 월드 포인터를 가져와서 블렌딩 시작
+	//UWorld* World = GetWorld();
+	//if (World)
+	//{
+	//	World->GetTimerManager().SetTimer(BlendTimerHandle, this, &AKZGCharacter::DoCameraBlendToFirst, 0.05f, false);
+	//	bIsBlending = true;
+	//}
+}
+
+void AKZGCharacter::DoCameraBlendToFirst()
+{
+	// 현재 시간과 블렌딩의 비율 계산
+	float CurrentTime = GetWorld()->GetTimerManager().GetTimerElapsed(BlendTimerHandle);
+	float BlendAlpha = FMath::Clamp(CurrentTime / blendTime, 0.0f, 1.0f);
+
+	// 현재 카메라의 위치를 가져옴
+	FVector StartLocation = CameraMoveLoc;
+	FRotator StartRot = CameraMoveRot;
+	// 블렌딩된 위치 계산
+	FVector BlendedLocation = FMath::Lerp(StartLocation, CameraLocation, BlendAlpha);
+	FRotator BlendedRotation = FMath::Lerp(StartRot, CameraRot, BlendAlpha);
+
+	// 카메라의 위치를 설정
+	FollowCamera->SetRelativeLocationAndRotation(BlendedLocation, BlendedRotation);
+
+	if (BlendAlpha >= 0.9f)
+	{
+		// 블렌딩이 완료되면 타이머를 정지하고 블렌딩 중인 상태를 해제
+		GetWorld()->GetTimerManager().ClearTimer(BlendTimerHandle);
+		bIsBlending = false;
 	}
 }
 
@@ -309,9 +408,9 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 {
 	int32 attackNum = FMath::RandRange(1, 100);
 	if (!bIsAttacking && !bIsgrabbed) {
-		if (attackNum <= 33) anim->PlayAttackAnimation1();
-		else if (attackNum > 33 && attackNum <= 66) anim->PlayAttackAnimation2();
-		else if (attackNum > 66) anim->PlayAttackAnimation3();
+		//if (attackNum <= 100) anim->PlayAttackAnimation1();
+		if (attackNum > 50) anim->PlayAttackAnimation2();
+		else if (attackNum <= 50) anim->PlayAttackAnimation3();
 	}
 	bIsAttacking = true;
 }

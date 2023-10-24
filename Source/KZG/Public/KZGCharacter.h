@@ -171,6 +171,25 @@ public:
 	//UFUNCTION(NetMulticast, Reliable)
 	//void Multicast_GrabbedWidget();
 
+	UPROPERTY()
+	float blendTime = 0.4f;
 
+	FVector CameraLocation;
+	FRotator CameraRot;
+
+	FVector CameraMoveLoc = FVector(130.000000, 110.000000, -20.000000);
+	FRotator CameraMoveRot = FRotator(19.683498, -30.627584,-3.616442);
+
+	bool bIsBlending = false;
+
+	void StartCameraBlending();
+
+	void DoingCameraBlending();
+
+	void StartCameraBlendToFirst();
+
+	void DoCameraBlendToFirst();
+
+	FTimerHandle BlendTimerHandle;
 };
 
