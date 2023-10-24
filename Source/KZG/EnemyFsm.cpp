@@ -52,11 +52,11 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	// ...
 	if (ai!=nullptr)
 	{
-		UE_LOG(LogTemp,Warning,TEXT("AI NULL zz"));
+		//UE_LOG(LogTemp,Warning,TEXT("AI NULL zz"));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AI YEs zz"));
+		//UE_LOG(LogTemp, Warning, TEXT("AI YEs zz"));
 	}	
 
 	if (start)
@@ -130,7 +130,7 @@ void UEnemyFsm::IdleState(float DeltaTime)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Fail Loc"));
+		//UE_LOG(LogTemp, Warning, TEXT("Fail Loc"));
 	}
 
 	/*밤일때
@@ -147,9 +147,17 @@ void UEnemyFsm::TrackingState()
 	}
 	FVector dest = Target->GetActorLocation();
 	if (FVector::Dist(Me->GetActorLocation(), dest) < 100.0f) {
-		//공격
-		ChangeToAttackState();
-		return;
+		if (true) {
+			//공격
+			ChangeToAttackState();
+			return;
+		}
+		else
+		{
+			//대기
+			return;
+		}
+
 	}
 	EPathFollowingRequestResult::Type isAlreadyGoal = EPathFollowingRequestResult::Failed;
 	FPathFindingResult r;
@@ -190,7 +198,7 @@ void UEnemyFsm::AttackState(float DeltaTime)
 		{
 			Target->DamagedStamina(1);
 			// player->damagedstamina(int32 value)
-			UE_LOG(LogTemp, Warning, TEXT("Attack remain Sta=%d"),Target->playerStamina);
+			UE_LOG(LogTemp, Warning, TEXT("Attack remain Sta=%d"),Target->currentStamina);
 			attacktime_cur=0;
 		}
 		else

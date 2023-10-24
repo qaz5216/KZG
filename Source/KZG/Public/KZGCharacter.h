@@ -135,11 +135,19 @@ public:
 	UPROPERTY(Replicated)
 	bool bIsgrabbed = false;
 
+	UPROPERTY(Replicated)
+	bool bCangrabbed = true;
+
 	void GrabbedbyZombie(class AEnemy *Enemy);
 
 	void EscapebyZombie();
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = MySettings)
+	float grabbedDelayTime = 5.0f;
+
 	void TryEscape();
+
+	void GrabbedDelay();
 
 	UPROPERTY(Replicated)
 	float recoverTime = 3;

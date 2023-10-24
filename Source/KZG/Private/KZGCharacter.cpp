@@ -153,6 +153,7 @@ void AKZGCharacter::PlayStepSoundPlaying()
 void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
 {
 	bIsgrabbed=true;
+	bCangrabbed=false;
 	GrabbedEnemy=Enemy;
 	//UE_LOG(LogTemp, Warning, TEXT("Grabbedzz"));
 }
@@ -163,6 +164,8 @@ void AKZGCharacter::EscapebyZombie()
 	GrabbedEnemy=nullptr;
 	if (bIsCrouching) bIsCrouching = false;
 	//UE_LOG(LogTemp, Warning, TEXT("Escapezz"));
+	FTimerHandle myhandle;
+	GetWorldTimerManager().SetTimer(myhandle, this,&AKZGCharacter::GrabbedDelay, grabbedDelayTime, false);
 }
 
 void AKZGCharacter::TryEscape()
@@ -174,6 +177,12 @@ void AKZGCharacter::TryEscape()
 	{
 		EscapebyZombie();
 	}
+}
+
+void AKZGCharacter::GrabbedDelay()
+{	//그랩가능상태로 바꾸는함수
+	bCangrabbed=true;
+	UE_LOG(LogTemp,Warning,TEXT("DelayHochulzz"));
 }
 
 void AKZGCharacter::DamagedStamina(int32 value)
