@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+ // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "KZGCharacter.h"
 #include "Camera/CameraComponent.h"
@@ -15,6 +15,8 @@
 #include "H_EWidget.h"
 #include "H_PlayerInfo.h"
 #include "Net/UnrealNetwork.h"
+#include <Kismet/GameplayStatics.h>
+#include <Camera/PlayerCameraManager.h>
 
 //////////////////////////////////////////////////////////////////////////
 // AKZGCharacter
@@ -46,6 +48,10 @@ AKZGCharacter::AKZGCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
 	FollowCamera->bUsePawnControlRotation = false;
 
+	CamFollowComp = CreateDefaultSubobject<USceneComponent>(TEXT("Cam Follow Comp"));
+	CamFollowComp->SetupAttachment(GetCapsuleComponent());
+	CamFollowComp->SetRelativeLocation(FVector(-130.000000, 200.000000, -10.000000));
+
 	bReplicates = true;
 }
 
@@ -73,6 +79,8 @@ void AKZGCharacter::BeginPlay()
 		InfoWidget->AddToViewport();
 	}
 	currentStamina = playerStamina;
+	CameraLocation = FollowCamera->GetComponentLocation();
+	CameraRot = FollowCamera->GetComponentRotation();
 }
 
 void AKZGCharacter::Tick(float DeltaTime)
@@ -112,23 +120,9 @@ void AKZGCharacter::Tick(float DeltaTime)
 		}
 	}
 
-	if (bIsgrabbed)
-	{
-		if (EWidget != nullptr)
-		{
-			EWidget->AddToViewport();
-		}
-	}
-	else 
-	{
-		if (EWidget != nullptr)
-		{
-			EWidget->RemoveFromParent();
-		}
-	}
-
+	Server_GrabbedWidget();
 	
-
+	
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
 }
 
@@ -198,6 +192,43 @@ void AKZGCharacter::DamagedStamina(int32 value)
 
 	}
 }
+
+void AKZGCharacter::Server_GrabbedWidget_Implementation()
+{
+	//Multicast_GrabbedWidget();
+	if (bIsgrabbed)
+	{
+		if (EWidget != nullptr)
+		{
+			EWidget->AddToViewport();
+		}
+	}
+	else
+	{
+		if (EWidget != nullptr)
+		{
+			EWidget->RemoveFromParent();
+		}
+	}
+}
+
+//void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
+//{
+//	if (bIsgrabbed)
+//	{
+//		if (EWidget != nullptr)
+//		{
+//			EWidget->AddToViewport();
+//		}
+//	}
+//	else
+//	{
+//		if (EWidget != nullptr)
+//		{
+//			EWidget->RemoveFromParent();
+//		}
+//	}
+//}
 
 void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -285,11 +316,12 @@ void AKZGCharacter::Server_AttackInput_Implementation()
 
 void AKZGCharacter::Multicast_AttackInput_Implementation()
 {
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
 	int32 attackNum = FMath::RandRange(1, 100);
 	if (!bIsAttacking && !bIsgrabbed) {
-		if (attackNum <= 33) anim->PlayAttackAnimation1();
-		else if (attackNum > 33 && attackNum <= 66) anim->PlayAttackAnimation2();
-		else if (attackNum > 66) anim->PlayAttackAnimation3();
+		//if (attackNum <= 100) anim->PlayAttackAnimation1();
+		if (attackNum > 50) anim->PlayAttackAnimation2();
+		else if (attackNum <= 50) anim->PlayAttackAnimation3();
 	}
 	bIsAttacking = true;
 }
@@ -374,5 +406,6 @@ void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AKZGCharacter, bOnDamaged);
 	DOREPLIFETIME(AKZGCharacter, bIsAttacking);
 	DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
+	//DOREPLIFETIME(AKZGCharacter, EWidget);
 
 }

@@ -18,6 +18,10 @@ class AKZGCharacter : public ACharacter
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* CamFollowComp;
+
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
@@ -43,6 +47,8 @@ class AKZGCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* InterAction;
 
+	
+
 public:
 	UPROPERTY(VisibleAnywhere, Category = MySettings, meta = (AllowPrivateAccess = "true"))
 	class UH_EWidget* EWidget;
@@ -55,6 +61,11 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	TSubclassOf<class UH_PlayerInfo> BP_InfoWidget;
+
+	
+	UPROPERTY(EditDefaultsOnly, Category="CameraShake")
+	TSubclassOf<class UCameraShakeBase> ZHitBase;
+
 public:
 	AKZGCharacter();
 	
@@ -102,10 +113,10 @@ public:
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
 	// °È±â ¼Óµµ
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MySettings")
 	float walkSpeed = 300;
 	// ¶Ù±â ¼Óµµ
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MySettings")
 	float runSpeed = 800;
 	// ´Ù½Ã ¹Ù²ð¼Óµµ
 	float returnSpeed = 0;
@@ -132,7 +143,7 @@ public:
 
 	float stepSoundrad=1000;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	bool bIsgrabbed = false;
 
 	UPROPERTY(Replicated)
@@ -158,11 +169,34 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=MySettings)
 	int32 recoveryPoint = 2;
 
+	float lerpMaxTime = 1;
+
+	float lerpCurTime;
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class AEnemy *GrabbedEnemy;
 
 public:
 	void DamagedStamina(int32 value);
+
+	UFUNCTION(Server, Reliable)
+	void Server_GrabbedWidget();
+
+	//UFUNCTION(NetMulticast, Reliable)
+	//void Multicast_GrabbedWidget();
+
+	UPROPERTY()
+	float blendTime = 1.0f;
+
+	FVector CameraLocation;
+	FRotator CameraRot;
+
+	FVector CameraMoveLoc = FVector(0.000000, 260.000000, 0.000000);
+	FRotator CameraMoveRot = FRotator(0.000000, -50.000000,  0.000000);
+
+
+
+	FTimerHandle BlendTimerHandle;
 };
 
