@@ -61,17 +61,21 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 
 	if (start)
 	{
+		//시야는 계속작동하니까
+		Viewing();
 	switch (mState)
 	{/*-수면 상태
 		-단순 이동 / 순찰
 		- 인지(사운드 / 시각)
 		- 추적
 	*/
+
+	
 	case EEnemyState::Idle:
 		IdleState(DeltaTime);
 		break;
 	case EEnemyState::Tracking:
-		TrackingState();
+		TrackingState(DeltaTime);
 		break;
 	case EEnemyState::Recognition:
 		RecognitionState(DeltaTime);
@@ -138,23 +142,40 @@ void UEnemyFsm::IdleState(float DeltaTime)
 	*/
 }
 
-void UEnemyFsm::TrackingState()
+void UEnemyFsm::TrackingState(float DeltaTime)
 {
 	if (Target==nullptr)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("nullzz"));
 		return;
+		ChangeToIdleState();
 	}
-	FVector dest = Target->GetActorLocation();
+	bool TargetSee = SeeTarget(Target);
+	if (TargetSee)
+	{
+		dest = Target->GetActorLocation();
+		UE_LOG(LogTemp, Warning, TEXT("See"));
+		Trackingtime_cur=0;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NoSee"));
+	}
 	if (FVector::Dist(Me->GetActorLocation(), dest) < 100.0f) {
-		if (true) {
+		if (TargetSee) {
 			//공격
+			Trackingtime_cur=0;
 			ChangeToAttackState();
 			return;
 		}
 		else
 		{
-			//대기
+			Trackingtime_cur+=DeltaTime;
+			if (Trackingtime_cur > Trackingtime)
+			{
+				ChangeToIdleState();
+			}
+			//대기후 아이들 놓침
 			return;
 		}
 
@@ -245,18 +266,50 @@ void UEnemyFsm::GroggyState(float DeltaTime)
 
 void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 {
-	Target=NewTarget;	
-	Me->AttachUI();
-	mState=EEnemyState::Tracking;
+	if (mState==EEnemyState::Tracking)
+	{
+		if (NewTarget != Target)
+		{
+			FVector TargetDist = Target->GetActorLocation() - Me->GetActorLocation();
+			FVector NewTargetDist = NewTarget->GetActorLocation() - Me->GetActorLocation();
+			if (NewTargetDist.Size() < TargetDist.Size())
+			{
+				Target=NewTarget;
+				dest=Target->GetActorLocation();
+				Trackingtime_cur=0;
+			}
+		}
+		else
+		{	//소리내면
+			dest = Target->GetActorLocation();
+			Trackingtime_cur = 0;
+		}
+	}
+	else if (mState==EEnemyState::Idle)
+	{
+		Target = NewTarget;
+		dest = Target->GetActorLocation();
+		Me->AttachUI();
+		Trackingtime_cur=0;
+		mState = EEnemyState::Tracking;
+	}
+	else if(mState==EEnemyState::Recognition)
+	{
+		Target = NewTarget;
+		dest = Target->GetActorLocation();
+		Me->AttachUI();
+		Trackingtime_cur=0;
+		mState = EEnemyState::Tracking;
+	}
 }
 
-bool UEnemyFsm::GetRandomPosInNavMesh(FVector center, float radius, FVector& dest)
+bool UEnemyFsm::GetRandomPosInNavMesh(FVector center, float radius, FVector& Rdest)
 {
 	UNavigationSystemV1* ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
 	FNavLocation loc;
 
 	bool result = ns->GetRandomReachablePointInRadius(center, radius, loc);
-	dest = loc.Location;
+	Rdest = loc.Location;
 	return true;
 }
 
@@ -320,6 +373,121 @@ void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
 	mState=EEnemyState::Recognition;
 }
 
+void UEnemyFsm::Viewing()
+{
+	TArray<FOverlapResult> hitInfos;
+	FVector MeLoc= Me->GetActorLocation();
+	if (GetWorld()->OverlapMultiByProfile(hitInfos,	MeLoc , FQuat::Identity, FName("ViewPlayer"), FCollisionShape::MakeSphere(viewDistance)))
+	{
+		bool findCharacter=false;
+		TArray<AKZGCharacter*> hitPlayers;
+		//UE_LOG(LogTemp,Warning,TEXT("1"));
+		for (const FOverlapResult& hitInfo : hitInfos)
+		{	
+			//UE_LOG(LogTemp, Warning, TEXT("2"));
+			if (AKZGCharacter* hitPlayer = Cast<AKZGCharacter>(hitInfo.GetActor()))//이거 되긴하냐..?
+			{	
+				//UE_LOG(LogTemp, Warning, TEXT("3"));
+				//시야에 들어가있냐?
+				if (SeeTarget(hitPlayer)) //여기부터확인해 이게 안불려;;
+				{
+					///UE_LOG(LogTemp, Warning, TEXT("8"));
+					hitPlayers.Add(hitPlayer);
+					findCharacter = true;
+				}
+				//hitPlayers.Add(hitPlayer);
+				//findCharacter=true;
+			}
+		}
+		// 시야에 보인놈들중 가장 가까운놈 추적
+		if (findCharacter)
+		{
+			float mindist=-1;
+			AKZGCharacter* ShortPlayer=nullptr;
+			for (AKZGCharacter* DistCharacter:hitPlayers)
+			{	// 가까운놈 찾기
+				if (mindist==-1)
+				{
+					ShortPlayer=DistCharacter;
+					float checkdist=(DistCharacter->GetActorLocation()-MeLoc).Size();
+					mindist=checkdist;
+				}
+				else
+				{
+					float checkdist = (DistCharacter->GetActorLocation() - MeLoc).Size();
+					if (checkdist<mindist)
+					{
+						ShortPlayer = DistCharacter;
+						mindist=checkdist;
+					}
+				}
+			}
+			if (ShortPlayer!=nullptr)
+			{
+				ChangeToTrackingState(ShortPlayer);
+			}
+		}
+		else
+		{
+			//
+		}
+	}DrawDebugSphere(GetWorld(), MeLoc, viewDistance, 30, FColor::Green, false, 1.0f);
+
+}
+
+bool UEnemyFsm::SeeTarget(class AKZGCharacter* TargetChar)
+{
+	FVector MeLoc = Me->GetActorLocation();
+	FVector startloc = MeLoc;
+	startloc.Z += 50.0f;//눈위치
+	FVector endloc = TargetChar->GetActorLocation();
+	endloc.Z += 50.0f;//플레이어 위치보정
+	FHitResult hitResult;
+	FCollisionQueryParams collisionParams;
+	collisionParams.AddIgnoredActor(Me);
+	//UE_LOG(LogTemp, Warning, TEXT("4"));
+	DrawDebugLine(GetWorld(), startloc, endloc, FColor::Red, false, 1.0f);
+	if (GetWorld()->LineTraceSingleByChannel(hitResult, startloc, endloc, ECC_Visibility, collisionParams))
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("5"));
+		if (hitResult.GetActor())
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("6"));
+			if (AKZGCharacter* hitPlayer = Cast<AKZGCharacter>(hitResult.GetActor()))
+			{
+				auto* hitActor=hitResult.GetActor();
+				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Hit Actor Name:%s"), *hitActor->GetName()));
+				//UE_LOG(LogTemp, Warning, TEXT("7"));
+				if (hitPlayer == TargetChar)
+				{
+					//UE_LOG(LogTemp, Warning, TEXT("Findzz"));
+					//시야각 안에있냐?
+					FVector DirectionVec=hitPlayer->GetActorLocation()-Me->GetActorLocation();
+					DirectionVec.Z=0;
+					DirectionVec.Normalize();
+					double DotP = FVector::DotProduct(Me->GetActorForwardVector(),DirectionVec);
+					if (DotP>0.5) // 잘생각해봐
+					{
+						//UE_LOG(LogTemp, Warning, TEXT("SeeAngle"));
+						return true;
+					}
+					else
+					{
+						//UE_LOG(LogTemp, Warning, TEXT("SeeAngle X"));
+					}
+				}
+				else
+				{
+					//UE_LOG(LogTemp, Warning, TEXT("NOFindzz"));
+				}
+
+			}
+			//맞은액터 확인용
+		}
+	}
+	return false;
+}
+
 void UEnemyFsm::Recognition(class AKZGCharacter* NewTarget)
 {
 	if (mState==EEnemyState::Idle)
@@ -327,6 +495,17 @@ void UEnemyFsm::Recognition(class AKZGCharacter* NewTarget)
 		ChangeToRecognitionState(NewTarget);
 	}
 	else if(mState==EEnemyState::Recognition)
+	{
+		if (NewTarget!=Target)
+		{	
+			ChangeToRecognitionState(NewTarget);
+		}
+		else
+		{
+			ChangeToTrackingState(NewTarget);
+		}
+	}
+	else if (mState == EEnemyState::Tracking)
 	{
 		ChangeToTrackingState(NewTarget);
 	}

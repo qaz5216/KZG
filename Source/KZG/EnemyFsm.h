@@ -40,7 +40,7 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void IdleState(float DeltaTime);
-	void TrackingState();
+	void TrackingState(float DeltaTime);
 	void RecognitionState(float DeltaTime);
 	void AttackState(float DeltaTime);
 	void DamageState();
@@ -80,7 +80,18 @@ public:
 
 	void ChangeToRecognitionState(class AKZGCharacter* NewTarget);
 
+	void Viewing();
+
+	bool SeeTarget(class AKZGCharacter* NewTarget);
+
+
 	void Recognition(class AKZGCharacter* NewTarget);
+	
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	FVector dest;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float viewDistance=1000.0f;
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float recognitiontime_cur=0;
@@ -99,6 +110,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float idletime=3;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float Trackingtime_cur=0;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float Trackingtime=3;
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float attacktime_cur=0;
