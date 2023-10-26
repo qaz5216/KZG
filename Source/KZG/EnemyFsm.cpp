@@ -62,7 +62,13 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	if (start)
 	{
 		//시야는 계속작동하니까
-		Viewing();
+		if (mState==EEnemyState::Damage||mState==EEnemyState::Groggy)
+		{
+		}
+		else
+		{
+			Viewing();
+		}
 	switch (mState)
 	{/*-수면 상태
 		-단순 이동 / 순찰
@@ -84,7 +90,7 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		AttackState(DeltaTime);
 		break;
 	case EEnemyState::Damage:
-		DamageState();
+		DamageState(DeltaTime);
 		break;
 	case EEnemyState::Die:
 		DieState();
@@ -235,9 +241,16 @@ void UEnemyFsm::AttackState(float DeltaTime)
 	}
 }
 
-void UEnemyFsm::DamageState()
+void UEnemyFsm::DamageState(float DeltaTime)
 {
-	
+	damagetime_cur+=DeltaTime;
+	if (damagetime_cur>damagetime)
+	{
+		if (Target!=nullptr)
+		{
+			ChangeToTrackingState(Target);
+		}
+	}
 }
 
 void UEnemyFsm::DieState()
@@ -252,9 +265,11 @@ void UEnemyFsm::SleepState()
 
 void UEnemyFsm::GroggyState(float DeltaTime)
 {
+	UE_LOG(LogTemp,Warning,TEXT("%f,%f"),groggytime_cur,groggytime);
 	if (groggytime_cur>groggytime)
 	{
 		Me->isGroggy=false;
+		Me->StaminaHeal(Me->Stamina_Max);
 		ChangeToTrackingState(Target);
 	}
 	else
@@ -299,6 +314,22 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 		dest = Target->GetActorLocation();
 		Me->AttachUI();
 		Trackingtime_cur=0;
+		mState = EEnemyState::Tracking;
+	}
+	else if (mState==EEnemyState::Damage)
+	{
+		Target = NewTarget;
+		dest = Target->GetActorLocation();
+		Me->AttachUI();
+		Trackingtime_cur = 0;
+		mState = EEnemyState::Tracking;
+	}
+	else if (mState==EEnemyState::Groggy)
+	{
+		Target = NewTarget;
+		dest = Target->GetActorLocation();
+		Me->AttachUI();
+		Trackingtime_cur = 0;
 		mState = EEnemyState::Tracking;
 	}
 }
@@ -371,6 +402,24 @@ void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
 	UE_LOG(LogTemp, Warning, TEXT("Turnzz"));
 	Me->SetActorRotation((Target->GetActorLocation()-Me->GetActorLocation()).Rotation().Quaternion());
 	mState=EEnemyState::Recognition;
+}
+
+void UEnemyFsm::ChangeToDamageState()
+{
+	if (mState==EEnemyState::Damage)
+	{
+		damagetime_cur=0;
+	}
+	else if (mState == EEnemyState::Groggy)
+	{
+		//그로기일때 맞으면 어떻게하죠?
+	}
+	else
+	{
+		damagetime_cur=0;
+		PremState = mState;
+		mState = EEnemyState::Damage;
+	}
 }
 
 void UEnemyFsm::Viewing()

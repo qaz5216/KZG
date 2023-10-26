@@ -57,6 +57,10 @@ public:
 	void StaminaDamaged(int32 value);
 
 	UFUNCTION(BlueprintCallable)
+	void StaminaHeal(int32 value);
+
+
+	UFUNCTION(BlueprintCallable)
 	void AttachUI();
 	UFUNCTION(BlueprintCallable)
 	void DetachUI();

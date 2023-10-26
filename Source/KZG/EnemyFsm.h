@@ -43,7 +43,7 @@ public:
 	void TrackingState(float DeltaTime);
 	void RecognitionState(float DeltaTime);
 	void AttackState(float DeltaTime);
-	void DamageState();
+	void DamageState(float DeltaTime);
 	void DieState();
 	void SleepState();
 	void GroggyState(float DeltaTime);
@@ -52,6 +52,11 @@ public:
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="FSM")
 	EEnemyState mState=EEnemyState::Idle;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="FSM")
+	EEnemyState PremState;
+
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
 	class AEnemy *Me;
@@ -79,6 +84,9 @@ public:
 	void ChangeToGroggyState();
 
 	void ChangeToRecognitionState(class AKZGCharacter* NewTarget);
+
+	void ChangeToDamageState();
+
 
 	void Viewing();
 
@@ -110,6 +118,12 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float idletime=3;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float damagetime_cur=0;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float damagetime=3;
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float Trackingtime_cur=0;

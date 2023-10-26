@@ -58,6 +58,7 @@ void AEnemy::Damaged(int32 damage)
 	if (HP_Cur-damage>0)
 	{
 		HP_Cur=HP_Cur-damage;
+		FSM->ChangeToDamageState();
 	}
 	else
 	{
@@ -77,6 +78,19 @@ void AEnemy::StaminaDamaged(int32 value)
 		Stamina_Cur = 0;
 	}
 	StatUI->SetStaminaBar(Stamina_Cur,Stamina_Max);
+}
+
+void AEnemy::StaminaHeal(int32 value)
+{
+	if (Stamina_Cur + value > Stamina_Max)
+	{
+		Stamina_Cur = Stamina_Max;
+	}
+	else
+	{
+		Stamina_Cur = Stamina_Cur + value;
+	}
+	StatUI->SetStaminaBar(Stamina_Cur, Stamina_Max);
 }
 
 void AEnemy::AttachUI()
