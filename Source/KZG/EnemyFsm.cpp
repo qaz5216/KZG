@@ -62,7 +62,7 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	if (start)
 	{
 		//시야는 계속작동하니까
-		if (mState==EEnemyState::Damage||mState==EEnemyState::Groggy)
+		if (mState==EEnemyState::Damage||mState==EEnemyState::Groggy||mState==EEnemyState::Die)
 		{
 		}
 		else
@@ -255,7 +255,7 @@ void UEnemyFsm::DamageState(float DeltaTime)
 
 void UEnemyFsm::DieState()
 {
-	
+	Me->Destroy();
 }
 
 void UEnemyFsm::SleepState()
@@ -270,6 +270,7 @@ void UEnemyFsm::GroggyState(float DeltaTime)
 	{
 		Me->isGroggy=false;
 		Me->StaminaHeal(Me->Stamina_Max);
+		Me->StatUI->EImageHidden();
 		ChangeToTrackingState(Target);
 	}
 	else
@@ -388,6 +389,7 @@ void UEnemyFsm::ChangeToGroggyState()
 	Me->isGroggy=true;
 	groggytime_cur=0;
 	mState=EEnemyState::Groggy;
+	Me->StatUI->EImageShow();
 }
 
 void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
@@ -420,6 +422,12 @@ void UEnemyFsm::ChangeToDamageState()
 		PremState = mState;
 		mState = EEnemyState::Damage;
 	}
+}
+
+void UEnemyFsm::ChangeToDieState()
+{
+	mState=EEnemyState::Die;
+	Me->HP_Cur=0;
 }
 
 void UEnemyFsm::Viewing()

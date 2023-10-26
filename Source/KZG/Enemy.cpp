@@ -63,6 +63,7 @@ void AEnemy::Damaged(int32 damage)
 	else
 	{
 		HP_Cur=0;
+		
 	}
 	StatUI->SetHPBar(HP_Cur,HP_Max);
 }

@@ -87,6 +87,7 @@ public:
 
 	void ChangeToDamageState();
 
+	void ChangeToDieState();
 
 	void Viewing();
 
