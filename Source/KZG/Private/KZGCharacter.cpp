@@ -79,6 +79,7 @@ void AKZGCharacter::BeginPlay()
 		InfoWidget->AddToViewport();
 	}
 	currentStamina = playerStamina;
+	curHungerP = maxHungerP;
 	CameraLocation = FollowCamera->GetComponentLocation();
 	CameraRot = FollowCamera->GetComponentRotation();
 }
@@ -122,6 +123,12 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	Server_GrabbedWidget();
 	
+	curHungtime += DeltaTime;
+	if (curHungtime > 1) 
+	{
+		curHungerP--;
+		curHungtime = 0;
+	}
 	
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
 }

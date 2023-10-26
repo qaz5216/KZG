@@ -47,8 +47,6 @@ class AKZGCharacter : public ACharacter
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* InterAction;
 
-	
-
 public:
 	UPROPERTY(VisibleAnywhere, Category = MySettings, meta = (AllowPrivateAccess = "true"))
 	class UH_EWidget* EWidget;
@@ -139,6 +137,15 @@ public:
 	UPROPERTY(Replicated)
 	int32 currentStamina = 0;
 
+	UPROPERTY(Replicated)
+	int32 maxHungerP = 100;
+
+	UPROPERTY(Replicated)
+	int32 curHungerP = 0;
+
+	UPROPERTY(Replicated)
+	float curHungtime = 0;
+
 	void PlayStepSoundPlaying();
 
 	float stepSoundrad=1000;
@@ -194,8 +201,6 @@ public:
 
 	FVector CameraMoveLoc = FVector(0.000000, 260.000000, 0.000000);
 	FRotator CameraMoveRot = FRotator(0.000000, -50.000000,  0.000000);
-
-
 
 	FTimerHandle BlendTimerHandle;
 };
