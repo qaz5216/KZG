@@ -13,6 +13,7 @@ class AKZGCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
 
@@ -138,10 +139,12 @@ public:
 	int32 currentStamina = 0;
 
 	UPROPERTY(Replicated)
-	int32 maxHungerP = 100;
+	int32 maxHungerP = 32;
 
 	UPROPERTY(Replicated)
 	int32 curHungerP = 0;
+
+	float camArmLen;
 
 	UPROPERTY(Replicated)
 	float curHungtime = 0;

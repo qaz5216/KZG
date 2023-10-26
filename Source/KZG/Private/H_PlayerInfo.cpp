@@ -28,8 +28,6 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		else text_Hungry->SetVisibility(ESlateVisibility::Hidden);
 
 	}
-
-	
 }
 
 void UH_PlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

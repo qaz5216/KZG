@@ -4,6 +4,7 @@
 #include "H_KZGPlayerAnim.h"
 #include "KZGCharacter.h"
 #include <GameFramework/CharacterMovementComponent.h>
+#include "GameFramework/SpringArmComponent.h"
 
 
 void UH_KZGPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
@@ -30,8 +31,11 @@ void UH_KZGPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 
 void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
 {
-	if (player) player->bIsAttacking = false;
-	if (player) player->currentStamina--;
+	if (player) 
+	{
+		player->bIsAttacking = false;
+		player->currentStamina--;
+	}
 
 }
 
