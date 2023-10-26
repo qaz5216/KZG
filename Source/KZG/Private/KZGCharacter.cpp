@@ -43,6 +43,7 @@ AKZGCharacter::AKZGCharacter()
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->TargetArmLength = 200.0f; 
 	CameraBoom->bUsePawnControlRotation = true; 
+	CameraBoom->SetRelativeLocation(FVector(0.000000, 0.000000, 50.000000));
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
@@ -79,8 +80,10 @@ void AKZGCharacter::BeginPlay()
 		InfoWidget->AddToViewport();
 	}
 	currentStamina = playerStamina;
+	curHungerP = maxHungerP;
 	CameraLocation = FollowCamera->GetComponentLocation();
 	CameraRot = FollowCamera->GetComponentRotation();
+	camArmLen = CameraBoom->TargetArmLength;
 }
 
 void AKZGCharacter::Tick(float DeltaTime)
@@ -122,7 +125,22 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	Server_GrabbedWidget();
 	
+	curHungtime += DeltaTime;
+	if (curHungtime > 1) 
+	{
+		curHungerP--;
+		curHungtime = 0;
+	}
 	
+	if (bIsAttacking)
+	{
+		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, 100, 0.2f);
+	}
+	else
+	{
+		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, 200, 0.2f);
+	}
+
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
 }
 
@@ -316,10 +334,11 @@ void AKZGCharacter::Server_AttackInput_Implementation()
 
 void AKZGCharacter::Multicast_AttackInput_Implementation()
 {
-	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
 	int32 attackNum = FMath::RandRange(1, 100);
 	if (!bIsAttacking && !bIsgrabbed) {
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
+
 		if (attackNum > 50) anim->PlayAttackAnimation2();
 		else if (attackNum <= 50) anim->PlayAttackAnimation3();
 	}
