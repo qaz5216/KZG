@@ -23,6 +23,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* CamFollowComp;
 
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* boxComp;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
@@ -183,6 +185,10 @@ public:
 
 	float lerpCurTime;
 
+	bool bIsOverlapping = false;
+
+	UPROPERTY(EditAnywhere)
+	int32 damagePower = 10;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class AEnemy *GrabbedEnemy;
@@ -206,5 +212,11 @@ public:
 	FRotator CameraMoveRot = FRotator(0.000000, -50.000000,  0.000000);
 
 	FTimerHandle BlendTimerHandle;
+
+	UFUNCTION()
+	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 };
 
