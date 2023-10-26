@@ -5,6 +5,7 @@
 #include "KZGCharacter.h"
 #include "Components/ProgressBar.h"
 #include "Net/UnrealNetwork.h"
+#include "Components/TextBlock.h"
 
 
 void UH_PlayerInfo::NativeConstruct()
@@ -22,6 +23,10 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	{
 		// 소유 폰의 체력 값 반영(현재 체력 / 최대 체력)
 		PB_StaminaPoint->SetPercent((float)player->currentStamina / (float)player->playerStamina);
+
+		if (player->curHungerP < 30) text_Hungry->SetVisibility(ESlateVisibility::Visible);
+		else text_Hungry->SetVisibility(ESlateVisibility::Hidden);
+
 	}
 }
 
@@ -30,5 +35,5 @@ void UH_PlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(UH_PlayerInfo, PB_StaminaPoint);
-
+	DOREPLIFETIME(UH_PlayerInfo, text_Hungry);
 }

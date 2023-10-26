@@ -4,16 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "H_AttackWeapons.generated.h"
+#include "H_BuildingProps.generated.h"
 
 UCLASS()
-class KZG_API AH_AttackWeapons : public AActor
+class KZG_API AH_BuildingProps : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	AH_AttackWeapons();
+	AH_BuildingProps();
 
 protected:
 	// Called when the game starts or when spawned
@@ -23,19 +23,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* boxComp;
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* meshComp;
-	UPROPERTY(EditAnywhere)
-	int32 damagePower = 10;
-	
-	
-	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
-
-public:
-	bool bIsOverlapping = false;
 };
