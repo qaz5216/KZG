@@ -24,8 +24,9 @@ public:
 	UPROPERTY(Replicated)
 	float staminaCurTime = 0;
 
+
 	UPROPERTY(Replicated)
-	float maxsize = 1;
+	float maxsize = 500;
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;

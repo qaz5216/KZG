@@ -42,7 +42,12 @@ void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
 
 void UH_KZGPlayerAnim::AnimNotify_AttackEnd2()
 {
-	
+	player->bIsFinalAttackEnded = true;
+}
+
+void UH_KZGPlayerAnim::AnimNotify_AttackEnd3()
+{
+	player->bIsFinalAttackEnded = false;
 }
 
 void UH_KZGPlayerAnim::AnimNotify_SoundStep()

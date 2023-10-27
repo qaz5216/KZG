@@ -117,7 +117,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d, %d"), currentStamina, playerStamina));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
 	if (!bIsCrouching && bIsRunning && currentStamina > 5)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = runSpeed;
