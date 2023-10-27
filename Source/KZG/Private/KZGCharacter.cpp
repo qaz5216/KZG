@@ -45,6 +45,7 @@ AKZGCharacter::AKZGCharacter()
 	boxComp->SetRelativeLocation(FVector(110.000000, 0.000000, 0.000000));
 	boxComp->SetBoxExtent(FVector(200));
 	boxComp->SetCollisionProfileName(TEXT("Weapon"));
+	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -244,17 +245,11 @@ void AKZGCharacter::Server_GrabbedWidget_Implementation()
 
 void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (bIsAttacking)
-	{
-
-		if (!bIsOverlapping)
-		{
-			bIsOverlapping = true;
-			AEnemy* Zombie = Cast<AEnemy>(OtherActor);
-			Zombie->Damaged(damagePower);
-
-		}
-	}
+	
+	AEnemy* Zombie = Cast<AEnemy>(OtherActor);
+	Zombie->Damaged(damagePower);
+	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	UE_LOG(LogTemp, Warning, TEXT("Collision OFFzz"));
 }
 
 void AKZGCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -368,6 +363,8 @@ void AKZGCharacter::Server_AttackInput_Implementation()
 void AKZGCharacter::Multicast_AttackInput_Implementation()
 {
 	int32 attackNum = FMath::RandRange(1, 100);
+	UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
+	boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	if (!bIsAttacking && !bIsgrabbed) {
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
