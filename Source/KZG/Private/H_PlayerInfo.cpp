@@ -22,7 +22,7 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	if (player != nullptr)
 	{
-		// 소유 폰의 체력 값 반영(현재 체력 / 최대 체력)
+		// 소유 폰의 스태미너 값 반영(현재 체력 / 최대 체력)
 		PB_CurStamina->SetPercent((float)player->currentStamina / (float)player->playerStamina);
 
 		UCanvasPanelSlot* MySlot =Cast<UCanvasPanelSlot>(PB_CurStamina->Slot);
