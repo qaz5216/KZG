@@ -260,7 +260,7 @@ void UEnemyFsm::DieState()
 
 void UEnemyFsm::SleepState()
 {
-	
+	//ÀÚ´ÂÁß
 }
 
 void UEnemyFsm::GroggyState(float DeltaTime)
@@ -428,6 +428,12 @@ void UEnemyFsm::ChangeToDieState()
 {
 	mState=EEnemyState::Die;
 	Me->HP_Cur=0;
+}
+
+void UEnemyFsm::ChangeToSleepState()
+{
+	mState=EEnemyState::Sleep;
+
 }
 
 void UEnemyFsm::Viewing()
