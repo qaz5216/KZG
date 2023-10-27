@@ -21,6 +21,9 @@ public:
 	class UCameraComponent* FollowCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class UCameraComponent* GrabbedCam;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* CamFollowComp;
 
 	UPROPERTY(VisibleAnywhere)
@@ -97,6 +100,12 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_InteractionUnput();
+
+	UFUNCTION(Server, Reliable)
+	void Server_ChangeView();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ChangeView();
 
 	void JumpInput();
  

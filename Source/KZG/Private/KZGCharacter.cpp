@@ -57,6 +57,10 @@ AKZGCharacter::AKZGCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
 	FollowCamera->bUsePawnControlRotation = false;
 
+	GrabbedCam = CreateDefaultSubobject<UCameraComponent>(TEXT("GrabbedCam"));
+	GrabbedCam->SetupAttachment(GetCapsuleComponent());
+	GrabbedCam->SetRelativeLocationAndRotation(FVector(-65.832497, 0.000000, 116.922268), FRotator(-20.000000, 0.000000, 0.000000));
+
 	CamFollowComp = CreateDefaultSubobject<USceneComponent>(TEXT("Cam Follow Comp"));
 	CamFollowComp->SetupAttachment(GetCapsuleComponent());
 	CamFollowComp->SetRelativeLocation(FVector(-130.000000, 200.000000, -10.000000));
@@ -137,6 +141,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	}
 
 	Server_GrabbedWidget();
+	//Server_ChangeView();
 	
 	curHungtime += DeltaTime;
 	if (curHungtime > 1) 
@@ -415,6 +420,26 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 				//맞은액터 확인용
 			}
 		}
+	}
+}
+
+void AKZGCharacter::Server_ChangeView_Implementation()
+{
+	Multicast_ChangeView();
+
+}
+
+void AKZGCharacter::Multicast_ChangeView_Implementation()
+{
+	if (bIsgrabbed) 
+	{
+		GrabbedCam->SetActive(true);
+		FollowCamera->SetActive(false);
+	}
+	else
+	{
+		FollowCamera->SetActive(true);
+		GrabbedCam->SetActive(false);
 	}
 }
 
