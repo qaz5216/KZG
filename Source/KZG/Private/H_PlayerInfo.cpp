@@ -28,12 +28,14 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		UCanvasPanelSlot* MySlot =Cast<UCanvasPanelSlot>(PB_CurStamina->Slot);
 
 		staminaCurTime += InDeltaTime;
-		if (player->curHungerP < 70)
+		if (player->curHungerP < 95)
 		{
 			if (staminaCurTime > 5)
 			{
-				MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));
+				maxsize -= 10;
+				MySlot->SetSize(FVector2D(maxsize,50));
 				staminaCurTime = 0;
+				//MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));
 			}
 		}
 

@@ -147,6 +147,9 @@ public:
 	bool bIsAttacking = false;
 
 	UPROPERTY(Replicated)
+	bool bIsFinalAttackEnded = false;
+
+	UPROPERTY(Replicated)
 	int32 playerStamina = 500;
 
 	UPROPERTY(Replicated)

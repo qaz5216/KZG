@@ -45,7 +45,8 @@ public:
 	void AnimNotify_AttackEnd1();
 	UFUNCTION()
 	void AnimNotify_AttackEnd2();
-
+	UFUNCTION()
+	void AnimNotify_AttackEnd3();
 	UFUNCTION()
 	void AnimNotify_SoundStep();
 
