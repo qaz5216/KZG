@@ -89,6 +89,8 @@ public:
 
 	void ChangeToDieState();
 
+	void ChangeToSleepState();
+
 	void Viewing();
 
 	bool SeeTarget(class AKZGCharacter* NewTarget);
