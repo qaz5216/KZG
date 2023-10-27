@@ -5,12 +5,12 @@
 #include "KZGCharacter.h"
 #include <GameFramework/CharacterMovementComponent.h>
 #include "GameFramework/SpringArmComponent.h"
+#include <Components/BoxComponent.h>
 
 
 void UH_KZGPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
-
 	auto ownerPawn = TryGetPawnOwner();
 
 	player = Cast<AKZGCharacter>(ownerPawn);
@@ -35,6 +35,7 @@ void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
 	{
 		player->bIsAttacking = false;
 		player->currentStamina--;
+		player->boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 }

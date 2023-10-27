@@ -25,8 +25,7 @@ void AH_AttackWeapons::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AH_AttackWeapons::OnComponentBeginOverlap);
-	boxComp->OnComponentEndOverlap.AddDynamic(this, &AH_AttackWeapons::OnComponentEndOverlap);
+	
 }
 
 // Called every frame
@@ -34,20 +33,5 @@ void AH_AttackWeapons::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-}
-
-void AH_AttackWeapons::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (!bIsOverlapping)
-	{
-		bIsOverlapping = true;
-		AEnemy* Zombie = Cast<AEnemy>(OtherActor);
-		Zombie->Damaged(damagePower);
-	}
-}
-
-void AH_AttackWeapons::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	bIsOverlapping = false;
 }
 

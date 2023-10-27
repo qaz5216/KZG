@@ -17,6 +17,7 @@
 #include "Net/UnrealNetwork.h"
 #include <Kismet/GameplayStatics.h>
 #include <Camera/PlayerCameraManager.h>
+#include <Components/BoxComponent.h>
 
 //////////////////////////////////////////////////////////////////////////
 // AKZGCharacter
@@ -38,6 +39,13 @@ AKZGCharacter::AKZGCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+
+	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+	boxComp->SetupAttachment(GetCapsuleComponent());
+	boxComp->SetRelativeLocation(FVector(110.000000, 0.000000, 0.000000));
+	boxComp->SetBoxExtent(FVector(200));
+	boxComp->SetCollisionProfileName(TEXT("Weapon"));
+	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -68,6 +76,9 @@ void AKZGCharacter::BeginPlay()
 		}
 	}
 
+	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AKZGCharacter::OnComponentBeginOverlap);
+	boxComp->OnComponentEndOverlap.AddDynamic(this, &AKZGCharacter::OnComponentEndOverlap);
+
 	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 	returnSpeed = walkSpeed;
 
@@ -84,6 +95,8 @@ void AKZGCharacter::BeginPlay()
 	CameraLocation = FollowCamera->GetComponentLocation();
 	CameraRot = FollowCamera->GetComponentRotation();
 	camArmLen = CameraBoom->TargetArmLength;
+
+
 }
 
 void AKZGCharacter::Tick(float DeltaTime)
@@ -230,6 +243,21 @@ void AKZGCharacter::Server_GrabbedWidget_Implementation()
 	}
 }
 
+void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	
+	AEnemy* Zombie = Cast<AEnemy>(OtherActor);
+	Zombie->Damaged(damagePower);
+	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	UE_LOG(LogTemp, Warning, TEXT("Collision OFFzz"));
+}
+
+void AKZGCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	bIsOverlapping = false;
+
+}
+
 //void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
 //{
 //	if (bIsgrabbed)
@@ -335,6 +363,8 @@ void AKZGCharacter::Server_AttackInput_Implementation()
 void AKZGCharacter::Multicast_AttackInput_Implementation()
 {
 	int32 attackNum = FMath::RandRange(1, 100);
+	UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
+	boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	if (!bIsAttacking && !bIsgrabbed) {
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
@@ -358,7 +388,34 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 	}
 	else
 	{
-
+		FVector MeLoc = GetActorLocation();
+		FVector startloc = MeLoc;
+		startloc.Z += 50.0f;//눈위치
+		FVector endloc = MeLoc+GetActorForwardVector()*500;
+		endloc.Z += 50.0f;//플레이어 위치보정
+		FHitResult hitResult;
+		FCollisionQueryParams collisionParams;
+		collisionParams.AddIgnoredActor(this);
+		//UE_LOG(LogTemp, Warning, TEXT("4"));
+		DrawDebugLine(GetWorld(), startloc, endloc, FColor::Red, false, 1.0f);
+		if (GetWorld()->LineTraceSingleByChannel(hitResult, startloc, endloc, ECC_Visibility, collisionParams))
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("5"));
+			if (hitResult.GetActor())
+			{
+				//UE_LOG(LogTemp, Warning, TEXT("6"));
+				if (AEnemy* hitEnemy = Cast<AEnemy>(hitResult.GetActor()))
+				{
+					auto* hitActor = hitResult.GetActor();
+					GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Hit Actor Name:%s"), *hitActor->GetName()));
+					if (hitEnemy->isGroggy)
+					{
+						hitEnemy->FSM->ChangeToDieState();
+					}
+				}
+				//맞은액터 확인용
+			}
+		}
 	}
 }
 
