@@ -261,6 +261,10 @@ void UEnemyFsm::DieState()
 void UEnemyFsm::SleepState()
 {
 	//ÀÚ´ÂÁß
+	if (mState==EEnemyState::Idle)
+	{
+		mState= EEnemyState::Sleep;
+	}
 }
 
 void UEnemyFsm::GroggyState(float DeltaTime)
