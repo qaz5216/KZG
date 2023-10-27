@@ -21,6 +21,9 @@ public:
 	class UCameraComponent* FollowCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	class USceneComponent* SeeScene;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* GrabbedCam;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
@@ -144,13 +147,13 @@ public:
 	bool bIsAttacking = false;
 
 	UPROPERTY(Replicated)
-	int32 playerStamina = 40;
+	int32 playerStamina = 500;
 
 	UPROPERTY(Replicated)
 	int32 currentStamina = 0;
 
 	UPROPERTY(Replicated)
-	int32 maxHungerP = 32;
+	int32 maxHungerP = 100;
 
 	UPROPERTY(Replicated)
 	int32 curHungerP = 0;
@@ -188,7 +191,7 @@ public:
 	float curSP = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category=MySettings)
-	int32 recoveryPoint = 2;
+	int32 recoveryPoint = 5;
 
 	float lerpMaxTime = 1;
 
@@ -210,9 +213,6 @@ public:
 
 	//UFUNCTION(NetMulticast, Reliable)
 	//void Multicast_GrabbedWidget();
-
-	UPROPERTY()
-	float blendTime = 1.0f;
 
 	FVector CameraLocation;
 	FRotator CameraRot;

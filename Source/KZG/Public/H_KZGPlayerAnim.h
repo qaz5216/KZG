@@ -34,9 +34,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
 	class UAnimMontage* attackMontage3;
 
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* finalAttackMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* offMontage;
+
 
 	UFUNCTION()
 	void AnimNotify_AttackEnd1();
+	UFUNCTION()
+	void AnimNotify_AttackEnd2();
 
 	UFUNCTION()
 	void AnimNotify_SoundStep();
@@ -44,6 +52,9 @@ public:
 	void PlayAttackAnimation1();
 	void PlayAttackAnimation2();
 	void PlayAttackAnimation3();
+
+	void finalAttackAnimation3();
+	void playOffAnimation();
 
 	class AKZGCharacter* player;
 
