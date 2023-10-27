@@ -40,6 +40,11 @@ void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
 
 }
 
+void UH_KZGPlayerAnim::AnimNotify_AttackEnd2()
+{
+	
+}
+
 void UH_KZGPlayerAnim::AnimNotify_SoundStep()
 {
 	if(player) player->PlayStepSoundPlaying();
@@ -60,4 +65,14 @@ void UH_KZGPlayerAnim::PlayAttackAnimation3()
 {
 	Montage_Play(attackMontage3);
 
+}
+
+void UH_KZGPlayerAnim::finalAttackAnimation3()
+{
+	Montage_Play(finalAttackMontage);
+}
+
+void UH_KZGPlayerAnim::playOffAnimation()
+{
+	Montage_Play(offMontage);
 }

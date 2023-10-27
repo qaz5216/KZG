@@ -65,6 +65,10 @@ AKZGCharacter::AKZGCharacter()
 	CamFollowComp->SetupAttachment(GetCapsuleComponent());
 	CamFollowComp->SetRelativeLocation(FVector(-130.000000, 200.000000, -10.000000));
 
+	SeeScene = CreateDefaultSubobject<USceneComponent>(TEXT("SeeScene"));
+	SeeScene->SetupAttachment(GetMesh());
+	SeeScene->SetRelativeLocation(FVector(0,0,50));
+
 	bReplicates = true;
 }
 
@@ -109,13 +113,18 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, returnSpeed, 5 * DeltaTime);
 
+	
+
+	if(currentStamina > playerStamina) currentStamina = playerStamina;
+
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d, %d"), currentStamina, playerStamina));
 	if (!bIsCrouching && bIsRunning && currentStamina > 5)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = runSpeed;
 		curSP += DeltaTime;
 		if (curSP > 1)
 		{
-			currentStamina-= recoveryPoint;
+			currentStamina -= recoveryPoint;
 			curSP = 0;
 		}
 	}
@@ -389,6 +398,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 	if (bIsgrabbed)
 	{
 		TryEscape();
+		anim->playOffAnimation();
 	}
 	else
 	{
@@ -414,6 +424,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 					GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Hit Actor Name:%s"), *hitActor->GetName()));
 					if (hitEnemy->isGroggy)
 					{
+						anim->finalAttackAnimation3();
 						hitEnemy->FSM->ChangeToDieState();
 					}
 				}

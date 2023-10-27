@@ -14,12 +14,18 @@ class KZG_API UH_PlayerInfo : public UUserWidget
 {
 	GENERATED_BODY()
 	
-
+public:
+	
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Replicated)
-	class UProgressBar* PB_StaminaPoint;
+	class UProgressBar* PB_CurStamina;
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Replicated)
 	class UTextBlock* text_Hungry;
+	
+	UPROPERTY(Replicated)
+	float staminaCurTime = 0;
 
+	UPROPERTY(Replicated)
+	float maxsize = 1;
 protected:
 	virtual void NativeConstruct() override;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
