@@ -507,8 +507,7 @@ bool UEnemyFsm::SeeTarget(class AKZGCharacter* TargetChar)
 	FVector MeLoc = Me->GetActorLocation();
 	FVector startloc = MeLoc;
 	startloc.Z += 50.0f;//눈위치
-	FVector endloc = TargetChar->GetActorLocation();
-	endloc.Z += 50.0f;//플레이어 위치보정
+	FVector endloc = TargetChar->GetMesh()->GetBoneLocation(FName("Head"));
 	FHitResult hitResult;
 	FCollisionQueryParams collisionParams;
 	collisionParams.AddIgnoredActor(Me);
