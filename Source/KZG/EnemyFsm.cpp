@@ -93,7 +93,7 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 		DamageState(DeltaTime);
 		break;
 	case EEnemyState::Die:
-		DieState();
+		DieState(DeltaTime);
 		break;
 	case EEnemyState::Sleep:
 		SleepState();
@@ -253,9 +253,13 @@ void UEnemyFsm::DamageState(float DeltaTime)
 	}
 }
 
-void UEnemyFsm::DieState()
+void UEnemyFsm::DieState(float DeltaTime)
 {
-	Me->Destroy();
+	dietime+=DeltaTime;
+	if (dietime>2)
+	{
+		Me->Destroy();
+	}
 }
 
 void UEnemyFsm::SleepState()
@@ -286,6 +290,10 @@ void UEnemyFsm::GroggyState(float DeltaTime)
 
 void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 {
+	if (mState == EEnemyState::Die)
+	{
+		return;
+	}
 	if (mState==EEnemyState::Tracking)
 	{
 		if (NewTarget != Target)
@@ -368,6 +376,10 @@ void UEnemyFsm::FindPathByAI(FVector destination, FPathFindingResult& result)
 
 void UEnemyFsm::ChangeToIdleState()
 {
+	if (mState == EEnemyState::Die)
+	{
+		return;
+	}
 	Target=nullptr;
 	SearchLoc=Me->GetActorLocation();
 	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
@@ -376,6 +388,10 @@ void UEnemyFsm::ChangeToIdleState()
 
 void UEnemyFsm::ChangeToAttackState()
 {
+	if (mState == EEnemyState::Die)
+	{
+		return;
+	}
 	attacktime_cur=0;
 	Me->Stamina_Cur=Me->Stamina_Max;
 	if (ai != nullptr)
@@ -390,6 +406,10 @@ void UEnemyFsm::ChangeToAttackState()
 
 void UEnemyFsm::ChangeToGroggyState()
 {
+	if (mState == EEnemyState::Die)
+	{
+		return;
+	}
 	Me->isGroggy=true;
 	groggytime_cur=0;
 	mState=EEnemyState::Groggy;
@@ -398,6 +418,10 @@ void UEnemyFsm::ChangeToGroggyState()
 
 void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
 {
+	if (mState == EEnemyState::Die)
+	{
+		return;
+	}
 	Target=NewTarget;
 	if (ai != nullptr)
 	{
@@ -412,6 +436,10 @@ void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
 
 void UEnemyFsm::ChangeToDamageState()
 {
+	if (mState == EEnemyState::Die)
+	{
+		return;
+	}
 	if (mState==EEnemyState::Damage)
 	{
 		damagetime_cur=0;
@@ -432,10 +460,15 @@ void UEnemyFsm::ChangeToDieState()
 {
 	mState=EEnemyState::Die;
 	Me->HP_Cur=0;
+	dietime=0;
 }
 
 void UEnemyFsm::ChangeToSleepState()
 {
+	if (mState == EEnemyState::Die)
+	{
+		return;
+	}
 	mState=EEnemyState::Sleep;
 
 }

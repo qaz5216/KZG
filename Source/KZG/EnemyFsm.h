@@ -44,7 +44,7 @@ public:
 	void RecognitionState(float DeltaTime);
 	void AttackState(float DeltaTime);
 	void DamageState(float DeltaTime);
-	void DieState();
+	void DieState(float DeltaTime);
 	void SleepState();
 	void GroggyState(float DeltaTime);
 
@@ -77,6 +77,8 @@ public:
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float speed = 300;
 	
+	float dietime=0;
+
 	void ChangeToIdleState();
 
 	void ChangeToAttackState();
