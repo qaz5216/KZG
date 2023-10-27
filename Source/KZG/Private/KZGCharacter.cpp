@@ -245,7 +245,6 @@ void AKZGCharacter::Server_GrabbedWidget_Implementation()
 
 void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	
 	AEnemy* Zombie = Cast<AEnemy>(OtherActor);
 	Zombie->Damaged(damagePower);
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -363,12 +362,12 @@ void AKZGCharacter::Server_AttackInput_Implementation()
 void AKZGCharacter::Multicast_AttackInput_Implementation()
 {
 	int32 attackNum = FMath::RandRange(1, 100);
-	UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
-	boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	if (!bIsAttacking && !bIsgrabbed) {
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
 
+		UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
+		boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		if (attackNum > 50) anim->PlayAttackAnimation2();
 		else if (attackNum <= 50) anim->PlayAttackAnimation3();
 	}
