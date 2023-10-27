@@ -24,6 +24,7 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		// 소유 폰의 체력 값 반영(현재 체력 / 최대 체력)
 		PB_StaminaPoint->SetPercent((float)player->currentStamina / (float)player->playerStamina);
 
+		//PB_CurStamina->Size
 		if (player->curHungerP < 30) text_Hungry->SetVisibility(ESlateVisibility::Visible);
 		else text_Hungry->SetVisibility(ESlateVisibility::Hidden);
 

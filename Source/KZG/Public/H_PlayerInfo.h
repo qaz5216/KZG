@@ -18,6 +18,8 @@ class KZG_API UH_PlayerInfo : public UUserWidget
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Replicated)
 	class UProgressBar* PB_StaminaPoint;
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Replicated)
+	class UProgressBar* PB_CurStamina;
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Replicated)
 	class UTextBlock* text_Hungry;
 
 protected:
