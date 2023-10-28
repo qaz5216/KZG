@@ -16,5 +16,47 @@ class KZG_API UH_KZGPlayerAnim : public UAnimInstance
 	
 public:
 
+	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings")
+	float speed = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Settings")
+	float direction = 0;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Settings")
+	bool isInAir = false;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* attackMontage1;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* attackMontage2;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* attackMontage3;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* finalAttackMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* offMontage;
+
+
+	UFUNCTION()
+	void AnimNotify_AttackEnd1();
+	UFUNCTION()
+	void AnimNotify_AttackEnd2();
+	UFUNCTION()
+	void AnimNotify_AttackEnd3();
+	UFUNCTION()
+	void AnimNotify_SoundStep();
+
+	void PlayAttackAnimation1();
+	void PlayAttackAnimation2();
+	void PlayAttackAnimation3();
+
+	void finalAttackAnimation3();
+	void playOffAnimation();
+
+	class AKZGCharacter* player;
 
 };
