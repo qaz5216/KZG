@@ -531,7 +531,7 @@ void UEnemyFsm::Viewing()
 		{
 			//
 		}
-	}DrawDebugSphere(GetWorld(), MeLoc, viewDistance, 30, FColor::Green, false, 1.0f);
+	}//DrawDebugSphere(GetWorld(), MeLoc, viewDistance, 30, FColor::Green, false, 1.0f);
 
 }
 
@@ -545,7 +545,7 @@ bool UEnemyFsm::SeeTarget(class AKZGCharacter* TargetChar)
 	FCollisionQueryParams collisionParams;
 	collisionParams.AddIgnoredActor(Me);
 	//UE_LOG(LogTemp, Warning, TEXT("4"));
-	DrawDebugLine(GetWorld(), startloc, endloc, FColor::Red, false, 1.0f);
+	//DrawDebugLine(GetWorld(), startloc, endloc, FColor::Red, false, 1.0f);
 	if (GetWorld()->LineTraceSingleByChannel(hitResult, startloc, endloc, ECC_Visibility, collisionParams))
 	{
 		//UE_LOG(LogTemp, Warning, TEXT("5"));
@@ -555,7 +555,7 @@ bool UEnemyFsm::SeeTarget(class AKZGCharacter* TargetChar)
 			if (AKZGCharacter* hitPlayer = Cast<AKZGCharacter>(hitResult.GetActor()))
 			{
 				auto* hitActor=hitResult.GetActor();
-				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Hit Actor Name:%s"), *hitActor->GetName()));
+				//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Hit Actor Name:%s"), *hitActor->GetName()));
 				//UE_LOG(LogTemp, Warning, TEXT("7"));
 				if (hitPlayer == TargetChar)
 				{
