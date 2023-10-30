@@ -43,6 +43,8 @@ void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
 void UH_KZGPlayerAnim::AnimNotify_AttackEnd2()
 {
 	player->bIsFinalAttackEnded = true;
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(player->ZFinalBase);
+
 }
 
 void UH_KZGPlayerAnim::AnimNotify_AttackEnd3()

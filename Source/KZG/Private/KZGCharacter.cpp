@@ -194,6 +194,7 @@ void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
 {
 	bIsgrabbed=true;
 	bCangrabbed=false;
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
 	GrabbedEnemy=Enemy;
 	//UE_LOG(LogTemp, Warning, TEXT("Grabbedzz"));
 }
@@ -403,11 +404,13 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 	{
 		bIsInteractionInput = true;
 		TryEscape();
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
 		anim->playOffAnimation();
 	}
 	else
 	{
 		bIsInteractionInput = true;
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
 		FVector MeLoc = GetActorLocation();
 		FVector startloc = MeLoc;
 		startloc.Z += 50.0f;//´«À§Ä¡

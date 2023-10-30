@@ -73,6 +73,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="CameraShake")
 	TSubclassOf<class UCameraShakeBase> ZHitBase;
 
+	UPROPERTY(EditDefaultsOnly, Category="CameraShake")
+	TSubclassOf<class UCameraShakeBase> ZGrabbedBase;
+
+	UPROPERTY(EditDefaultsOnly, Category="CameraShake")
+	TSubclassOf<class UCameraShakeBase> ZFinalBase;
+
 public:
 	AKZGCharacter();
 	
