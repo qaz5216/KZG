@@ -113,8 +113,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, returnSpeed, 5 * DeltaTime);
 
-	
-
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("attack: %s"), bIsAttacking ? *FString("true") : *FString("false")));
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
@@ -380,16 +380,19 @@ void AKZGCharacter::Server_AttackInput_Implementation()
 void AKZGCharacter::Multicast_AttackInput_Implementation()
 {
 	int32 attackNum = FMath::RandRange(1, 100);
-	if (!bIsAttacking && !bIsgrabbed) {
+	if(bIsAttacking) return;
+	if(bIsFinalAttackEnded) return;
+	if (!bIsgrabbed) {
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
 
-		UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
+		UGameplayStatics::PlaySound2D(this, batHitSound, 0.4f);
+		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
 		boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		if (attackNum > 50) anim->PlayAttackAnimation2();
 		else if (attackNum <= 50) anim->PlayAttackAnimation3();
+		bIsAttacking = true;
 	}
-	bIsAttacking = true;
 }
 
 void AKZGCharacter::Server_InteractionInput_Implementation()
