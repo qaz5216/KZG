@@ -79,6 +79,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="CameraShake")
 	TSubclassOf<class UCameraShakeBase> ZFinalBase;
 
+	UPROPERTY(EditDefaultsOnly, Category="PlaySound")
+	class USoundBase* batHitSound;
+
 public:
 	AKZGCharacter();
 	
