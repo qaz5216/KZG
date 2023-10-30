@@ -450,6 +450,10 @@ void UEnemyFsm::ChangeToDamageState()
 	}
 	else
 	{
+		if (ai != nullptr)
+		{
+			ai->StopMovement();
+		}
 		damagetime_cur=0;
 		PremState = mState;
 		mState = EEnemyState::Damage;
@@ -457,7 +461,9 @@ void UEnemyFsm::ChangeToDamageState()
 }
 
 void UEnemyFsm::ChangeToDieState()
-{
+{	
+	if(mState==EEnemyState::Die)
+	return;
 	mState=EEnemyState::Die;
 	Me->HP_Cur=0;
 	dietime=0;
