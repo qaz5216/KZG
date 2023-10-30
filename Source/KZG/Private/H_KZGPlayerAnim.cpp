@@ -53,7 +53,7 @@ void UH_KZGPlayerAnim::AnimNotify_AttackEnd3()
 void UH_KZGPlayerAnim::AnimNotify_SoundStep()
 {
 	if(player) player->PlayStepSoundPlaying();
-	GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("stepSound")));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("stepSound")));
 }
 
 void UH_KZGPlayerAnim::PlayAttackAnimation1()

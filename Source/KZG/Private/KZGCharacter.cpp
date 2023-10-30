@@ -117,8 +117,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
 	if (!bIsCrouching && bIsRunning && currentStamina > 5)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = runSpeed;
@@ -187,7 +187,7 @@ void AKZGCharacter::PlayStepSoundPlaying()
 			}
 		}
 	}
-	DrawDebugSphere(GetWorld(), GetActorLocation(), stepSoundrad, 30, FColor::Green, false, 1.0f);
+	//DrawDebugSphere(GetWorld(), GetActorLocation(), stepSoundrad, 30, FColor::Green, false, 1.0f);
 }
 
 void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
@@ -310,7 +310,9 @@ void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 		EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &AKZGCharacter::Server_AttackInput);
 
-		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Triggered, this, &AKZGCharacter::Server_InteractionInput);
+		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Started, this, &AKZGCharacter::Server_InteractionInput);
+		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Completed, this, &AKZGCharacter::Server_InteractionInputEnd);
+
 	}
 }
 
@@ -396,13 +398,16 @@ void AKZGCharacter::Server_InteractionInput_Implementation()
 
 void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 {
+	if(bIsInteractionInput) return;
 	if (bIsgrabbed)
 	{
+		bIsInteractionInput = true;
 		TryEscape();
 		anim->playOffAnimation();
 	}
 	else
 	{
+		bIsInteractionInput = true;
 		FVector MeLoc = GetActorLocation();
 		FVector startloc = MeLoc;
 		startloc.Z += 50.0f;//´«À§Ä¡
@@ -412,7 +417,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 		FCollisionQueryParams collisionParams;
 		collisionParams.AddIgnoredActor(this);
 		//UE_LOG(LogTemp, Warning, TEXT("4"));
-		DrawDebugLine(GetWorld(), startloc, endloc, FColor::Red, false, 1.0f);
+		//DrawDebugLine(GetWorld(), startloc, endloc, FColor::Red, false, 1.0f);
 		if (GetWorld()->LineTraceSingleByChannel(hitResult, startloc, endloc, ECC_Visibility, collisionParams))
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("5"));
@@ -422,7 +427,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 				if (AEnemy* hitEnemy = Cast<AEnemy>(hitResult.GetActor()))
 				{
 					auto* hitActor = hitResult.GetActor();
-					GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Hit Actor Name:%s"), *hitActor->GetName()));
+					//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Hit Actor Name:%s"), *hitActor->GetName()));
 					if (hitEnemy->isGroggy)
 					{
 						anim->finalAttackAnimation3();
@@ -433,6 +438,16 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 			}
 		}
 	}
+}
+
+void AKZGCharacter::Server_InteractionInputEnd_Implementation()
+{
+	Multicast_InteractionUnputEnd();
+}
+
+void AKZGCharacter::Multicast_InteractionUnputEnd_Implementation()
+{
+	bIsInteractionInput = false;
 }
 
 void AKZGCharacter::Server_ChangeView_Implementation()
@@ -518,6 +533,7 @@ void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AKZGCharacter, bOnDamaged);
 	DOREPLIFETIME(AKZGCharacter, bIsAttacking);
 	DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
+	DOREPLIFETIME(AKZGCharacter, bIsInteractionInput);
 	//DOREPLIFETIME(AKZGCharacter, EWidget);
 
 }

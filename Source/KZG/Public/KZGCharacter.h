@@ -105,6 +105,12 @@ protected:
 	void Multicast_InteractionUnput();
 
 	UFUNCTION(Server, Reliable)
+	void Server_InteractionInputEnd();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_InteractionUnputEnd();
+
+	UFUNCTION(Server, Reliable)
 	void Server_ChangeView();
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -148,6 +154,9 @@ public:
 
 	UPROPERTY(Replicated)
 	bool bIsFinalAttackEnded = false;
+
+	UPROPERTY(Replicated)
+	bool bIsInteractionInput = false;
 
 	UPROPERTY(Replicated)
 	int32 playerStamina = 500;
