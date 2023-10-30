@@ -385,7 +385,6 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 	if (!bIsgrabbed) {
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
-
 		UGameplayStatics::PlaySound2D(this, batHitSound, 0.4f);
 		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
 		boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
@@ -412,8 +411,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 	}
 	else
 	{
-		bIsInteractionInput = true;
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
+		
 		FVector MeLoc = GetActorLocation();
 		FVector startloc = MeLoc;
 		startloc.Z += 50.0f;//눈위치
@@ -432,12 +430,15 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 				//UE_LOG(LogTemp, Warning, TEXT("6"));
 				if (AEnemy* hitEnemy = Cast<AEnemy>(hitResult.GetActor()))
 				{
+					if(hitEnemy->FSM->mState==EEnemyState::Die) return;
+					bIsInteractionInput = true;
 					auto* hitActor = hitResult.GetActor();
 					//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Hit Actor Name:%s"), *hitActor->GetName()));
 					if (hitEnemy->isGroggy)
 					{
 						anim->finalAttackAnimation3();
 						hitEnemy->FSM->ChangeToDieState();
+						GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
 					}
 				}
 				//맞은액터 확인용
