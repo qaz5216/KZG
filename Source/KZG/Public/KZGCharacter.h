@@ -57,7 +57,7 @@ public:
 	class UInputAction* InterAction;
 
 public:
-	UPROPERTY(VisibleAnywhere, Category = MySettings, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = MySettings, Replicated, meta = (AllowPrivateAccess = "true"))
 	class UH_EWidget* EWidget;
 	
 	UPROPERTY(EditAnywhere, Category = MySettings)

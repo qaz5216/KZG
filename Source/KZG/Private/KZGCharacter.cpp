@@ -120,10 +120,11 @@ void AKZGCharacter::Tick(float DeltaTime)
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("attack: %s"), bIsAttacking ? *FString("true") : *FString("false")));
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 	if(playerStamina > maxsize) playerStamina = maxsize;
-	if(maxsize < 10) maxsize = 10;
+	if(maxsize <= 50) maxsize = 60;
+	if(curHungerP <= 0) curHungerP = 0;
 
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
 	if (!bIsCrouching && bIsRunning && currentStamina > 5)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = runSpeed;
@@ -292,24 +293,6 @@ void AKZGCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedCompone
 	bIsOverlapping = false;
 
 }
-
-//void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
-//{
-//	if (bIsgrabbed)
-//	{
-//		if (EWidget != nullptr)
-//		{
-//			EWidget->AddToViewport();
-//		}
-//	}
-//	else
-//	{
-//		if (EWidget != nullptr)
-//		{
-//			EWidget->RemoveFromParent();
-//		}
-//	}
-//}
 
 void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -562,6 +545,6 @@ void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
 	DOREPLIFETIME(AKZGCharacter, bIsInteractionInput);
 	DOREPLIFETIME(AKZGCharacter, maxsize);
-	//DOREPLIFETIME(AKZGCharacter, EWidget);
+	DOREPLIFETIME(AKZGCharacter, EWidget);
 
 }
