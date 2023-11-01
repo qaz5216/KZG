@@ -56,6 +56,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* InterAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* FlashAction;
+
 public:
 	UPROPERTY(VisibleAnywhere, Category = MySettings, meta = (AllowPrivateAccess = "true"))
 	class UH_EWidget* EWidget;
@@ -68,7 +71,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	TSubclassOf<class UH_PlayerInfo> BP_InfoWidget;
-
 	
 	UPROPERTY(EditDefaultsOnly, Category="CameraShake")
 	TSubclassOf<class UCameraShakeBase> ZHitBase;
@@ -232,6 +234,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void Server_GrabbedWidget();
 
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_GrabbedWidget();
+
 	//UFUNCTION(NetMulticast, Reliable)
 	//void Multicast_GrabbedWidget();
 
@@ -245,6 +250,9 @@ public:
 
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);

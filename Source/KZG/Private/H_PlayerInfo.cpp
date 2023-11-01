@@ -39,6 +39,8 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			}
 		}
 
+		
+
 		if (player->curHungerP < 30) text_Hungry->SetVisibility(ESlateVisibility::Visible);
 		else text_Hungry->SetVisibility(ESlateVisibility::Hidden);
 
