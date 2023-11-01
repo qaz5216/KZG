@@ -18,6 +18,8 @@
 #include <Kismet/GameplayStatics.h>
 #include <Camera/PlayerCameraManager.h>
 #include <Components/BoxComponent.h>
+#include "H_FoodActor.h"
+#include <Components/SpotLightComponent.h>
 
 //////////////////////////////////////////////////////////////////////////
 // AKZGCharacter
@@ -85,6 +87,7 @@ void AKZGCharacter::BeginPlay()
 	}
 
 	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AKZGCharacter::OnComponentBeginOverlap);
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AKZGCharacter::OnComponentBeginOverlapFood);
 	boxComp->OnComponentEndOverlap.AddDynamic(this, &AKZGCharacter::OnComponentEndOverlap);
 
 	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
@@ -116,6 +119,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("attack: %s"), bIsAttacking ? *FString("true") : *FString("false")));
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
+	if(playerStamina > maxsize) playerStamina = maxsize;
+	if(maxsize < 10) maxsize = 10;
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
@@ -242,7 +247,12 @@ void AKZGCharacter::DamagedStamina(int32 value)
 
 void AKZGCharacter::Server_GrabbedWidget_Implementation()
 {
-	//Multicast_GrabbedWidget();
+	Multicast_GrabbedWidget();
+	
+}
+
+void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
+{
 	if (bIsgrabbed)
 	{
 		if (EWidget != nullptr)
@@ -265,7 +275,17 @@ void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 	Zombie->Damaged(damagePower);
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	UE_LOG(LogTemp, Warning, TEXT("Collision OFFzz"));
+
+	
 }
+
+void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (AH_FoodActor* food = Cast<AH_FoodActor>(OtherActor))
+	{
+
+	}
+}	
 
 void AKZGCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
@@ -541,6 +561,7 @@ void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AKZGCharacter, bIsAttacking);
 	DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
 	DOREPLIFETIME(AKZGCharacter, bIsInteractionInput);
+	DOREPLIFETIME(AKZGCharacter, maxsize);
 	//DOREPLIFETIME(AKZGCharacter, EWidget);
 
 }

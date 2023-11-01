@@ -28,16 +28,38 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		UCanvasPanelSlot* MySlot =Cast<UCanvasPanelSlot>(PB_CurStamina->Slot);
 
 		staminaCurTime += InDeltaTime;
-		if (player->curHungerP < 95)
+		if (player->curHungerP < 95 && player->curHungerP > 70)
 		{
 			if (staminaCurTime > 5)
 			{
-				maxsize -= 10;
-				MySlot->SetSize(FVector2D(maxsize,50));
+				player->maxsize -= 10;
+				MySlot->SetSize(FVector2D(player->maxsize,50));
 				staminaCurTime = 0;
 				//MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));
 			}
 		}
+		else if (player->curHungerP > 30 && player->curHungerP <= 70)
+		{
+			if (staminaCurTime > 5)
+			{
+				player->maxsize -= 20;
+				MySlot->SetSize(FVector2D(player->maxsize, 50));
+				staminaCurTime = 0;
+				//MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));
+			}
+		}
+		else if (player->curHungerP <= 30)
+		{
+			if (staminaCurTime > 5)
+			{
+				player->maxsize -= 30;
+				MySlot->SetSize(FVector2D(player->maxsize, 50));
+				staminaCurTime = 0;
+				//MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));
+			}
+		}
+
+		
 
 		if (player->curHungerP < 30) text_Hungry->SetVisibility(ESlateVisibility::Visible);
 		else text_Hungry->SetVisibility(ESlateVisibility::Hidden);
@@ -51,5 +73,4 @@ void UH_PlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 	DOREPLIFETIME(UH_PlayerInfo, text_Hungry);
 	DOREPLIFETIME(UH_PlayerInfo, staminaCurTime);
-	DOREPLIFETIME(UH_PlayerInfo, maxsize);
 }

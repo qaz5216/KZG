@@ -68,7 +68,6 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = MySettings)
 	TSubclassOf<class UH_PlayerInfo> BP_InfoWidget;
-
 	
 	UPROPERTY(EditDefaultsOnly, Category="CameraShake")
 	TSubclassOf<class UCameraShakeBase> ZHitBase;
@@ -167,10 +166,10 @@ public:
 	UPROPERTY(Replicated)
 	bool bIsInteractionInput = false;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
 	int32 playerStamina = 500;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
 	int32 currentStamina = 0;
 
 	UPROPERTY(Replicated)
@@ -226,11 +225,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class AEnemy *GrabbedEnemy;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
+	int32 maxsize = 500;
+
 public:
 	void DamagedStamina(int32 value);
 
 	UFUNCTION(Server, Reliable)
 	void Server_GrabbedWidget();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_GrabbedWidget();
 
 	//UFUNCTION(NetMulticast, Reliable)
 	//void Multicast_GrabbedWidget();
@@ -245,6 +250,9 @@ public:
 
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	UFUNCTION()
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);

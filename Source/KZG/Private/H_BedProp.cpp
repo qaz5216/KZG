@@ -37,7 +37,7 @@ void AH_BedProp::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponen
 {
 	AKZGCharacter* player = Cast<AKZGCharacter>(OtherActor);
 
-	if (player) 
+	if (player)
 	{
 		
 	}
