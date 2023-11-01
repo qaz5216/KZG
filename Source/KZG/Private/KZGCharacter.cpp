@@ -119,6 +119,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("attack: %s"), bIsAttacking ? *FString("true") : *FString("false")));
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
+	if(playerStamina > maxsize) playerStamina = maxsize;
+	if(maxsize < 10) maxsize = 10;
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
@@ -559,6 +561,7 @@ void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AKZGCharacter, bIsAttacking);
 	DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
 	DOREPLIFETIME(AKZGCharacter, bIsInteractionInput);
+	DOREPLIFETIME(AKZGCharacter, maxsize);
 	//DOREPLIFETIME(AKZGCharacter, EWidget);
 
 }

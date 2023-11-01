@@ -56,9 +56,6 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* InterAction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
-	class UInputAction* FlashAction;
-
 public:
 	UPROPERTY(VisibleAnywhere, Category = MySettings, meta = (AllowPrivateAccess = "true"))
 	class UH_EWidget* EWidget;
@@ -169,10 +166,10 @@ public:
 	UPROPERTY(Replicated)
 	bool bIsInteractionInput = false;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
 	int32 playerStamina = 500;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
 	int32 currentStamina = 0;
 
 	UPROPERTY(Replicated)
@@ -227,6 +224,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class AEnemy *GrabbedEnemy;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
+	int32 maxsize = 500;
 
 public:
 	void DamagedStamina(int32 value);
