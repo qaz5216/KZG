@@ -25,7 +25,8 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	float currentTime = 0;
+	float currentTime = 9995;
+	float currentTime1 = 0;
 	bool bIsRequestSend = false;
 
 	void SendRequest(const FString url);

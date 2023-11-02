@@ -118,7 +118,7 @@ void UEnemyFsm::IdleState(float DeltaTime)
 		// 목표지점도착 3초정도 있다가 다음 탐색지역으로
 		if (Idletime_cur>idletime)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("DestFix"));
+			//UE_LOG(LogTemp, Warning, TEXT("DestFix"));
 			Idletime_cur=0;
 			GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
 		}
@@ -152,7 +152,7 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 {
 	if (Target==nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("nullzz"));
+		//UE_LOG(LogTemp, Warning, TEXT("nullzz"));
 		return;
 		ChangeToIdleState();
 	}
@@ -160,7 +160,7 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 	if (TargetSee)
 	{
 		dest = Target->GetActorLocation();
-		UE_LOG(LogTemp, Warning, TEXT("See"));
+		//UE_LOG(LogTemp, Warning, TEXT("See"));
 		Trackingtime_cur=0;
 	}
 	else
@@ -197,7 +197,7 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 	}
 	else
 	{
-		UE_LOG(LogTemp,Warning,TEXT("Fail Loc"));
+		//UE_LOG(LogTemp,Warning,TEXT("Fail Loc"));
 	}
 }
 
@@ -225,7 +225,7 @@ void UEnemyFsm::AttackState(float DeltaTime)
 		{
 			Target->DamagedStamina(1);
 			// player->damagedstamina(int32 value)
-			UE_LOG(LogTemp, Warning, TEXT("Attack remain Sta=%d"),Target->currentStamina);
+			//UE_LOG(LogTemp, Warning, TEXT("Attack remain Sta=%d"),Target->currentStamina);
 			attacktime_cur=0;
 		}
 		else
@@ -273,7 +273,7 @@ void UEnemyFsm::SleepState()
 
 void UEnemyFsm::GroggyState(float DeltaTime)
 {
-	UE_LOG(LogTemp,Warning,TEXT("%f,%f"),groggytime_cur,groggytime);
+	//UE_LOG(LogTemp,Warning,TEXT("%f,%f"),groggytime_cur,groggytime);
 	if (groggytime_cur>groggytime)
 	{
 		Me->isGroggy=false;
@@ -398,7 +398,7 @@ void UEnemyFsm::ChangeToAttackState()
 	{
 		ai->StopMovement();
 	}
-	UE_LOG(LogTemp, Warning, TEXT("GoAttackzz"));
+	//UE_LOG(LogTemp, Warning, TEXT("GoAttackzz"));
 	Target->GrabbedbyZombie(Me);
 	mState=EEnemyState::Attack;
 	Me->StatUI->EImageShow();
@@ -429,7 +429,7 @@ void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
 	}
 	recognitiontime_cur=0;
 	RecognitionLoc=Target->GetActorLocation();
-	UE_LOG(LogTemp, Warning, TEXT("Turnzz"));
+	//UE_LOG(LogTemp, Warning, TEXT("Turnzz"));
 	Me->SetActorRotation((Target->GetActorLocation()-Me->GetActorLocation()).Rotation().Quaternion());
 	mState=EEnemyState::Recognition;
 }

@@ -97,9 +97,6 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void Server_CrouchInput();
 
-	UFUNCTION(NetMulticast, Reliable)
-	void Multicast_CrouchInput();
-
 	UFUNCTION(Server, Reliable)
 	void Server_AttackInput();
 
@@ -187,7 +184,7 @@ public:
 
 	float stepSoundrad=1000;
 
-	UPROPERTY(BlueprintReadOnly, Replicated)
+	UPROPERTY(BlueprintReadOnly, Category= "Grabbed")
 	bool bIsgrabbed = false;
 
 	UPROPERTY(Replicated)

@@ -17,11 +17,11 @@ FString UH_JsonParseLibrary::JsonParse(const FString& originData)
 	// 해독한다.
 	if (FJsonSerializer::Deserialize(reader, result))
 	{
-		TArray<TSharedPtr<FJsonValue>> parsedDataArr = result->GetArrayField("items");
+		TArray<TSharedPtr<FJsonValue>> parsedDataArr = result->GetArrayField("username");
 
 		for (TSharedPtr<FJsonValue> pd : parsedDataArr)
 		{
-			FString rightNumber = pd->AsObject()->GetStringField("Number");
+			FString rightNumber = pd->AsObject()->GetStringField("username");
 			parsedData = rightNumber;
 			//parsedData.Append(FString::Printf(TEXT("rightNumber: %s\n"), *rightNumber));
 		}

@@ -19,6 +19,8 @@ void AH_RequestActor::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	
+
 }
 
 // Called every frame
@@ -28,10 +30,10 @@ void AH_RequestActor::Tick(float DeltaTime)
 
 	currentTime += DeltaTime;
 
-	if (currentTime > 5)
+	if(currentTime > 10000)
 	{
 		FString fullURL;
-		fullURL = FString::Printf(TEXT("http://192.168.1.44:80"));
+		fullURL = FString::Printf(TEXT("http://125.132.216.155:8081"));
 
 		UE_LOG(LogTemp, Warning, TEXT("Send Request!"));
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *fullURL);
@@ -39,7 +41,7 @@ void AH_RequestActor::Tick(float DeltaTime)
 
 		FString num = "1";
 
-		FString fullPath = fullURL + "/post" + "/" + num;
+		FString fullPath = fullURL; // + "/register";
 		UE_LOG(LogTemp, Warning, TEXT("Post Request!"));
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *fullPath);
 
@@ -48,8 +50,7 @@ void AH_RequestActor::Tick(float DeltaTime)
 		currentTime = 0;
 	}
 
-
-
+	
 	/*currentTime += DeltaTime;
 	if (bIsRequestSend)
 	{
@@ -114,8 +115,10 @@ void AH_RequestActor::OnReceivedData(FHttpRequestPtr Request, FHttpResponsePtr R
 void AH_RequestActor::PostRequest(const FString url)
 {
 	TMap<FString, FString> handsNumber;
-	handsNumber.Add("Number", "0");
-
+	FString userName = "han5";
+	handsNumber.Add("username", userName);
+	FString password = "hanpassword";
+	handsNumber.Add("password",password);
 	FString myJsonData = UH_JsonParseLibrary::MakeJson(handsNumber);
 	//gm->SetLogText(myJsonData);
 
