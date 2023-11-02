@@ -52,14 +52,12 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		{
 			if (staminaCurTime > 5)
 			{
-				player->maxsize -= 30;
+				player->maxsize -= 10;
 				MySlot->SetSize(FVector2D(player->maxsize, 50));
 				staminaCurTime = 0;
 				//MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));
 			}
 		}
-
-		
 
 		if (player->curHungerP < 30) text_Hungry->SetVisibility(ESlateVisibility::Visible);
 		else text_Hungry->SetVisibility(ESlateVisibility::Hidden);

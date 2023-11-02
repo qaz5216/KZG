@@ -120,10 +120,11 @@ void AKZGCharacter::Tick(float DeltaTime)
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("attack: %s"), bIsAttacking ? *FString("true") : *FString("false")));
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 	if(playerStamina > maxsize) playerStamina = maxsize;
-	if(maxsize < 10) maxsize = 10;
+	if(maxsize <= 50) maxsize = 60;
+	if(curHungerP <= 0) curHungerP = 0;
 
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
 	if (!bIsCrouching && bIsRunning && currentStamina > 5)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = runSpeed;
@@ -155,7 +156,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 		}
 	}
 
-	Server_GrabbedWidget();
+	//Server_GrabbedWidget();
 	//Server_ChangeView();
 	
 	curHungtime += DeltaTime;
@@ -206,7 +207,7 @@ void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
 
 void AKZGCharacter::EscapebyZombie()
 {
-	bIsgrabbed=false;
+	bIsgrabbed=false;   
 	GrabbedEnemy=nullptr;
 	if (bIsCrouching) bIsCrouching = false;
 	//UE_LOG(LogTemp, Warning, TEXT("Escapezz"));
@@ -247,12 +248,6 @@ void AKZGCharacter::DamagedStamina(int32 value)
 
 void AKZGCharacter::Server_GrabbedWidget_Implementation()
 {
-	Multicast_GrabbedWidget();
-	
-}
-
-void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
-{
 	if (bIsgrabbed)
 	{
 		if (EWidget != nullptr)
@@ -267,6 +262,11 @@ void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
 			EWidget->RemoveFromParent();
 		}
 	}
+}
+
+void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
+{
+	
 }
 
 void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -292,24 +292,6 @@ void AKZGCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedCompone
 	bIsOverlapping = false;
 
 }
-
-//void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
-//{
-//	if (bIsgrabbed)
-//	{
-//		if (EWidget != nullptr)
-//		{
-//			EWidget->AddToViewport();
-//		}
-//	}
-//	else
-//	{
-//		if (EWidget != nullptr)
-//		{
-//			EWidget->RemoveFromParent();
-//		}
-//	}
-//}
 
 void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
 {
@@ -381,16 +363,12 @@ void AKZGCharacter::Server_InputRun_Implementation()
 
 void AKZGCharacter::Server_CrouchInput_Implementation()
 {
-	Multicast_CrouchInput();
-}
-
-void AKZGCharacter::Multicast_CrouchInput_Implementation()
-{
 	if (bIsgrabbed) return;
 	if (bIsAttacking) return;
 	if (bIsCrouching) bIsCrouching = false;
 	else bIsCrouching = true;
 }
+
 
 void AKZGCharacter::Server_AttackInput_Implementation()
 {
@@ -402,7 +380,7 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 	int32 attackNum = FMath::RandRange(1, 100);
 	if(bIsAttacking) return;
 	if(bIsFinalAttackEnded) return;
-	if (!bIsgrabbed) {
+	if (!bIsgrabbed && currentStamina > 5) {
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
 		UGameplayStatics::PlaySound2D(this, batHitSound, 0.4f);
@@ -424,10 +402,13 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 	if(bIsInteractionInput) return;
 	if (bIsgrabbed)
 	{
-		bIsInteractionInput = true;
-		TryEscape();
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
-		anim->playOffAnimation();
+		if (currentStamina > 5)
+		{
+			bIsInteractionInput = true;
+			TryEscape();
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
+			anim->playOffAnimation();
+		}
 	}
 	else
 	{
@@ -469,7 +450,9 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 
 void AKZGCharacter::Server_InteractionInputEnd_Implementation()
 {
-	Multicast_InteractionUnputEnd();
+	//Multicast_InteractionUnputEnd();
+	bIsInteractionInput = false;
+
 }
 
 void AKZGCharacter::Multicast_InteractionUnputEnd_Implementation()
@@ -480,7 +463,6 @@ void AKZGCharacter::Multicast_InteractionUnputEnd_Implementation()
 void AKZGCharacter::Server_ChangeView_Implementation()
 {
 	Multicast_ChangeView();
-
 }
 
 void AKZGCharacter::Multicast_ChangeView_Implementation()
@@ -559,9 +541,9 @@ void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AKZGCharacter, bIsRunning);
 	DOREPLIFETIME(AKZGCharacter, bOnDamaged);
 	DOREPLIFETIME(AKZGCharacter, bIsAttacking);
-	DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
+	//DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
 	DOREPLIFETIME(AKZGCharacter, bIsInteractionInput);
 	DOREPLIFETIME(AKZGCharacter, maxsize);
-	//DOREPLIFETIME(AKZGCharacter, EWidget);
+	DOREPLIFETIME(AKZGCharacter, EWidget);
 
 }
