@@ -36,12 +36,14 @@ void UEnemyFsm::BeginPlay()
 	ai = Cast<AAIController>(Me->GetController());
 
 	Me->GetCharacterMovement()->MaxWalkSpeed = speed;
-	
+	Me->GetCharacterMovement()->bOrientRotationToMovement=true;
+	Me->GetCharacterMovement()->RotationRate.Yaw=180;
 	//Target=Cast<AKZGCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(),AKZGCharacter::StaticClass()));
 	//mState=EEnemyState::Tracking;
 	SearchLoc=Me->GetActorLocation();
 	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
 	start=true;
+	
 }
 
 
