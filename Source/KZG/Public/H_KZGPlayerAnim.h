@@ -41,7 +41,7 @@ public:
 	class UAnimMontage* offMontage;
 
 
-	UFUNCTION()
+	/*UFUNCTION()
 	void AnimNotify_AttackEnd1();
 	UFUNCTION()
 	void AnimNotify_AttackEnd2();
@@ -55,7 +55,7 @@ public:
 	void PlayAttackAnimation3();
 
 	void finalAttackAnimation3();
-	void playOffAnimation();
+	void playOffAnimation();*/
 
 	class AKZGCharacter* player;
 

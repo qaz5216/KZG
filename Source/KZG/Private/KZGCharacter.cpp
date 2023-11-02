@@ -386,8 +386,8 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		UGameplayStatics::PlaySound2D(this, batHitSound, 0.4f);
 		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
 		boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		if (attackNum > 50) anim->PlayAttackAnimation2();
-		else if (attackNum <= 50) anim->PlayAttackAnimation3();
+		//if (attackNum > 50) anim->PlayAttackAnimation2();
+		//else if (attackNum <= 50) anim->PlayAttackAnimation3();
 		bIsAttacking = true;
 	}
 }
@@ -407,7 +407,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 			bIsInteractionInput = true;
 			TryEscape();
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
-			anim->playOffAnimation();
+			//anim->playOffAnimation();
 		}
 	}
 	else
@@ -437,7 +437,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 					//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Hit Actor Name:%s"), *hitActor->GetName()));
 					if (hitEnemy->isGroggy)
 					{
-						anim->finalAttackAnimation3();
+						//anim->finalAttackAnimation3();
 						hitEnemy->FSM->ChangeToDieState();
 						GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
 					}

@@ -29,57 +29,57 @@ void UH_KZGPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 	}
 }
 
-void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
-{
-	if (player) 
-	{
-		player->bIsAttacking = false;
-		player->currentStamina--;
-		player->boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
+//void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
+//{
+//	if (player) 
+//	{
+//		player->bIsAttacking = false;
+//		player->currentStamina--;
+//		player->boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+//	}
+//
+//}
+//
+//void UH_KZGPlayerAnim::AnimNotify_AttackEnd2()
+//{
+//	player->bIsFinalAttackEnded = true;
+//	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(player->ZFinalBase);
+//
+//}
+//
+//void UH_KZGPlayerAnim::AnimNotify_AttackEnd3()
+//{
+//	player->bIsFinalAttackEnded = false;
+//}
 
-}
-
-void UH_KZGPlayerAnim::AnimNotify_AttackEnd2()
-{
-	player->bIsFinalAttackEnded = true;
-	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(player->ZFinalBase);
-
-}
-
-void UH_KZGPlayerAnim::AnimNotify_AttackEnd3()
-{
-	player->bIsFinalAttackEnded = false;
-}
-
-void UH_KZGPlayerAnim::AnimNotify_SoundStep()
-{
-	if(player) player->PlayStepSoundPlaying();
-	//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("stepSound")));
-}
-
-void UH_KZGPlayerAnim::PlayAttackAnimation1()
-{
-	Montage_Play(attackMontage1);
-}
-
-void UH_KZGPlayerAnim::PlayAttackAnimation2()
-{
-	Montage_Play(attackMontage2);
-}
-
-void UH_KZGPlayerAnim::PlayAttackAnimation3()
-{
-	Montage_Play(attackMontage3);
-
-}
-
-void UH_KZGPlayerAnim::finalAttackAnimation3()
-{
-	Montage_Play(finalAttackMontage);
-}
-
-void UH_KZGPlayerAnim::playOffAnimation()
-{
-	Montage_Play(offMontage);
-}
+//void UH_KZGPlayerAnim::AnimNotify_SoundStep()
+//{
+//	if(player) player->PlayStepSoundPlaying();
+//	//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("stepSound")));
+//}
+//
+//void UH_KZGPlayerAnim::PlayAttackAnimation1()
+//{
+//	Montage_Play(attackMontage1);
+//}
+//
+//void UH_KZGPlayerAnim::PlayAttackAnimation2()
+//{
+//	Montage_Play(attackMontage2);
+//}
+//
+//void UH_KZGPlayerAnim::PlayAttackAnimation3()
+//{
+//	Montage_Play(attackMontage3);
+//
+//}
+//
+//void UH_KZGPlayerAnim::finalAttackAnimation3()
+//{
+//	Montage_Play(finalAttackMontage);
+//}
+//
+//void UH_KZGPlayerAnim::playOffAnimation()
+//{
+//	Montage_Play(offMontage);
+//}
