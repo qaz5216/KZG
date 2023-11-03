@@ -116,7 +116,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, returnSpeed, 5 * DeltaTime);
 
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("attack: %s"), bIsAttacking ? *FString("true") : *FString("false")));
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 	if(playerStamina > maxsize) playerStamina = maxsize;
@@ -156,7 +156,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 		}
 	}
 
-	//Server_GrabbedWidget();
+	Server_GrabbedWidget();
 	//Server_ChangeView();
 	
 	curHungtime += DeltaTime;
@@ -386,8 +386,8 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		UGameplayStatics::PlaySound2D(this, batHitSound, 0.4f);
 		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
 		boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		//if (attackNum > 50) anim->PlayAttackAnimation2();
-		//else if (attackNum <= 50) anim->PlayAttackAnimation3();
+		if (attackNum > 50) anim->PlayAttackAnimation2();
+		else if (attackNum <= 50) anim->PlayAttackAnimation3();
 		bIsAttacking = true;
 	}
 }
@@ -407,7 +407,6 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 			bIsInteractionInput = true;
 			TryEscape();
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
-			//anim->playOffAnimation();
 		}
 	}
 	else
@@ -437,7 +436,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 					//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Hit Actor Name:%s"), *hitActor->GetName()));
 					if (hitEnemy->isGroggy)
 					{
-						//anim->finalAttackAnimation3();
+						anim->finalAttackAnimation3();
 						hitEnemy->FSM->ChangeToDieState();
 						GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
 					}
