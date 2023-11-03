@@ -116,7 +116,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, returnSpeed, 5 * DeltaTime);
 
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("attack: %s"), bIsAttacking ? *FString("true") : *FString("false")));
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 	if(playerStamina > maxsize) playerStamina = maxsize;
@@ -156,7 +156,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 		}
 	}
 
-	//Server_GrabbedWidget();
+	Server_GrabbedWidget();
 	//Server_ChangeView();
 	
 	curHungtime += DeltaTime;
@@ -407,7 +407,6 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 			bIsInteractionInput = true;
 			TryEscape();
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
-			anim->playOffAnimation();
 		}
 	}
 	else
