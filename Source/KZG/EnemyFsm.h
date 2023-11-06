@@ -56,7 +56,8 @@ public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly,Category="FSM")
 	EEnemyState PremState;
 
-
+	UPROPERTY()
+	class UEnemyAnimInstance* anim;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
 	class AEnemy *Me;
