@@ -15,6 +15,7 @@
 #include "NavigationSystemTypes.h"
 #include <AIModule/Classes/Navigation/PathFollowingComponent.h>
 #include "EnemyStat.h"
+#include "EnemyAnimInstance.h"
 // Sets default values for this component's properties
 UEnemyFsm::UEnemyFsm()
 {
@@ -41,6 +42,7 @@ void UEnemyFsm::BeginPlay()
 	//Target=Cast<AKZGCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(),AKZGCharacter::StaticClass()));
 	//mState=EEnemyState::Tracking;
 	SearchLoc=Me->GetActorLocation();
+	anim = Cast<UEnemyAnimInstance>(Me->GetMesh()->GetAnimInstance());
 	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
 	start=true;
 	
@@ -258,7 +260,7 @@ void UEnemyFsm::DamageState(float DeltaTime)
 void UEnemyFsm::DieState(float DeltaTime)
 {
 	dietime+=DeltaTime;
-	if (dietime>2)
+	if (dietime>6.5)
 	{
 		Me->Destroy();
 	}
@@ -442,6 +444,11 @@ void UEnemyFsm::ChangeToDamageState()
 	{
 		return;
 	}
+	int32 index = FMath::RandRange(0, 1);
+	FString sectionName = FString::Printf(TEXT("Damage%d"), index);
+	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Section Name:%s"), *sectionName));
+	//anim->PlayDamageAnim(FName(*sectionName));
+	anim->PlayDamageAnim(FName(*sectionName));
 	if (mState==EEnemyState::Damage)
 	{
 		damagetime_cur=0;
@@ -467,6 +474,7 @@ void UEnemyFsm::ChangeToDieState()
 	if(mState==EEnemyState::Die)
 	return;
 	mState=EEnemyState::Die;
+	anim->PlayDieAnim();
 	Me->HP_Cur=0;
 	dietime=0;
 }

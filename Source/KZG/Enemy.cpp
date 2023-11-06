@@ -7,6 +7,7 @@
 #include <UMG/Public/Components/WidgetComponent.h>
 #include "EnemyStat.h"
 #include "KZGCharacter.h"
+#include "EnemyAnimInstance.h"
 
 // Sets default values
 AEnemy::AEnemy()
@@ -73,6 +74,9 @@ void AEnemy::StaminaDamaged(int32 value)
 	if (Stamina_Cur - value > 0)
 	{
 		Stamina_Cur = Stamina_Cur - value;
+		int32 index = FMath::RandRange(0, 1);
+		FString sectionName = FString::Printf(TEXT("Stamina%d"), index);
+		FSM->anim->PlayStaminaAnim(FName(*sectionName));
 	}
 	else
 	{
