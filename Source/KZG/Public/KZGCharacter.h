@@ -231,6 +231,9 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
 	int32 maxsize = 500;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
+	class AEnemy *AssaionateEnemy;
+
 	int32 killNum = 0;
 public:
 	void DamagedStamina(int32 value);
