@@ -177,6 +177,56 @@ void AKZGCharacter::Tick(float DeltaTime)
 	}
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
+
+	//암살가능범위
+	TArray<FOverlapResult> hitInfos;
+	FVector MeLoc = GetActorLocation();
+	if (GetWorld()->OverlapMultiByProfile(hitInfos, MeLoc, FQuat::Identity, FName("StepSound"), FCollisionShape::MakeSphere(300)))
+	{
+		bool findEnemy = false;
+		TArray<AEnemy*> hitEnemys;
+		TArray<double> WhatEnemy;
+		//UE_LOG(LogTemp,Warning,TEXT("1"));
+		for (const FOverlapResult& hitInfo : hitInfos)
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("2"));
+			if (AEnemy* hitEnemy = Cast<AEnemy>(hitInfo.GetActor()))//이거 되긴하냐..?
+			{	
+				//에너미의 뒤인가?
+				FVector CheckDir=GetActorLocation()-hitEnemy->GetActorLocation();
+				CheckDir.Normalize();
+				double DotP = FVector::DotProduct(CheckDir, hitEnemy->GetActorForwardVector());
+				if (DotP<0&&hitEnemy->FSM->mState!=EEnemyState::Die)
+				{
+					hitEnemys.Add(hitEnemy);
+					FVector CheckDir2 = hitEnemy->GetActorLocation()- GetActorLocation();
+					double DotP2 = FVector::DotProduct(CheckDir2,FollowCamera->GetForwardVector());
+					WhatEnemy.Add(DotP2);
+					findEnemy = true;
+				}
+			}
+		}
+		if (findEnemy)
+		{	// 카메라가 보는 방향에가장 근접한 에너미
+			int32 index=0;
+			int32 dist=-1;
+			for (int32 i=0;i<WhatEnemy.Num();i++)
+			{
+				if (dist<WhatEnemy[i])
+				{
+					index=i;
+				}
+			}
+			bCanAssasination=true;
+			AssaionateEnemy = hitEnemys[index];
+		}
+		else
+		{
+			bCanAssasination=false;
+			AssaionateEnemy=nullptr;
+		}
+	}//DrawDebugSphere(GetWorld(), MeLoc, 300, 30, FColor::Green, false, 1.0f);
+
 }
 
 void AKZGCharacter::PlayStepSoundPlaying()
@@ -346,7 +396,7 @@ void AKZGCharacter::Look(const FInputActionValue& Value)
 {
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller != nullptr && !bIsgrabbed)
 	{
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
@@ -449,11 +499,16 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 			}
 		}
 	}
-	else if (!bIsgrabbed && bCanAssasination)
+	else if (!bIsgrabbed && bCanAssasination && !bStartAssaination)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.01, FColor::Black, FString::Printf(TEXT("Assasination")));
-		bStartAssaination = true;
-		anim->playAssasinationAnimation();
+		if (AssaionateEnemy!=nullptr)
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 0.01, FColor::Black, FString::Printf(TEXT("Assasination")));
+			bStartAssaination = true;
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZFinalBase);
+			anim->playAssasinationAnimation();
+			AssaionateEnemy->FSM->ChangeToDieState();
+		}
 	}
 }
 
