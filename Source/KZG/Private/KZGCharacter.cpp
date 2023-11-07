@@ -438,6 +438,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 					if (hitEnemy->isGroggy)
 					{
 						anim->finalAttackAnimation3();
+						killNum++;
 						hitEnemy->FSM->ChangeToDieState();
 						GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
 					}

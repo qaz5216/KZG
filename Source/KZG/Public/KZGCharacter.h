@@ -169,10 +169,10 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
 	int32 currentStamina = 0;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "StaminaSize")
 	int32 maxHungerP = 100;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "StaminaSize")
 	int32 curHungerP = 0;
 
 	float camArmLen;
@@ -225,6 +225,7 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
 	int32 maxsize = 500;
 
+	int32 killNum = 0;
 public:
 	void DamagedStamina(int32 value);
 
