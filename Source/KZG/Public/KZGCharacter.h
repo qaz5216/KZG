@@ -81,6 +81,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="PlaySound")
 	class USoundBase* batHitSound;
 
+	UPROPERTY(EditDefaultsOnly, Category="swingSound")
+	class USoundBase* batSwingSound;
+
 public:
 	AKZGCharacter();
 	
