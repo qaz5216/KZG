@@ -116,7 +116,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, returnSpeed, 5 * DeltaTime);
 
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("attack: %s"), bIsAttacking ? *FString("true") : *FString("false")));
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 	if(playerStamina > maxsize) playerStamina = maxsize;
@@ -124,8 +124,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 	if(curHungerP <= 0) curHungerP = 0;
 	if(curHungerP > maxHungerP) curHungerP = maxHungerP;
 
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
 	if (!bIsCrouching && bIsRunning && currentStamina > 5)
 	{
 		GetCharacterMovement()->MaxWalkSpeed = runSpeed;
@@ -325,6 +325,11 @@ void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 	AEnemy* Zombie = Cast<AEnemy>(OtherActor);
 	Zombie->FSM->Target=this;
 	Zombie->Damaged(damagePower);
+	if (OtherActor == Zombie)
+	{
+		UGameplayStatics::PlaySound2D(this, batHitSound, 0.4f);
+
+	}
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	UE_LOG(LogTemp, Warning, TEXT("Collision OFFzz"));
 
@@ -435,9 +440,9 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 	if (!bIsgrabbed && currentStamina > 5) {
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
-		UGameplayStatics::PlaySound2D(this, batHitSound, 0.4f);
 		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
 		boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		UGameplayStatics::PlaySound2D(this, batSwingSound, 1.0f);
 		if (attackNum > 50) anim->PlayAttackAnimation2();
 		else if (attackNum <= 50) anim->PlayAttackAnimation3();
 		bIsAttacking = true;
