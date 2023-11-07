@@ -49,6 +49,8 @@ public:
 	void AnimNotify_AttackEnd3();
 	UFUNCTION()
 	void AnimNotify_SoundStep();
+	UFUNCTION()
+	void AnimNotify_AssasinationEnd();
 
 	void PlayAttackAnimation2();
 	void PlayAttackAnimation3();

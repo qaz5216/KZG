@@ -45,6 +45,34 @@ void AEnemy::Tick(float DeltaTime)
 			MyWidget->SetWorldRotation((FSM->Target->GetActorLocation()-MyWidget->GetComponentLocation()).Rotation());
 		}
 	}
+
+
+	FVector MeLoc = GetActorLocation();
+	FVector startloc = MeLoc;
+	FVector endloc = MeLoc + GetActorForwardVector() * -50;
+	FHitResult hitResult;
+	FCollisionQueryParams collisionParams;
+	collisionParams.AddIgnoredActor(this);
+	//UE_LOG(LogTemp, Warning, TEXT("4"));
+	DrawDebugLine(GetWorld(), startloc, endloc, FColor::Red, false, 1.0f);
+	if (GetWorld()->LineTraceSingleByChannel(hitResult, startloc, endloc, ECC_Visibility, collisionParams))
+	{
+		//UE_LOG(LogTemp, Warning, TEXT("5"));
+		if (hitResult.GetActor())
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("6"));
+			if (AKZGCharacter* player = Cast<AKZGCharacter>(hitResult.GetActor()))
+			{
+				player->bCanAssasination = true;
+				if (player->bStartAssaination)
+				{
+					FSM->ChangeToDieState();
+				}
+			}
+		}
+	}
+
+	
 }
 
 // Called to bind functionality to input

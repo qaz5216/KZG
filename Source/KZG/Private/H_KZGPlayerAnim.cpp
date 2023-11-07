@@ -58,6 +58,15 @@ void UH_KZGPlayerAnim::AnimNotify_SoundStep()
 	//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("stepSound")));
 }
 
+void UH_KZGPlayerAnim::AnimNotify_AssasinationEnd()
+{
+	if (player)
+	{
+		player->bCanAssasination = false;
+		player->bStartAssaination = false;
+	}
+}
+
 void UH_KZGPlayerAnim::PlayAttackAnimation2()
 {
 	Montage_Play(attackMontage2);

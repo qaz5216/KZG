@@ -50,6 +50,7 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	bool isGroggy=false;
 
+
 	UFUNCTION(BlueprintCallable)
 	void Damaged(int32 damage);
 

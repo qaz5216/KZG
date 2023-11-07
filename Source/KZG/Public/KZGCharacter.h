@@ -163,6 +163,12 @@ public:
 	UPROPERTY(Replicated)
 	bool bIsInteractionInput = false;
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	bool bCanAssasination=false;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	bool bStartAssaination=false;
+
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
 	int32 playerStamina = 500;
 

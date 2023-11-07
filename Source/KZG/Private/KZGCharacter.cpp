@@ -122,6 +122,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	if(playerStamina > maxsize) playerStamina = maxsize;
 	if(maxsize <= 50) maxsize = 60;
 	if(curHungerP <= 0) curHungerP = 0;
+	if(curHungerP > maxHungerP) curHungerP = maxHungerP;
 
 	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), playerStamina));
 	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%d"), curHungerP));
@@ -401,7 +402,8 @@ void AKZGCharacter::Server_InteractionInput_Implementation()
 void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 {
 	if(bIsInteractionInput) return;
-	if (bIsgrabbed)
+	if(bIsAttacking) return;
+	if (bIsgrabbed && !bCanAssasination)
 	{
 		if (currentStamina > 5)
 		{
@@ -410,7 +412,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
 		}
 	}
-	else
+	else if(!bIsgrabbed && !bCanAssasination)
 	{
 		
 		FVector MeLoc = GetActorLocation();
@@ -446,6 +448,12 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 				//맞은액터 확인용
 			}
 		}
+	}
+	else if (!bIsgrabbed && bCanAssasination)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0.01, FColor::Black, FString::Printf(TEXT("Assasination")));
+		bStartAssaination = true;
+		anim->playAssasinationAnimation();
 	}
 }
 
