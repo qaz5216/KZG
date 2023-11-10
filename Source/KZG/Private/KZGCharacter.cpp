@@ -278,7 +278,7 @@ void AKZGCharacter::EscapebyZombie()
 void AKZGCharacter::TryEscape()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Tryzz"));
-	DamagedStamina(1);
+	DamagedStamina(10);
 	GrabbedEnemy->StaminaDamaged(10);
 	if (GrabbedEnemy->Stamina_Cur<=0)
 	{
