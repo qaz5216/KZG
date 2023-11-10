@@ -220,6 +220,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 			}
 			bCanAssasination=true;
 			AssaionateEnemy = hitEnemys[index];
+
 		}
 		else
 		{
@@ -278,7 +279,7 @@ void AKZGCharacter::EscapebyZombie()
 void AKZGCharacter::TryEscape()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Tryzz"));
-	DamagedStamina(1);
+	DamagedStamina(10);
 	GrabbedEnemy->StaminaDamaged(10);
 	if (GrabbedEnemy->Stamina_Cur<=0)
 	{
@@ -347,8 +348,7 @@ void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 	Zombie->Damaged(damagePower);
 	if (OtherActor == Zombie)
 	{
-		UGameplayStatics::PlaySound2D(this, batHitSound, 0.4f);
-
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), batHitSound, GetActorLocation(), FRotator(), 0.4f);
 	}
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	UE_LOG(LogTemp, Warning, TEXT("Collision OFFzz"));
@@ -464,7 +464,8 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
 		boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		UGameplayStatics::PlaySound2D(this, batSwingSound, 1.0f);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), batSwingSound, GetActorLocation(), FRotator(), 1.0f);
+
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
 		if (attackNum > 50) anim->PlayAttackAnimation2();
 		else if (attackNum <= 50) anim->PlayAttackAnimation3();
@@ -532,10 +533,14 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 	{
 		if (AssaionateEnemy!=nullptr)
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 0.01, FColor::Black, FString::Printf(TEXT("Assasination")));
+			//GEngine->AddOnScreenDebugMessage(-1, 0.01, FColor::Black, FString::Printf(TEXT("Assasination")));
 			bStartAssaination = true;
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZFinalBase);
 			anim->playAssasinationAnimation();
+			AssaionateEnemy->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 30);
+			AssaionateEnemy->SetActorRotation(GetActorForwardVector().Rotation());
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(), assasinationSound ,GetActorLocation(), FRotator() , 0.4f);
+
 			AssaionateEnemy->FSM->ChangeToDieState();
 		}
 	}
