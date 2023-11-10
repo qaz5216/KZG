@@ -31,7 +31,13 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* boxComp;
+
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* batMesh;
 	
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* axeMesh;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
 
@@ -146,7 +152,7 @@ public:
 	float walkSpeed = 300;
 	// ¶Ù±â ¼Óµµ
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MySettings")
-	float runSpeed = 800;
+	float runSpeed = 600;
 	// ´Ù½Ã ¹Ù²ð¼Óµµ
 	float returnSpeed = 0;
 
@@ -185,6 +191,12 @@ public:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "StaminaSize")
 	int32 curHungerP = 0;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
+	int32 maxWeaponHP = 100;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
+	int32 curWeaponHP = 0;
 
 	float camArmLen;
 
@@ -228,7 +240,7 @@ public:
 	bool bIsOverlapping = false;
 
 	UPROPERTY(EditAnywhere)
-	int32 damagePower = 10;
+	int32 damagePower = 35;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	class AEnemy *GrabbedEnemy;
@@ -255,6 +267,8 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_PlayerDeath();
+
+	void AttackCollisionOff();
 	//UFUNCTION(NetMulticast, Reliable)
 	//void Multicast_GrabbedWidget();
 

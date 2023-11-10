@@ -13,8 +13,8 @@ AH_AttackWeapons::AH_AttackWeapons()
 
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	RootComponent = boxComp;
-	boxComp->SetBoxExtent(FVector(75, 10, 10));
-	boxComp->SetCollisionProfileName(TEXT("Weapon"));
+	boxComp->SetBoxExtent(FVector(50, 50, 50));
+	boxComp->SetCollisionProfileName(TEXT("WeaponDrop"));
 
 	bReplicates = true;
 
