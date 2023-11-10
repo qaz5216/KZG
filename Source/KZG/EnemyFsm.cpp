@@ -174,9 +174,20 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 	if (FVector::Dist(Me->GetActorLocation(), dest) < 100.0f) {
 		if (TargetSee) {
 			//АјАн
+			double DotP = FVector::DotProduct(Me->GetActorForwardVector(), Target->GetActorForwardVector());
+			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("%f"), DotP));
+			if (DotP > 0.5)
+			{
+				Target->DamagedStamina(Target->currentStamina);
+				anim->PlayKillAnim();
+				ChangeToIdleState();
+				return;
+			}
+			else{
 			Trackingtime_cur=0;
 			ChangeToAttackState();
 			return;
+			}
 		}
 		else
 		{
@@ -225,12 +236,22 @@ void UEnemyFsm::AttackState(float DeltaTime)
 {
 	if (Me->Stamina_Cur>0)
 	{
+		if (Target==nullptr)
+		{
+			ChangeToIdleState();
+			return;
+		}
 		if (attacktime_cur>attacktime)
 		{
 			Target->DamagedStamina(1);
 			// player->damagedstamina(int32 value)
 			//UE_LOG(LogTemp, Warning, TEXT("Attack remain Sta=%d"),Target->currentStamina);
 			attacktime_cur=0;
+			if (Target->currentStamina <= 0)
+			{
+				anim->PlayKillAnim();
+				ChangeToIdleState();
+			}
 		}
 		else
 		{

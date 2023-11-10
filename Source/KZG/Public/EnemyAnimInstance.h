@@ -42,6 +42,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
 	void PlayGroogyAnim();
 
+	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
+	void PlayKillAnim();
+
+
 	// DieEndNoti 이벤트가 들어오면 그때서야 DieState 가 동작하도록 하고싶다.
 	UFUNCTION()
 	void AnimNotify_DieEndNoti();
