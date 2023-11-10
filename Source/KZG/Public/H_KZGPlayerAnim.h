@@ -26,7 +26,7 @@ public:
 	bool isInAir = false;
 
 	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
-	class UAnimMontage* attackMontage1;
+	class UAnimMontage* deathMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
 	class UAnimMontage* attackMontage2;
@@ -54,6 +54,7 @@ public:
 
 	void PlayAttackAnimation2();
 	void PlayAttackAnimation3();
+	void PlayDeathAnimation();
 
 	void finalAttackAnimation3();
 	void playAssasinationAnimation();

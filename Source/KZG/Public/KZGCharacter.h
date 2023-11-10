@@ -247,8 +247,17 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_GrabbedWidget();
 
+
+	UFUNCTION(Server, Reliable)
+	void Server_PlayerDeath();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_PlayerDeath();
 	//UFUNCTION(NetMulticast, Reliable)
 	//void Multicast_GrabbedWidget();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	bool bIsDead = false;
 
 	FVector CameraLocation;
 	FRotator CameraRot;
