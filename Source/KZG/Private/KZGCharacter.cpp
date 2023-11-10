@@ -20,6 +20,7 @@
 #include <Components/BoxComponent.h>
 #include "H_FoodActor.h"
 #include <Components/SpotLightComponent.h>
+#include "H_AttackWeapons.h"
 
 //////////////////////////////////////////////////////////////////////////
 // AKZGCharacter
@@ -42,10 +43,44 @@ AKZGCharacter::AKZGCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
+	batMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("batMesh"));
+	batMesh->SetupAttachment(GetMesh());
+	// Get the socket name
+	FName WeaponSocketName = FName(TEXT("WeaoponSocket"));
+	// Attach batMesh to the WeaoponSocket
+	batMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+	 
+	ConstructorHelpers::FObjectFinder<UStaticMesh>TempBat (TEXT("/Script/Engine.StaticMesh'/Game/Props_MeleeWeapons/Meshes/baseballBat.baseballBat'"));
+
+	if (TempBat.Succeeded())
+	{
+		batMesh->SetStaticMesh(TempBat.Object);
+		batMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		batMesh->SetVisibility(false);
+		batMesh->SetRelativeLocationAndRotation(FVector(-13.419591, -2.414909, 9.095527), FRotator(12.700006, -15.579394, -51.744371));
+
+	}
+
+	axeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AxeMesh"));
+	axeMesh->SetupAttachment(GetMesh());
+	// Attach batMesh to the WeaoponSocket
+	axeMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+	
+	ConstructorHelpers::FObjectFinder<UStaticMesh>TempAxe(TEXT("/Script/Engine.StaticMesh'/Game/Props_MeleeWeapons/Meshes/fireAxe.fireAxe'"));
+
+	if (TempAxe.Succeeded())
+	{
+		axeMesh->SetStaticMesh(TempAxe.Object);
+		axeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		axeMesh->SetVisibility(false);
+		axeMesh->SetRelativeLocationAndRotation(FVector(-11.144902, 1.984119, 4.615342), FRotator(12.700006, -15.579394, -51.744371));
+	}
+
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	boxComp->SetupAttachment(GetCapsuleComponent());
 	boxComp->SetRelativeLocation(FVector(110.000000, 0.000000, 0.000000));
 	boxComp->SetBoxExtent(FVector(100));
+	boxComp->SetRelativeScale3D(FVector(-0.500000, 0.500000, 1.000000));
 	boxComp->SetCollisionProfileName(TEXT("Weapon"));
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -107,7 +142,6 @@ void AKZGCharacter::BeginPlay()
 	CameraRot = FollowCamera->GetComponentRotation();
 	camArmLen = CameraBoom->TargetArmLength;
 
-
 }
 
 void AKZGCharacter::Tick(float DeltaTime)
@@ -118,6 +152,13 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("attack: %s"), bIsAttacking ? *FString("true") : *FString("false")));
+
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::Printf(TEXT("Weapon HP : %d"), curWeaponHP));
+	if (curWeaponHP <= 0)
+	{
+		if(axeMesh->IsVisible()) axeMesh->SetVisibility(false);
+		else if(batMesh->IsVisible()) batMesh->SetVisibility(false);
+	}
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 	if(playerStamina > maxsize) playerStamina = maxsize;
 	if(maxsize <= 50) maxsize = 60;
@@ -260,7 +301,7 @@ void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
 	FVector meLoc = GetActorLocation();
 	if (Enemy)
 	{
-		Enemy->SetActorLocation(meLoc + GetActorForwardVector() * 10);
+		Enemy->SetActorLocation(meLoc + GetActorForwardVector() * 5);
 		Enemy->SetActorRotation((GetActorLocation() - Enemy->GetActorLocation()).Rotation());
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("Grabbedzz"));
@@ -341,26 +382,64 @@ void AKZGCharacter::Multicast_PlayerDeath_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void AKZGCharacter::AttackCollisionOff()
+{
+	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
 void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AEnemy* Zombie = Cast<AEnemy>(OtherActor);
 	Zombie->FSM->Target=this;
 	Zombie->Damaged(damagePower);
+	
 	if (OtherActor == Zombie)
 	{
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), batHitSound, GetActorLocation(), FRotator(), 0.4f);
+		if (batMesh->IsVisible())
+		{
+			curWeaponHP -= 5;
+		}
+		else if (axeMesh->IsVisible())
+		{
+			curWeaponHP -= 5;
+		}
 	}
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	UE_LOG(LogTemp, Warning, TEXT("Collision OFFzz"));
 
 	
+	
 }
 
 void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (AH_FoodActor* food = Cast<AH_FoodActor>(OtherActor))
+	
+	if (AH_AttackWeapons* Weapon = Cast<AH_AttackWeapons>(OtherActor))
 	{
+		Weapon->Destroy();
+		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("Overlap")));
 
+		if (OtherActor->GetName().Contains(FString(TEXT("Bat"))))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));\
+			batMesh->SetVisibility(true);
+			curWeaponHP = maxWeaponHP;
+			if (axeMesh->IsVisible())
+			{
+				axeMesh->SetVisibility(false);
+			}
+		}
+		else if (OtherActor->GetName().Contains(FString(TEXT("Axe"))))
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
+			axeMesh->SetVisibility(true);
+			curWeaponHP = maxWeaponHP;
+			if (batMesh->IsVisible())
+			{
+				batMesh->SetVisibility(false);
+			}
+		}
 	}
 }	
 
@@ -457,6 +536,7 @@ void AKZGCharacter::Server_AttackInput_Implementation()
 void AKZGCharacter::Multicast_AttackInput_Implementation()
 {
 	int32 attackNum = FMath::RandRange(1, 100);
+	if(axeMesh->IsVisible() == false && batMesh->IsVisible() == false) return;
 	if(bIsAttacking) return;
 	if(bIsFinalAttackEnded) return;
 	if (bIsDead) return;
@@ -465,7 +545,8 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
 		boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), batSwingSound, GetActorLocation(), FRotator(), 1.0f);
-
+		FTimerHandle CollisionTimerHandle;
+		GetWorldTimerManager().SetTimer(CollisionTimerHandle, this, &AKZGCharacter::AttackCollisionOff, 0.1f, false);
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
 		if (attackNum > 50) anim->PlayAttackAnimation2();
 		else if (attackNum <= 50) anim->PlayAttackAnimation3();
