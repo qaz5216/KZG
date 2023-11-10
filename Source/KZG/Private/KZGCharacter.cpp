@@ -54,7 +54,7 @@ AKZGCharacter::AKZGCharacter()
 	CameraBoom->TargetArmLength = 200.0f; 
 	CameraBoom->bUsePawnControlRotation = true; 
 	CameraBoom->SetRelativeLocation(FVector(0.000000, 0.000000, 50.000000));
-
+	 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); 
 	FollowCamera->bUsePawnControlRotation = false;
@@ -256,6 +256,12 @@ void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
 	bCangrabbed=false;
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
 	GrabbedEnemy=Enemy;
+	FVector meLoc = GetActorLocation();
+	if (Enemy)
+	{
+		Enemy->SetActorLocation(meLoc + GetActorForwardVector() * 10);
+		Enemy->SetActorRotation((GetActorLocation() - Enemy->GetActorLocation()).Rotation());
+	}
 	//UE_LOG(LogTemp, Warning, TEXT("Grabbedzz"));
 }
 
