@@ -117,7 +117,7 @@ public:
 	float groggytime_cur=0;
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
-	float groggytime=3;
+	float groggytime=5;
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float Idletime_cur=0;

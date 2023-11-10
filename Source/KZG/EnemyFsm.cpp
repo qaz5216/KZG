@@ -416,6 +416,7 @@ void UEnemyFsm::ChangeToGroggyState()
 	}
 	Me->isGroggy=true;
 	groggytime_cur=0;
+	anim->PlayGroogyAnim();
 	mState=EEnemyState::Groggy;
 	Me->StatUI->EImageShow();
 }
