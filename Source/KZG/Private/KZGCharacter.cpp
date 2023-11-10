@@ -45,7 +45,7 @@ AKZGCharacter::AKZGCharacter()
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	boxComp->SetupAttachment(GetCapsuleComponent());
 	boxComp->SetRelativeLocation(FVector(110.000000, 0.000000, 0.000000));
-	boxComp->SetBoxExtent(FVector(200));
+	boxComp->SetBoxExtent(FVector(100));
 	boxComp->SetCollisionProfileName(TEXT("Weapon"));
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -439,10 +439,10 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 	if(bIsFinalAttackEnded) return;
 	if (!bIsgrabbed && currentStamina > 5) {
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
 		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
 		boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		UGameplayStatics::PlaySound2D(this, batSwingSound, 1.0f);
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
 		if (attackNum > 50) anim->PlayAttackAnimation2();
 		else if (attackNum <= 50) anim->PlayAttackAnimation3();
 		bIsAttacking = true;
