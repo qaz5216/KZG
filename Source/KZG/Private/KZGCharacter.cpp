@@ -156,6 +156,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 			curSP = 0;
 		}
 	}
+	if(currentStamina <= 0) Server_PlayerDeath();
 
 	Server_GrabbedWidget();
 	//Server_ChangeView();
@@ -245,6 +246,8 @@ void AKZGCharacter::PlayStepSoundPlaying()
 		}
 	}
 	//DrawDebugSphere(GetWorld(), GetActorLocation(), stepSoundrad, 30, FColor::Green, false, 1.0f);
+
+
 }
 
 void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
@@ -320,6 +323,17 @@ void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
 	
 }
 
+void AKZGCharacter::Server_PlayerDeath_Implementation()
+{
+	Multicast_PlayerDeath();
+}
+
+void AKZGCharacter::Multicast_PlayerDeath_Implementation()
+{
+	bIsDead = true;
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
 void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	AEnemy* Zombie = Cast<AEnemy>(OtherActor);
@@ -384,6 +398,7 @@ void AKZGCharacter::Move(const FInputActionValue& Value)
 	{
 		if(bIsgrabbed) return;
 		if(bIsAttacking) return;
+		if(bIsDead) return;
 
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
@@ -403,6 +418,7 @@ void AKZGCharacter::Look(const FInputActionValue& Value)
 
 	if (Controller != nullptr && !bIsgrabbed)
 	{
+		if (bIsDead) return;
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
@@ -437,6 +453,7 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 	int32 attackNum = FMath::RandRange(1, 100);
 	if(bIsAttacking) return;
 	if(bIsFinalAttackEnded) return;
+	if (bIsDead) return;
 	if (!bIsgrabbed && currentStamina > 5) {
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
@@ -458,6 +475,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 {
 	if(bIsInteractionInput) return;
 	if(bIsAttacking) return;
+	if (bIsDead) return;
 	if (bIsgrabbed && !bCanAssasination)
 	{
 		if (currentStamina > 5)

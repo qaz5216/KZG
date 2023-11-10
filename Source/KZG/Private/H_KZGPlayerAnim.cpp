@@ -78,6 +78,12 @@ void UH_KZGPlayerAnim::PlayAttackAnimation3()
 
 }
 
+void UH_KZGPlayerAnim::PlayDeathAnimation()
+{
+	Montage_Play(deathMontage);
+
+}
+
 void UH_KZGPlayerAnim::finalAttackAnimation3()
 {
 	Montage_Play(finalAttackMontage);
