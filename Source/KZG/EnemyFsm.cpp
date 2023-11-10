@@ -45,6 +45,7 @@ void UEnemyFsm::BeginPlay()
 	anim = Cast<UEnemyAnimInstance>(Me->GetMesh()->GetAnimInstance());
 	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
 	start=true;
+	mState=StartState;
 	
 }
 
@@ -66,7 +67,7 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	if (start)
 	{
 		//시야는 계속작동하니까
-		if (mState==EEnemyState::Damage||mState==EEnemyState::Groggy||mState==EEnemyState::Die)
+		if (mState==EEnemyState::Damage||mState==EEnemyState::Groggy||mState==EEnemyState::Die||mState==EEnemyState::Sleep)
 		{
 		}
 		else
@@ -175,7 +176,6 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 		if (TargetSee) {
 			//공격
 			double DotP = FVector::DotProduct(Me->GetActorForwardVector(), Target->GetActorForwardVector());
-			GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("%f"), DotP));
 			if (DotP > 0.5)
 			{
 				Target->DamagedStamina(Target->currentStamina);
@@ -221,7 +221,14 @@ void UEnemyFsm::RecognitionState(float DeltaTime)
 	//5초안에 별일 없으면 다시 idle;
 	if (recognitiontime_cur>recognitiontime)
 	{
-		ChangeToIdleState();
+		if (PremState==EEnemyState::Idle)
+		{
+			ChangeToIdleState();
+		}
+		else if (PremState==EEnemyState::Sleep)
+		{
+			mState=EEnemyState::Sleep;
+		}
 		return;
 	}
 	else
@@ -290,10 +297,6 @@ void UEnemyFsm::DieState(float DeltaTime)
 void UEnemyFsm::SleepState()
 {
 	//자는중
-	if (mState==EEnemyState::Idle)
-	{
-		mState= EEnemyState::Sleep;
-	}
 }
 
 void UEnemyFsm::GroggyState(float DeltaTime)
@@ -352,6 +355,7 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 		dest = Target->GetActorLocation();
 		Me->AttachUI();
 		Trackingtime_cur=0;
+		anim->StopRecoAnim();
 		mState = EEnemyState::Tracking;
 	}
 	else if (mState==EEnemyState::Damage)
@@ -627,18 +631,23 @@ bool UEnemyFsm::SeeTarget(class AKZGCharacter* TargetChar)
 
 void UEnemyFsm::Recognition(class AKZGCharacter* NewTarget)
 {
-	if (mState==EEnemyState::Idle)
+	if (mState==EEnemyState::Idle||mState==EEnemyState::Sleep)
 	{
+		PremState=mState;
+		anim->PlayRecoAnim();
 		ChangeToRecognitionState(NewTarget);
 	}
 	else if(mState==EEnemyState::Recognition)
 	{
 		if (NewTarget!=Target)
 		{	
+			anim->PlayRecoAnim();
 			ChangeToRecognitionState(NewTarget);
 		}
 		else
 		{
+			anim->StopRecoAnim();
+			//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Stopp!")));
 			ChangeToTrackingState(NewTarget);
 		}
 	}

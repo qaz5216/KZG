@@ -39,6 +39,8 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+
+	void SleepState(float DeltaTime);
 	void IdleState(float DeltaTime);
 	void TrackingState(float DeltaTime);
 	void RecognitionState(float DeltaTime);
@@ -65,6 +67,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
 	class AKZGCharacter *Target;
 	
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	EEnemyState StartState=EEnemyState::Idle;
+	
+
 	void ChangeToTrackingState(class AKZGCharacter* NewTarget);
 
 	// 패트롤 하기 위해서 이동가능 위치를 랜덤하게 찾아주기
