@@ -84,6 +84,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="swingSound")
 	class USoundBase* batSwingSound;
 
+	UPROPERTY(EditDefaultsOnly, Category="AssasinationSound")
+	class USoundBase* assasinationSound;
 public:
 	AKZGCharacter();
 	

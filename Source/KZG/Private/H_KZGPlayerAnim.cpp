@@ -6,6 +6,7 @@
 #include <GameFramework/CharacterMovementComponent.h>
 #include "GameFramework/SpringArmComponent.h"
 #include <Components/BoxComponent.h>
+#include <Kismet/GameplayStatics.h>
 
 
 void UH_KZGPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
@@ -54,8 +55,12 @@ void UH_KZGPlayerAnim::AnimNotify_AttackEnd3()
 
 void UH_KZGPlayerAnim::AnimNotify_SoundStep()
 {
-	if(player) player->PlayStepSoundPlaying();
-	//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("stepSound")));
+	if(player) 
+	{
+		player->PlayStepSoundPlaying();
+		//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("stepSound")));
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), stepSound, player->GetActorLocation(), FRotator(), 0.4f);
+	}
 }
 
 void UH_KZGPlayerAnim::AnimNotify_AssasinationEnd()

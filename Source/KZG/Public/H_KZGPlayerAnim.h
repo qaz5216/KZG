@@ -40,6 +40,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
 	class UAnimMontage* assasinationMontage;
 
+	UPROPERTY(EditDefaultsOnly, Category="StepSound")
+	USoundBase* stepSound;
 
 	UFUNCTION()
 	void AnimNotify_AttackEnd1();
