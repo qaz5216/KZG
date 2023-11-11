@@ -51,6 +51,8 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
 	void StopRecoAnim();
 
+	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
+	void StopGroogyAnim();
 
 
 	// DieEndNoti 이벤트가 들어오면 그때서야 DieState 가 동작하도록 하고싶다.

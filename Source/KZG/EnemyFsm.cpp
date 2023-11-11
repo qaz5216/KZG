@@ -67,7 +67,7 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	if (start)
 	{
 		//시야는 계속작동하니까
-		if (mState==EEnemyState::Damage||mState==EEnemyState::Groggy||mState==EEnemyState::Die||mState==EEnemyState::Sleep)
+		if (mState==EEnemyState::Damage||mState==EEnemyState::Groggy||mState==EEnemyState::Die||mState==EEnemyState::Sleep||mState==EEnemyState::kill)
 		{
 		}
 		else
@@ -106,11 +106,22 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	case EEnemyState::Groggy:
 		GroggyState(DeltaTime);
 		break;
+	case EEnemyState::kill:
+		KillingState(DeltaTime);
+	break; 
 	default:
 		break;
 	}
 	}
 	
+}
+
+void UEnemyFsm::KillingState(float DeltaTime)
+{
+	if (killing)
+	{
+		return;
+	}
 }
 
 void UEnemyFsm::IdleState(float DeltaTime)
@@ -179,8 +190,14 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 			if (DotP > 0.5)
 			{
 				Target->DamagedStamina(Target->currentStamina);
+				ai->StopMovement();
 				anim->PlayKillAnim();
-				ChangeToIdleState();
+				FTimerHandle myTimerHandle;
+				GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
+					{
+						killingplay();
+					}), 4.6, false); // 반복 실행을 하고 싶으면 false 대신 true 대입
+				mState = EEnemyState::kill;
 				return;
 			}
 			else{
@@ -257,7 +274,12 @@ void UEnemyFsm::AttackState(float DeltaTime)
 			if (Target->currentStamina <= 0)
 			{
 				anim->PlayKillAnim();
-				ChangeToIdleState();
+				FTimerHandle myTimerHandle;
+				GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
+					{
+						killingplay();
+					}),4.6 ,false); // 반복 실행을 하고 싶으면 false 대신 true 대입
+				mState=EEnemyState::kill;
 			}
 		}
 		else
@@ -307,14 +329,25 @@ void UEnemyFsm::GroggyState(float DeltaTime)
 		Me->isGroggy=false;
 		Me->StaminaHeal(Me->Stamina_Max);
 		Me->StatUI->EImageHidden();
+		anim->StopGroogyAnim();
 		ChangeToTrackingState(Target);
 	}
 	else
 	{
 		groggytime_cur+=DeltaTime;
+		if (!Me->isGroggy&&groggytime_cur>groggydelaytime)
+		{
+			Me->isGroggy=true;
+		}
 	}
 }
 
+
+void UEnemyFsm::killingplay()
+{
+	killing=false;
+	ChangeToIdleState();
+}
 
 void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 {
@@ -322,6 +355,7 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 	{
 		return;
 	}
+	Me->GetCharacterMovement()->MaxWalkSpeed = runspeed;
 	if (mState==EEnemyState::Tracking)
 	{
 		if (NewTarget != Target)
@@ -412,6 +446,7 @@ void UEnemyFsm::ChangeToIdleState()
 	Target=nullptr;
 	SearchLoc=Me->GetActorLocation();
 	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
+	Me->GetCharacterMovement()->MaxWalkSpeed = speed;
 	mState=EEnemyState::Idle;
 }
 
@@ -439,7 +474,6 @@ void UEnemyFsm::ChangeToGroggyState()
 	{
 		return;
 	}
-	Me->isGroggy=true;
 	groggytime_cur=0;
 	anim->PlayGroogyAnim();
 	mState=EEnemyState::Groggy;

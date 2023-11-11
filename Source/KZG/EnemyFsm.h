@@ -21,6 +21,7 @@ enum class EEnemyState : uint8
 	Die,
 	Sleep,
 	Groggy,
+	kill,
 };
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class KZG_API UEnemyFsm : public UActorComponent
@@ -39,7 +40,7 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-
+	void KillingState(float DeltaTime);
 	void SleepState(float DeltaTime);
 	void IdleState(float DeltaTime);
 	void TrackingState(float DeltaTime);
@@ -69,7 +70,11 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	EEnemyState StartState=EEnemyState::Idle;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
+	bool killing=false;
+
+	void killingplay();
 
 	void ChangeToTrackingState(class AKZGCharacter* NewTarget);
 
@@ -82,7 +87,11 @@ public:
 	class AAIController* ai;
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
-	float speed = 300;
+	float speed = 150;
+	
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float runspeed = 300;
 	
 	float dietime=0;
 
@@ -124,6 +133,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float groggytime=5;
+
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	float groggydelaytime=1;
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float Idletime_cur=0;
