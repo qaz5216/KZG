@@ -7,6 +7,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Components/TextBlock.h"
 #include <UMG/Public/Components/CanvasPanelSlot.h>
+#include <UMG/Public/Components/Image.h>
 
 
 void UH_PlayerInfo::NativeConstruct()
@@ -33,7 +34,7 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			if (staminaCurTime > 5)
 			{
 				player->maxsize -= 5;
-				MySlot->SetSize(FVector2D(player->maxsize,50));
+				MySlot->SetSize(FVector2D(player->maxsize,15));
 				staminaCurTime = 0;
 				//MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));
 			}
@@ -43,7 +44,7 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			if (staminaCurTime > 5)
 			{
 				player->maxsize -= 7;
-				MySlot->SetSize(FVector2D(player->maxsize, 50));
+				MySlot->SetSize(FVector2D(player->maxsize, 15));
 				staminaCurTime = 0;
 				//MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));
 			}
@@ -53,22 +54,15 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			if (staminaCurTime > 5)
 			{
 				player->maxsize -= 10;
-				MySlot->SetSize(FVector2D(player->maxsize, 50));
+				MySlot->SetSize(FVector2D(player->maxsize, 15));
 				staminaCurTime = 0;
 				//MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));
 			}
 		}
 
-		if (player->curHungerP < 30) text_Hungry->SetVisibility(ESlateVisibility::Visible);
-		else if(player->curHungerP >= 30) text_Hungry->SetVisibility(ESlateVisibility::Hidden);
+		if (player->curHungerP < 30) Image_Hungry->SetVisibility(ESlateVisibility::Visible);
+		else Image_Hungry->SetVisibility(ESlateVisibility::Hidden);
 
 	}
 }
 
-void UH_PlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(UH_PlayerInfo, text_Hungry);
-	DOREPLIFETIME(UH_PlayerInfo, staminaCurTime);
-}
