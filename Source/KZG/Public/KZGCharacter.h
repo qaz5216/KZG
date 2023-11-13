@@ -199,6 +199,9 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
 	int32 curWeaponHP = 0;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
+	int32 weaponDamage = 5;
+
 	float camArmLen;
 
 	UPROPERTY(Replicated)

@@ -443,11 +443,11 @@ void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), batHitSound, GetActorLocation(), FRotator(), 0.4f);
 		if (batMesh->IsVisible())
 		{
-			curWeaponHP -= 5;
+			curWeaponHP -= weaponDamage;
 		}
 		else if (axeMesh->IsVisible())
 		{
-			curWeaponHP -= 5;
+			curWeaponHP -= weaponDamage;
 		}
 	}
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
