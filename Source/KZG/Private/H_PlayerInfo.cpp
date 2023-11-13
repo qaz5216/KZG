@@ -7,6 +7,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Components/TextBlock.h"
 #include <UMG/Public/Components/CanvasPanelSlot.h>
+#include <UMG/Public/Components/Image.h>
 
 
 void UH_PlayerInfo::NativeConstruct()
@@ -59,16 +60,9 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 			}
 		}
 
-		if (player->curHungerP < 30) text_Hungry->SetVisibility(ESlateVisibility::Visible);
-		else if(player->curHungerP >= 30) text_Hungry->SetVisibility(ESlateVisibility::Hidden);
+		if (player->curHungerP < 30) Image_Hungry->SetVisibility(ESlateVisibility::Visible);
+		else if(player->curHungerP >= 30) Image_Hungry->SetVisibility(ESlateVisibility::Hidden);
 
 	}
 }
 
-void UH_PlayerInfo::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(UH_PlayerInfo, text_Hungry);
-	DOREPLIFETIME(UH_PlayerInfo, staminaCurTime);
-}
