@@ -20,7 +20,8 @@ public:
 	class UProgressBar* PB_CurStamina;
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
 	class UImage* Image_Hungry;
-	
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget))
+	class UImage* Image_Sleep;
 	UPROPERTY()
 	float staminaCurTime = 0;
 
