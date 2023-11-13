@@ -29,6 +29,9 @@ public:
 	class UAnimMontage* deathMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* deathGrabMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
 	class UAnimMontage* attackMontage2;
 
 	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
@@ -39,6 +42,12 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
 	class UAnimMontage* assasinationMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* pushMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* assasinationDeathMontage;
 
 	UPROPERTY(EditDefaultsOnly, Category="StepSound")
 	USoundBase* stepSound;
@@ -60,6 +69,9 @@ public:
 
 	void finalAttackAnimation3();
 	void playAssasinationAnimation();
+	void PlayDeathGrabMontage();
+	void playAssasinationDeathAnimation();
+	void playPushAnimation();
 
 	class AKZGCharacter* player;
 
