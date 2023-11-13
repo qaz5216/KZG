@@ -156,6 +156,9 @@ public:
 	// 다시 바뀔속도
 	float returnSpeed = 0;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
+	int32 damageNumber = 10;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings" , Replicated)
 	bool bIsCrouching = false;
 
@@ -166,9 +169,7 @@ public:
 	bool bOnDamaged = false;
 
 	UPROPERTY(Replicated)
-	bool bIsAttacking = false;
-
-	UPROPERTY(Replicated)
+	bool bIsAttacking = false;	UPROPERTY(Replicated)
 	bool bIsFinalAttackEnded = false;
 
 	UPROPERTY(Replicated)
@@ -207,7 +208,7 @@ public:
 
 	float stepSoundrad=1000;
 
-	UPROPERTY(BlueprintReadOnly, Category= "Grabbed")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category= "Grabbed")
 	bool bIsgrabbed = false;
 
 	UPROPERTY(Replicated)

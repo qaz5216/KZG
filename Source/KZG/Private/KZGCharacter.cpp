@@ -150,8 +150,35 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, returnSpeed, 5 * DeltaTime);
 
+	
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("attack: %s"), bIsAttacking ? *FString("true") : *FString("false")));
+
+	if (currentStamina <= 0)
+	{
+		if (!bIsDead)
+		{
+			if (bIsgrabbed)
+			{
+				GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+				anim->PlayDeathGrabMontage();
+				if (GrabbedCam->IsActive())
+				{
+					FollowCamera->SetActive(true);
+					GrabbedCam->SetActive(false);
+				}
+				CameraBoom->TargetArmLength = 1000.0f;
+				FollowCamera->SetRelativeLocation(FVector(0, 0, -100));
+				bIsgrabbed = false;
+				bIsDead = true;
+			}
+			else
+			{
+				Server_PlayerDeath();
+				bIsDead = true;
+			}
+		}
+	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::Printf(TEXT("Weapon HP : %d"), curWeaponHP));
 	if (curWeaponHP <= 0)
@@ -197,10 +224,19 @@ void AKZGCharacter::Tick(float DeltaTime)
 			curSP = 0;
 		}
 	}
-	if(currentStamina <= 0) Server_PlayerDeath();
 
 	Server_GrabbedWidget();
 	//Server_ChangeView();
+	if (bIsgrabbed)
+	{
+		GrabbedCam->SetActive(true);
+		FollowCamera->SetActive(false);
+	}
+	else if(!bIsgrabbed)
+	{
+		FollowCamera->SetActive(true);
+		GrabbedCam->SetActive(false);
+	}
 	
 	curHungtime += DeltaTime;
 	if (curHungtime > 1) 
@@ -294,14 +330,14 @@ void AKZGCharacter::PlayStepSoundPlaying()
 
 void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
 {
-	bIsgrabbed=true;
-	bCangrabbed=false;
+	bIsgrabbed = true;
+	bCangrabbed = false;
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
 	GrabbedEnemy=Enemy;
 	FVector meLoc = GetActorLocation();
 	if (Enemy)
 	{
-		Enemy->SetActorLocation(meLoc + GetActorForwardVector() * 5);
+		Enemy->SetActorLocation(meLoc + GetActorForwardVector());
 		Enemy->SetActorRotation((GetActorLocation() - Enemy->GetActorLocation()).Rotation());
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("Grabbedzz"));
@@ -313,6 +349,7 @@ void AKZGCharacter::EscapebyZombie()
 	GrabbedEnemy=nullptr;
 	if (bIsCrouching) bIsCrouching = false;
 	//UE_LOG(LogTemp, Warning, TEXT("Escapezz"));
+	anim->playPushAnimation();
 	FTimerHandle myhandle;
 	GetWorldTimerManager().SetTimer(myhandle, this,&AKZGCharacter::GrabbedDelay, grabbedDelayTime, false);
 }
@@ -320,7 +357,7 @@ void AKZGCharacter::EscapebyZombie()
 void AKZGCharacter::TryEscape()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Tryzz"));
-	DamagedStamina(10);
+	DamagedStamina(damageNumber);
 	GrabbedEnemy->StaminaDamaged(10);
 	if (GrabbedEnemy->Stamina_Cur<=0)
 	{
@@ -344,7 +381,7 @@ void AKZGCharacter::DamagedStamina(int32 value)
 	{
 		currentStamina = 0;
 		//»ç¸ÁÃ³¸®
-
+		
 	}
 }
 
@@ -379,6 +416,7 @@ void AKZGCharacter::Server_PlayerDeath_Implementation()
 void AKZGCharacter::Multicast_PlayerDeath_Implementation()
 {
 	bIsDead = true;
+	anim->PlayDeathAnimation();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -566,16 +604,18 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 	if (bIsDead) return;
 	if (bIsgrabbed && !bCanAssasination)
 	{
-		if (currentStamina > 5)
+		if (currentStamina > 1)
 		{
 			bIsInteractionInput = true;
 			TryEscape();
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
 		}
+		
 	}
 	else if(!bIsgrabbed && !bCanAssasination)
 	{
-		
+		if (axeMesh->IsVisible() == false && batMesh->IsVisible() == false) return;
+
 		FVector MeLoc = GetActorLocation();
 		FVector startloc = MeLoc;
 		startloc.Z += 50.0f;//´«À§Ä¡
@@ -641,12 +681,7 @@ void AKZGCharacter::Multicast_InteractionUnputEnd_Implementation()
 
 void AKZGCharacter::Server_ChangeView_Implementation()
 {
-	Multicast_ChangeView();
-}
-
-void AKZGCharacter::Multicast_ChangeView_Implementation()
-{
-	if (bIsgrabbed) 
+	if (bIsgrabbed)
 	{
 		GrabbedCam->SetActive(true);
 		FollowCamera->SetActive(false);
@@ -656,6 +691,11 @@ void AKZGCharacter::Multicast_ChangeView_Implementation()
 		FollowCamera->SetActive(true);
 		GrabbedCam->SetActive(false);
 	}
+}
+
+void AKZGCharacter::Multicast_ChangeView_Implementation()
+{
+	
 }
 
 //void AKZGCharacter::InputRun()
