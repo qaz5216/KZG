@@ -98,3 +98,20 @@ void UH_KZGPlayerAnim::playAssasinationAnimation()
 {
 	Montage_Play(assasinationMontage);
 }
+
+void UH_KZGPlayerAnim::PlayDeathGrabMontage()
+{
+	Montage_Play(deathGrabMontage);
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("DeathGrab")));
+
+}
+
+void UH_KZGPlayerAnim::playAssasinationDeathAnimation()
+{
+	Montage_Play(assasinationDeathMontage);
+}
+
+void UH_KZGPlayerAnim::playPushAnimation()
+{
+	Montage_Play(pushMontage);
+}
