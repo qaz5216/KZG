@@ -62,6 +62,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* InterAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* throwAction;
+
 public:
 	UPROPERTY(VisibleAnywhere, Category = MySettings, Replicated, meta = (AllowPrivateAccess = "true"))
 	class UH_EWidget* EWidget;
@@ -132,6 +135,9 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ChangeView();
 
+	UFUNCTION()
+	void ThrowAction();
+
 	void JumpInput();
  
 	class UH_KZGPlayerAnim* anim;
@@ -194,10 +200,7 @@ public:
 	int32 curHungerP = 0;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
-	int32 maxWeaponHP = 100;
-
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
-	int32 curWeaponHP = 0;
+	int32 realWeaponHP = 0;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
 	int32 weaponDamage = 5;
@@ -254,6 +257,11 @@ public:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
 	class AEnemy *AssaionateEnemy;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="Weapons")
+	TSubclassOf<class AH_AttackWeapons> BP_BatWeapon; 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="Weapons")
+	TSubclassOf<class AH_AttackWeapons> BP_AxeWeapon; 
 
 	int32 killNum = 0;
 public:

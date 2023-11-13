@@ -29,7 +29,8 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* meshComp;
 	
-	
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
+	int32 WeaponHP = 100;
 	
 
 public:

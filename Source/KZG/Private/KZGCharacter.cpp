@@ -187,8 +187,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 		}
 	}
 
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::Printf(TEXT("Weapon HP : %d"), curWeaponHP));
-	if (curWeaponHP <= 0)
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::Printf(TEXT("Weapon HP : %d"), realWeaponHP));
+	if (realWeaponHP <= 0)
 	{
 		if(axeMesh->IsVisible()) axeMesh->SetVisibility(false);
 		else if(batMesh->IsVisible()) batMesh->SetVisibility(false);
@@ -443,11 +443,11 @@ void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), batHitSound, GetActorLocation(), FRotator(), 0.4f);
 		if (batMesh->IsVisible())
 		{
-			curWeaponHP -= weaponDamage;
+			realWeaponHP -= weaponDamage;
 		}
 		else if (axeMesh->IsVisible())
 		{
-			curWeaponHP -= weaponDamage;
+			realWeaponHP -= weaponDamage;
 		}
 	}
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -469,7 +469,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));\
 			batMesh->SetVisibility(true);
-			curWeaponHP = maxWeaponHP;
+			realWeaponHP = Weapon->WeaponHP;
 			if (axeMesh->IsVisible())
 			{
 				axeMesh->SetVisibility(false);
@@ -479,7 +479,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
 			axeMesh->SetVisibility(true);
-			curWeaponHP = maxWeaponHP;
+			realWeaponHP = Weapon->WeaponHP;
 			if (batMesh->IsVisible())
 			{
 				batMesh->SetVisibility(false);
@@ -516,6 +516,8 @@ void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Started, this, &AKZGCharacter::Server_InteractionInput);
 		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Completed, this, &AKZGCharacter::Server_InteractionInputEnd);
+
+		EnhancedInputComponent->BindAction(throwAction, ETriggerEvent::Triggered, this, &AKZGCharacter::ThrowAction);
 
 	}
 }
@@ -703,6 +705,37 @@ void AKZGCharacter::Server_ChangeView_Implementation()
 void AKZGCharacter::Multicast_ChangeView_Implementation()
 {
 	
+}
+
+void AKZGCharacter::ThrowAction()
+{
+	if (axeMesh->IsVisible())
+	{
+		axeMesh->SetVisibility(false);
+		FActorSpawnParameters Param;
+		Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
+		AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_AxeWeapon,GetActorLocation() + GetActorForwardVector() * 100, FRotator() ,Param);
+		if (weapon)
+		{
+			weapon->WeaponHP = realWeaponHP;
+
+		}
+
+	}
+	else if (batMesh->IsVisible())
+	{
+		batMesh->SetVisibility(false);
+		FActorSpawnParameters Param;
+		Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_BatWeapon, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
+
+		if (weapon)
+		{
+			weapon->WeaponHP = realWeaponHP;
+
+		}
+	}
 }
 
 //void AKZGCharacter::InputRun()
