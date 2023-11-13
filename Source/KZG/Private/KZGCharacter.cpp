@@ -21,6 +21,9 @@
 #include "H_FoodActor.h"
 #include <Components/SpotLightComponent.h>
 #include "H_AttackWeapons.h"
+#include <Components/AudioComponent.h>
+#include <Sound/SoundCue.h>
+
 
 //////////////////////////////////////////////////////////////////////////
 // AKZGCharacter
@@ -106,6 +109,17 @@ AKZGCharacter::AKZGCharacter()
 	SeeScene->SetupAttachment(GetMesh());
 	SeeScene->SetRelativeLocation(FVector(0,0,50));
 
+	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	audioComp->SetupAttachment(GetCapsuleComponent());
+
+	static ConstructorHelpers::FObjectFinder<USoundCue> DefaultBGMFinder(TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Dark_Music_Pack/WAV/By_DrBorowski/BGM_Nomal_Cue.BGM_Nomal_Cue'"));
+	if (DefaultBGMFinder.Succeeded())
+	{
+		DefaultBGM = DefaultBGMFinder.Object;
+		audioComp->SetSound(DefaultBGM);
+	}
+	audioComp->Play();
+
 	//static ConstructorHelpers::FClassFinder<UH_PlayerInfo> TempInfo(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/CYS/UI_CYS_PlayerInfo2.UI_CYS_PlayerInfo2_C'"));
 
 	//if (TempInfo.Succeeded())
@@ -158,6 +172,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, returnSpeed, 5 * DeltaTime);
 
 	
+	
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("grab: %s"), bIsgrabbed ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("attack: %s"), bIsAttacking ? *FString("true") : *FString("false")));
 
@@ -207,7 +222,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 		curSP += DeltaTime;
 		if (curSP > 1)
 		{
-			currentStamina -= recoveryPoint;
+			DamagedStamina(recoveryPoint);
+			//currentStamina -= recoveryPoint;
 			curSP = 0;
 		}
 	}
@@ -217,7 +233,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 		curSP += DeltaTime;
 		if (curSP > recoverTime)
 		{
-			currentStamina += recoveryPoint * 10;
+			DamagedStamina(recoveryPoint);
+			//currentStamina += recoveryPoint * 10;
 			curSP = 0;
 		}
 	}
@@ -227,7 +244,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 		curSP += DeltaTime;
 		if (curSP > recoverTime)
 		{
-			currentStamina += recoveryPoint;
+			DamagedStamina(recoveryPoint);
+			//currentStamina += recoveryPoint;
 			curSP = 0;
 		}
 	}
@@ -238,9 +256,11 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		GrabbedCam->SetActive(true);
 		FollowCamera->SetActive(false);
+		SwitchBGMtoGrab();
 	}
 	else if(!bIsgrabbed)
 	{
+		SwitchBGMtoDefault();
 		FollowCamera->SetActive(true);
 		GrabbedCam->SetActive(false);
 	}
@@ -315,6 +335,118 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 }
 
+void AKZGCharacter::SwitchBGMtoDetecting()
+{
+	// Check if the audio component and the new background music sound cue are valid
+	if (audioComp && !bIsBGMDetecting)
+	{
+		// Stop the currently playing background music
+		audioComp->Stop();
+		bIsBGMDetecting = true;
+		if(bIsBGMDiscover) bIsBGMDiscover = false;
+		if(bIsBGMGrab) bIsBGMGrab = false;
+		if(bIsBGMDefault) bIsBGMDefault = false;
+
+		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
+		USoundCue* LoadCue = LoadObject<USoundCue> (nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Dark_Music_Pack/WAV/BGM_ChaseStart_Cue.BGM_ChaseStart_Cue'"));
+		if (LoadCue)
+		{
+			audioComp->SetSound(LoadCue);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Detecting BGM Error"));
+		}
+
+		// Start playing the new background music
+		audioComp->Play();
+	}
+}
+
+
+void AKZGCharacter::SwitchBGMtoDefault()
+{
+	// Check if the audio component and the new background music sound cue are valid
+	if (audioComp && !bIsBGMDefault)
+	{
+		// Stop the currently playing background music
+		audioComp->Stop();
+
+		bIsBGMDefault = true;
+		if (bIsBGMDiscover) bIsBGMDiscover = false;
+		if (bIsBGMGrab) bIsBGMGrab = false;
+		if (bIsBGMDetecting) bIsBGMDetecting = false;
+		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
+		if (DefaultBGM)
+		{
+			audioComp->SetSound(DefaultBGM);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Default BGM Error"));
+		}
+
+		// Start playing the new background music
+		audioComp->Play();
+	}
+}
+
+void AKZGCharacter::SwitchBGMtoDiscover()
+{
+	// Check if the audio component and the new background music sound cue are valid
+	if (audioComp && !bIsBGMDiscover)
+	{
+		// Stop the currently playing background music
+		audioComp->Stop();
+		bIsBGMDiscover = true;
+		if (bIsBGMDefault) bIsBGMDefault = false;
+		if (bIsBGMGrab) bIsBGMGrab = false;
+		if (bIsBGMDetecting) bIsBGMDetecting = false;
+		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
+		USoundCue* LoadCue = LoadObject<USoundCue>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Trailer/BGM_FindZombie_Cue.BGM_FindZombie_Cue'"));
+		if (LoadCue)
+		{
+			audioComp->SetSound(LoadCue);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Detecting BGM Error"));
+		}
+
+		// Start playing the new background music
+		audioComp->Play();
+	}
+}
+
+void AKZGCharacter::SwitchBGMtoGrab()
+{
+	// Check if the audio component and the new background music sound cue are valid
+	if (audioComp && !bIsBGMGrab)
+	{
+		// Stop the currently playing background music
+		audioComp->Stop();
+		bIsBGMGrab = true;
+		if (bIsBGMDefault) bIsBGMDefault = false;
+		if (bIsBGMDiscover) bIsBGMDiscover = false;
+		if (bIsBGMDetecting) bIsBGMDetecting = false;
+		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
+		USoundCue* LoadCue = LoadObject<USoundCue>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Trailer/BGM_Discover_Cue.BGM_Discover_Cue'"));
+		if (LoadCue)
+		{
+			audioComp->SetSound(LoadCue);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Detecting BGM Error"));
+		}
+
+		// Start playing the new background music
+		audioComp->Play();
+	}
+}
+
+
+
 void AKZGCharacter::PlayStepSoundPlaying()
 {
 	TArray<FOverlapResult> hitInfos;
@@ -326,6 +458,7 @@ void AKZGCharacter::PlayStepSoundPlaying()
 			if (AEnemy* hitEnemy = Cast<AEnemy>(hitInfo.GetActor()))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("RecoEnemy"));
+				SwitchBGMtoDetecting();
 				hitEnemy->FSM->Recognition(this);
 			}
 		}
@@ -613,7 +746,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 	if (bIsDead) return;
 	if (bIsgrabbed && !bCanAssasination)
 	{
-		if (currentStamina > 1)
+		if (currentStamina > 10)
 		{
 			bIsInteractionInput = true;
 			TryEscape();

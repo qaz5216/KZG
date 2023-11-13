@@ -95,6 +95,23 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="AssasinationSound")
 	class USoundBase* assasinationSound;
+
+	UPROPERTY(EditDefaultsOnly, Category="audioComp")
+	class UAudioComponent* audioComp;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Audio")
+    class USoundCue* DefaultBGM; // DefaultBGM 변수를 추가합니다.
+
+	void SwitchBGMtoDetecting();
+	void SwitchBGMtoDefault();
+	void SwitchBGMtoDiscover();
+	void SwitchBGMtoGrab();
+
+	bool bIsBGMDetecting = false;
+	bool bIsBGMDefault = true;
+	bool bIsBGMDiscover = false;
+	bool bIsBGMGrab = false;
+
 public:
 	AKZGCharacter();
 	
@@ -204,6 +221,9 @@ public:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
 	int32 weaponDamage = 5;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
+	int32 pursuitEnemy = 0;
 
 	float camArmLen;
 

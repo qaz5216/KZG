@@ -59,7 +59,7 @@ void UH_KZGPlayerAnim::AnimNotify_SoundStep()
 	{
 		player->PlayStepSoundPlaying();
 		//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Red, FString::Printf(TEXT("stepSound")));
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), stepSound, player->GetActorLocation(), FRotator(), 0.4f);
+		//UGameplayStatics::PlaySoundAtLocation(GetWorld(), stepSound, player->GetActorLocation(), FRotator(), 0.4f);
 	}
 }
 
