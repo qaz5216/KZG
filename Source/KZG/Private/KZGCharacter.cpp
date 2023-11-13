@@ -106,13 +106,13 @@ AKZGCharacter::AKZGCharacter()
 	SeeScene->SetupAttachment(GetMesh());
 	SeeScene->SetRelativeLocation(FVector(0,0,50));
 
-	static ConstructorHelpers::FClassFinder<UH_PlayerInfo> TempInfo(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/CYS/UI_CYS_PlayerInfo2.UI_CYS_PlayerInfo2_C'"));
+	//static ConstructorHelpers::FClassFinder<UH_PlayerInfo> TempInfo(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/CYS/UI_CYS_PlayerInfo2.UI_CYS_PlayerInfo2_C'"));
 
-	if (TempInfo.Succeeded())
-	{
-		// Assign the found class to a variable
-		BP_InfoWidget = TempInfo.Class;
-	}
+	//if (TempInfo.Succeeded())
+	//{
+	//	// Assign the found class to a variable
+	//	BP_InfoWidget = TempInfo.Class;
+	//}
 	bReplicates = true;
 }
 

@@ -273,7 +273,7 @@ public:
 	//UFUNCTION(NetMulticast, Reliable)
 	//void Multicast_GrabbedWidget();
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Death")
 	bool bIsDead = false;
 
 	FVector CameraLocation;
