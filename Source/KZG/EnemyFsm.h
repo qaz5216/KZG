@@ -65,11 +65,17 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
 	class AEnemy *Me;
 
+	UPROPERTY(EditAnywhere, Category = "FSM")
+	int32 attackdamage=10;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
 	class AKZGCharacter *Target;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
+	bool bAssassinDie=false;
+
 	UPROPERTY(EditAnywhere, Category = "FSM")
-	EEnemyState StartState=EEnemyState::Idle;
+		EEnemyState StartState = EEnemyState::Idle;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
 	bool killing=false;
@@ -77,6 +83,9 @@ public:
 	void killingplay();
 
 	void ChangeToTrackingState(class AKZGCharacter* NewTarget);
+
+	void ChangeToKillState();
+
 
 	// 패트롤 하기 위해서 이동가능 위치를 랜덤하게 찾아주기
 	bool GetRandomPosInNavMesh(FVector center, float radius, FVector& dest);
@@ -106,6 +115,8 @@ public:
 	void ChangeToDamageState();
 
 	void ChangeToDieState();
+
+	void ChangeToAssasinDieState();
 
 	void ChangeToSleepState();
 
@@ -147,7 +158,7 @@ public:
 	float damagetime_cur=0;
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
-	float damagetime=3;
+	float damagetime=1.7;
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
 	float Trackingtime_cur=0;

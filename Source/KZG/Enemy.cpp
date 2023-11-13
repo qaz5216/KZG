@@ -75,8 +75,8 @@ void AEnemy::StaminaDamaged(int32 value)
 	{
 		Stamina_Cur = Stamina_Cur - value;
 		int32 index = FMath::RandRange(0, 1);
-		FString sectionName = FString::Printf(TEXT("Stamina%d"), index);
-		FSM->anim->PlayStaminaAnim(FName(*sectionName));
+		//FString sectionName = FString::Printf(TEXT("Stamina%d"), index);
+		//FSM->anim->PlayStaminaAnim(FName(*sectionName));
 	}
 	else
 	{

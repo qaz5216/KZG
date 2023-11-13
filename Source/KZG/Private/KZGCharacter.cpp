@@ -521,7 +521,10 @@ void AKZGCharacter::DamagedStamina(int32 value)
 	{
 		currentStamina = 0;
 		//»ç¸ÁÃ³¸®
-		
+		if (GrabbedEnemy!=nullptr)
+		{
+			GrabbedEnemy->FSM->ChangeToKillState();
+		}
 	}
 }
 
@@ -804,7 +807,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 			AssaionateEnemy->SetActorRotation(GetActorForwardVector().Rotation());
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), assasinationSound ,GetActorLocation(), FRotator() , 0.4f);
 
-			AssaionateEnemy->FSM->ChangeToDieState();
+			AssaionateEnemy->FSM->ChangeToAssasinDieState();
 		}
 	}
 }

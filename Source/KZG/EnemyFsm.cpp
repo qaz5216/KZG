@@ -201,6 +201,10 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 				return;
 			}
 			else{
+			if (Target->bIsgrabbed)
+			{
+				return;
+			}
 			Trackingtime_cur=0;
 			ChangeToAttackState();
 			return;
@@ -267,7 +271,7 @@ void UEnemyFsm::AttackState(float DeltaTime)
 		}
 		if (attacktime_cur>attacktime)
 		{
-			Target->DamagedStamina(1);
+			Target->DamagedStamina(attackdamage);
 			// player->damagedstamina(int32 value)
 			//UE_LOG(LogTemp, Warning, TEXT("Attack remain Sta=%d"),Target->currentStamina);
 			attacktime_cur=0;
@@ -345,8 +349,8 @@ void UEnemyFsm::GroggyState(float DeltaTime)
 
 void UEnemyFsm::killingplay()
 {
-	killing=false;
-	ChangeToIdleState();
+	//killing=false;
+	//ChangeToIdleState();
 }
 
 void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
@@ -408,6 +412,17 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 		Trackingtime_cur = 0;
 		mState = EEnemyState::Tracking;
 	}
+}
+
+void UEnemyFsm::ChangeToKillState()
+{
+	anim->PlayKillAnim();
+	FTimerHandle myTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
+		{
+			killingplay();
+		}), 4.6, false); // 반복 실행을 하고 싶으면 false 대신 true 대입
+	mState = EEnemyState::kill;
 }
 
 bool UEnemyFsm::GetRandomPosInNavMesh(FVector center, float radius, FVector& Rdest)
@@ -537,6 +552,17 @@ void UEnemyFsm::ChangeToDieState()
 	anim->PlayDieAnim();
 	Me->HP_Cur=0;
 	dietime=0;
+}
+
+void UEnemyFsm::ChangeToAssasinDieState()
+{
+	if (mState == EEnemyState::Die)
+		return;
+	mState = EEnemyState::Die;
+	anim->PlayAssaineDieAnim();
+	bAssassinDie = true;
+	Me->HP_Cur = 0;
+	dietime = 0;
 }
 
 void UEnemyFsm::ChangeToSleepState()

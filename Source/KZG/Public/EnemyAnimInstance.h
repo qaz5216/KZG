@@ -39,6 +39,10 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
 	void PlayDieAnim();
+	
+	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
+	void PlayAssaineDieAnim();
+
 	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
 	void PlayGroogyAnim();
 

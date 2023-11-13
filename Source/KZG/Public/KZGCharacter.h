@@ -180,7 +180,7 @@ public:
 	float returnSpeed = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
-	int32 damageNumber = 10;
+	int32 damageNumber = 5;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Settings" , Replicated)
 	bool bIsCrouching = false;
