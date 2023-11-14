@@ -181,7 +181,7 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("NoSee"));
+		//UE_LOG(LogTemp, Warning, TEXT("NoSee"));
 	}
 	if (FVector::Dist(Me->GetActorLocation(), dest) < 100.0f) {
 		if (TargetSee) {
@@ -233,7 +233,7 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 	}
 	else
 	{
-		//UE_LOG(LogTemp,Warning,TEXT("Fail Loc"));
+		//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("FailLoc")));
 	}
 }
 
@@ -442,7 +442,10 @@ void UEnemyFsm::FindPathByAI(FVector destination, FPathFindingResult& result)
 
 		// navigation 시스템 세팅
 		auto ns = UNavigationSystemV1::GetNavigationSystem(GetWorld());
-
+		if (ns!=nullptr)
+		{
+			//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("nsNull")));
+		}
 		FPathFindingQuery query;
 		FAIMoveRequest req;
 		req.SetGoalLocation(destination);
