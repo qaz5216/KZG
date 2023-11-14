@@ -179,6 +179,12 @@ public:
 	// 다시 바뀔속도
 	float returnSpeed = 0;
 
+	int32 comboIndex = 0;
+
+	bool bComboTime = false;
+
+	float curComTime = 0;
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	int32 damageNumber = 5;
 
