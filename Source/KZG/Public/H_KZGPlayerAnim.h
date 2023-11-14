@@ -49,6 +49,15 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
 	class UAnimMontage* assasinationDeathMontage;
 
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* comboMontage1;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* comboMontage2;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* comboMontage3;
+
 	UPROPERTY(EditDefaultsOnly, Category="StepSound")
 	USoundBase* stepSound;
 
@@ -63,9 +72,27 @@ public:
 	UFUNCTION()
 	void AnimNotify_AssasinationEnd();
 
+	UFUNCTION()
+	void AnimNotify_Combo1();
+	UFUNCTION()
+	void AnimNotify_Combo2();
+	UFUNCTION()
+	void AnimNotify_Combo3();
+
+	UFUNCTION()
+	void AnimNotify_Combo1End();
+	UFUNCTION()
+	void AnimNotify_Combo2End();
+	UFUNCTION()
+	void AnimNotify_Combo3End();
+
 	void PlayAttackAnimation2();
 	void PlayAttackAnimation3();
 	void PlayDeathAnimation();
+
+	void PlayComboAnimation1();
+	void PlayComboAnimation2();
+	void PlayComboAnimation3();
 
 	void finalAttackAnimation3();
 	void playAssasinationAnimation();
