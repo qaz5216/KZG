@@ -24,31 +24,51 @@ void AAirPlane::BeginPlay()
 void AAirPlane::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	FVector P0 = GetActorLocation();
-	if (bisdrop)
-	{	
-		FVector direction = EndLoc - P0;
-		direction.Normalize();
-		FVector vt = direction * Speed * DeltaTime;
-		FVector P = P0 + vt;
-		if (FVector::Dist(P, EndLoc) < 300.0f)
+	if (bsettingend)
+	{
+		FVector P0 = GetActorLocation();
+		if (bisdrop)
 		{
-			Destroy();
+			FVector direction = EndLoc - P0;
+			direction.Normalize();
+			FVector vt = direction * Speed * DeltaTime;
+			FVector P = P0 + vt;
+			if (FVector::Dist(P, EndLoc) < 300.0f)
+			{
+				Destroy();
+			}
+			SetActorLocation(P);
 		}
-		SetActorLocation(P);
+		else
+		{	//¶³±¼ÁöÁ¡À¸·Î °¡¶ó
+			FVector direction = DropLoc - P0;
+			direction.Normalize();
+			FVector vt = direction * Speed * DeltaTime;
+			FVector P = P0 + vt;
+			if (FVector::Dist(P, DropLoc) < 300.0f)
+			{
+				drop();
+			}
+			SetActorLocation(P);
+		}
+	}
+}
+
+
+void AAirPlane::MySetting(FVector newStartLoc, FVector newDropLoc, TSubclassOf<class ADropProp> newprop)
+{
+	StartLoc=newStartLoc;
+	DropLoc=newDropLoc;
+	if (newprop!=nullptr)
+	{
+		prop = newprop;
 	}
 	else
-	{	//¶³±¼ÁöÁ¡À¸·Î °¡¶ó
-		FVector direction=DropLoc-P0;
-		direction.Normalize();
-		FVector vt=direction*Speed*DeltaTime;
-		FVector P=P0+vt;
-		if (FVector::Dist(P, DropLoc) < 300.0f)
-		{
-			drop();
-		}
-		SetActorLocation(P);
+	{
+		return;
 	}
+	EndLoc=DropLoc+DropLoc-StartLoc;
+	bsettingend=true;
 }
 
 void AAirPlane::drop()
