@@ -204,6 +204,7 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	bool bStartAssaination=false;
 
+
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
 	int32 playerStamina = 500;
 

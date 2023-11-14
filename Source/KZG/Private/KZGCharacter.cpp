@@ -676,6 +676,7 @@ void AKZGCharacter::Move(const FInputActionValue& Value)
 		if(bIsAttacking) return;
 		if(bIsDead) return;
 		if (bStartAssaination) return;
+		if (bIsFinalAttackEnded) return;
 
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
