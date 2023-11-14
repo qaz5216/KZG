@@ -552,6 +552,8 @@ void UEnemyFsm::ChangeToDieState()
 	anim->PlayDieAnim();
 	Me->HP_Cur=0;
 	dietime=0;
+	Me->CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//Me->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void UEnemyFsm::ChangeToAssasinDieState()
@@ -563,6 +565,8 @@ void UEnemyFsm::ChangeToAssasinDieState()
 	bAssassinDie = true;
 	Me->HP_Cur = 0;
 	dietime = 0;
+	Me->CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//Me->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
 void UEnemyFsm::ChangeToSleepState()

@@ -40,6 +40,14 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MySettings")
 	TSubclassOf<class ADropProp> prop;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MySettings")
+	bool bsettingend=false;
+	
 
+	UFUNCTION(BlueprintCallable)
+	void MySetting(FVector newStartLoc, FVector newDropLoc, TSubclassOf<class ADropProp> newprop);
+
+	UFUNCTION()
 	void drop();
 };
