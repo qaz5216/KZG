@@ -176,7 +176,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	
 	
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("combotime: %s"), bComboTime ? *FString("true") : *FString("false")));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("bCanAssasination: %s"), bCanAssasination ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("crouch: %s"), bIsCrouching ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("comboIndex: %d"), comboIndex));
 
@@ -250,7 +250,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 		curSP += DeltaTime;
 		if (curSP > 1)
 		{
-			DamagedStamina(recoveryPoint);
+			DamagedStamina(recoveryPoint * 2);
 			//currentStamina -= recoveryPoint;
 			curSP = 0;
 		}
@@ -261,8 +261,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 		curSP += DeltaTime;
 		if (curSP > recoverTime)
 		{
-			DamagedStamina(recoveryPoint);
-			//currentStamina += recoveryPoint * 10;
+			//DamagedStamina(recoveryPoint);
+			currentStamina += recoveryPoint * 10;
 			curSP = 0;
 		}
 	}
