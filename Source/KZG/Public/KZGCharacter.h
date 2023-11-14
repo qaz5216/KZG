@@ -333,5 +333,10 @@ public:
 
 	UFUNCTION()
 	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="SetLocation")
+	float restartLoc = 0.1f;
+
+	void SetPlayerLocationToFirst();
 };
 
