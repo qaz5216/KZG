@@ -134,6 +134,9 @@ void AKZGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	FTimerHandle ActorHandle;
+	GetWorldTimerManager().SetTimer(ActorHandle, this, &AKZGCharacter::SetPlayerLocationToFirst, restartLoc, false);
+
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -662,6 +665,11 @@ void AKZGCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedCompone
 {
 	bIsOverlapping = false;
 
+}
+
+void AKZGCharacter::SetPlayerLocationToFirst()
+{
+	SetActorLocation(FVector(-6113.896223, 17158.341344, 4187.370783));
 }
 
 void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
