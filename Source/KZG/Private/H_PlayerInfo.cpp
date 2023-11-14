@@ -33,7 +33,7 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		{
 			if (staminaCurTime > 5)
 			{
-				player->maxsize -= 5;
+				player->maxsize -= 3;
 				MySlot->SetSize(FVector2D(player->maxsize,15));
 				staminaCurTime = 0;
 				//MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));
@@ -43,7 +43,7 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		{
 			if (staminaCurTime > 5)
 			{
-				player->maxsize -= 7;
+				player->maxsize -= 5;
 				MySlot->SetSize(FVector2D(player->maxsize, 15));
 				staminaCurTime = 0;
 				//MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));
@@ -53,7 +53,7 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		{
 			if (staminaCurTime > 5)
 			{
-				player->maxsize -= 10;
+				player->maxsize -= 7;
 				MySlot->SetSize(FVector2D(player->maxsize, 15));
 				staminaCurTime = 0;
 				//MySlot->SetSize(MySlot->GetSize() - FVector2D(5, 0));

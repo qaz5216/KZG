@@ -67,7 +67,7 @@ void UH_KZGPlayerAnim::AnimNotify_AssasinationEnd()
 {
 	if (player)
 	{
-		//player->bCanAssasination = false;
+		player->bCanAssasination = false;
 		player->bStartAssaination = false;
 	}
 }
