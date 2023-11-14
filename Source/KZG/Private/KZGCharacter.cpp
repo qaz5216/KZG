@@ -341,11 +341,11 @@ void AKZGCharacter::SwitchBGMtoDetecting()
 	if (audioComp && !bIsBGMDetecting)
 	{
 		// Stop the currently playing background music
-		audioComp->Stop();
 		bIsBGMDetecting = true;
 		if(bIsBGMDiscover) bIsBGMDiscover = false;
 		if(bIsBGMGrab) bIsBGMGrab = false;
 		if(bIsBGMDefault) bIsBGMDefault = false;
+		audioComp->Stop();
 
 		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
 		USoundCue* LoadCue = LoadObject<USoundCue> (nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Dark_Music_Pack/WAV/BGM_ChaseStart_Cue.BGM_ChaseStart_Cue'"));
@@ -370,12 +370,14 @@ void AKZGCharacter::SwitchBGMtoDefault()
 	if (audioComp && !bIsBGMDefault)
 	{
 		// Stop the currently playing background music
-		audioComp->Stop();
 
 		bIsBGMDefault = true;
 		if (bIsBGMDiscover) bIsBGMDiscover = false;
 		if (bIsBGMGrab) bIsBGMGrab = false;
 		if (bIsBGMDetecting) bIsBGMDetecting = false;
+
+		audioComp->Stop();
+
 		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
 		if (DefaultBGM)
 		{
@@ -397,11 +399,13 @@ void AKZGCharacter::SwitchBGMtoDiscover()
 	if (audioComp && !bIsBGMDiscover)
 	{
 		// Stop the currently playing background music
-		audioComp->Stop();
 		bIsBGMDiscover = true;
 		if (bIsBGMDefault) bIsBGMDefault = false;
 		if (bIsBGMGrab) bIsBGMGrab = false;
 		if (bIsBGMDetecting) bIsBGMDetecting = false;
+
+		audioComp->Stop();
+
 		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
 		USoundCue* LoadCue = LoadObject<USoundCue>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Trailer/BGM_FindZombie_Cue.BGM_FindZombie_Cue'"));
 		if (LoadCue)
@@ -424,11 +428,13 @@ void AKZGCharacter::SwitchBGMtoGrab()
 	if (audioComp && !bIsBGMGrab)
 	{
 		// Stop the currently playing background music
-		audioComp->Stop();
 		bIsBGMGrab = true;
 		if (bIsBGMDefault) bIsBGMDefault = false;
 		if (bIsBGMDiscover) bIsBGMDiscover = false;
 		if (bIsBGMDetecting) bIsBGMDetecting = false;
+
+		audioComp->Stop();
+
 		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
 		USoundCue* LoadCue = LoadObject<USoundCue>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Trailer/BGM_Discover_Cue.BGM_Discover_Cue'"));
 		if (LoadCue)
@@ -458,8 +464,10 @@ void AKZGCharacter::PlayStepSoundPlaying()
 			if (AEnemy* hitEnemy = Cast<AEnemy>(hitInfo.GetActor()))
 			{
 				UE_LOG(LogTemp, Warning, TEXT("RecoEnemy"));
-				SwitchBGMtoDetecting();
 				hitEnemy->FSM->Recognition(this);
+
+				SwitchBGMtoDetecting();
+
 			}
 		}
 	}
@@ -667,6 +675,7 @@ void AKZGCharacter::Move(const FInputActionValue& Value)
 		if(bIsgrabbed) return;
 		if(bIsAttacking) return;
 		if(bIsDead) return;
+		if (bStartAssaination) return;
 
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
