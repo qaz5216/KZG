@@ -207,7 +207,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		curComTime+= DeltaTime;
 
-		if (curComTime > 4)
+		if (curComTime > curComboSec)
 		{
 			bComboTime = false;
 			curComTime = 0;
@@ -218,7 +218,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		curComTime += DeltaTime;
 
-		if (curComTime > 4)
+		if (curComTime > curComboSec)
 		{
 			bComboTime = false;
 			curComTime = 0;
@@ -764,9 +764,9 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
 		boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		UGameplayStatics::PlaySoundAtLocation(GetWorld(), batSwingSound, GetActorLocation(), FRotator(), 1.0f);
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(), batSwingSound, GetActorLocation(), FRotator(), 2.0f);
 		FTimerHandle CollisionTimerHandle;
-		GetWorldTimerManager().SetTimer(CollisionTimerHandle, this, &AKZGCharacter::AttackCollisionOff, 0.1f, false);
+		GetWorldTimerManager().SetTimer(CollisionTimerHandle, this, &AKZGCharacter::AttackCollisionOff, 0.03f, false);
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZHitBase);
 		
 		anim->PlayComboAnimation1();

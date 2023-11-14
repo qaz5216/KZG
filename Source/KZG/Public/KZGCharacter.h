@@ -179,6 +179,9 @@ public:
 	// 다시 바뀔속도
 	float returnSpeed = 0;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combo")
+	int32 curComboSec = 3;
+
 	int32 comboIndex = 0;
 
 	bool bComboTime = false;
