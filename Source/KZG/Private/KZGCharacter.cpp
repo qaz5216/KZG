@@ -173,9 +173,9 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	
 	
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("combotime: %s"), bComboTime ? *FString("true") : *FString("false")));
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("crouch: %s"), bIsCrouching ? *FString("true") : *FString("false")));
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("comboIndex: %d"), comboIndex));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("combotime: %s"), bComboTime ? *FString("true") : *FString("false")));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("crouch: %s"), bIsCrouching ? *FString("true") : *FString("false")));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("comboIndex: %d"), comboIndex));
 
 	if (currentStamina <= 0)
 	{
@@ -207,7 +207,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		curComTime+= DeltaTime;
 
-		if (curComTime > 2)
+		if (curComTime > 4)
 		{
 			bComboTime = false;
 			curComTime = 0;
@@ -218,7 +218,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		curComTime += DeltaTime;
 
-		if (curComTime > 2)
+		if (curComTime > 4)
 		{
 			bComboTime = false;
 			curComTime = 0;
@@ -561,20 +561,6 @@ void AKZGCharacter::DamagedStamina(int32 value)
 	}
 }
 
-void AKZGCharacter::Comobo1End()
-{
-	
-}
-
-void AKZGCharacter::Comobo2End()
-{
-
-}
-
-void AKZGCharacter::Comobo3End()
-{
-
-}
 
 void AKZGCharacter::Server_GrabbedWidget_Implementation()
 {
@@ -651,7 +637,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 
 		if (OtherActor->GetName().Contains(FString(TEXT("Bat"))))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));\
+			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
 			batMesh->SetVisibility(true);
 			realWeaponHP = Weapon->WeaponHP;
 			if (axeMesh->IsVisible())
@@ -661,7 +647,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 		}
 		else if (OtherActor->GetName().Contains(FString(TEXT("Axe"))))
 		{
-			GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
+			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
 			axeMesh->SetVisibility(true);
 			realWeaponHP = Weapon->WeaponHP;
 			if (batMesh->IsVisible())

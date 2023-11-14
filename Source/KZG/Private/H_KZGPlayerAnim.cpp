@@ -75,30 +75,37 @@ void UH_KZGPlayerAnim::AnimNotify_AssasinationEnd()
 void UH_KZGPlayerAnim::AnimNotify_Combo1()
 {	
 	player->comboIndex = 1;
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("Combo1")));
+
 }
 
 void UH_KZGPlayerAnim::AnimNotify_Combo2()
 {
 	player->comboIndex = 2;
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("Combo2")));
+
 }
 
 void UH_KZGPlayerAnim::AnimNotify_Combo3()
 {
 	player->comboIndex = 3;
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("Combo3")));
+
 }
 
 void UH_KZGPlayerAnim::AnimNotify_Combo1End()
 {
 	player->bComboTime = true;
 	player->bIsAttacking = false;
-	player->comboIndex++;
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("ComboEnd1")));
+
 }
 
 void UH_KZGPlayerAnim::AnimNotify_Combo2End()
 {
 	player->bComboTime = true;
 	player->bIsAttacking = false;
-	player->comboIndex++;
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("ComboEnd2")));
 
 }
 
@@ -106,7 +113,8 @@ void UH_KZGPlayerAnim::AnimNotify_Combo3End()
 {
 	player->bComboTime = true;
 	player->bIsAttacking = false;
-	player->comboIndex = 0;;
+	player->comboIndex = 0;
+	GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Green, FString::Printf(TEXT("ComboEnd3")));
 
 
 }

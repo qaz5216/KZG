@@ -294,10 +294,6 @@ public:
 public:
 	void DamagedStamina(int32 value);
 
-	void Comobo1End();
-	void Comobo2End();
-	void Comobo3End();
-
 	UFUNCTION(Server, Reliable)
 	void Server_GrabbedWidget();
 
