@@ -176,7 +176,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	
 	
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("bCanAssasination: %s"), bCanAssasination ? *FString("true") : *FString("false")));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("bCanAssasination: %s"), bCanAssasination ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("crouch: %s"), bIsCrouching ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("comboIndex: %d"), comboIndex));
 
@@ -350,8 +350,16 @@ void AKZGCharacter::Tick(float DeltaTime)
 					index=i;
 				}
 			}
-			bCanAssasination=true;
-			AssaionateEnemy = hitEnemys[index];
+			if (WhatEnemy[index] < 100)
+			{
+				bCanAssasination=true;
+				AssaionateEnemy = hitEnemys[index];
+			}
+			else
+			{
+				bCanAssasination = false;
+				AssaionateEnemy = nullptr;
+			}
 
 		}
 		else
@@ -860,7 +868,7 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 			bStartAssaination = true;
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZFinalBase);
 			anim->playAssasinationAnimation();
-			AssaionateEnemy->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 30);
+			AssaionateEnemy->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 70);
 			AssaionateEnemy->SetActorRotation(GetActorForwardVector().Rotation());
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(), assasinationSound ,GetActorLocation(), FRotator() , 0.4f);
 
