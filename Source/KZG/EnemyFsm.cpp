@@ -229,11 +229,17 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 		if (ai != nullptr)
 		{
 			isAlreadyGoal = ai->MoveToLocation(dest);
+			FailLocTime=FailLocMaxTime;
 		}
 	}
 	else
-	{
-		//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("FailLoc")));
+	{	
+		FailLocTime += DeltaTime;
+		if (FailLocTime>FailLocMaxTime)
+		{
+			ChangeToIdleState();
+			FailLocTime=0;
+		}	
 	}
 }
 
@@ -371,28 +377,32 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 				Target=NewTarget;
 				dest=Target->GetActorLocation();
 				Trackingtime_cur=0;
+				FailLocTime=0;
 			}
 		}
 		else
 		{	//소리내면
 			dest = Target->GetActorLocation();
 			Trackingtime_cur = 0;
+			FailLocTime=0;
 		}
 	}
 	else if (mState==EEnemyState::Idle)
 	{
 		Target = NewTarget;
 		dest = Target->GetActorLocation();
-		Me->AttachUI();
+		//Me->AttachUI();
 		Trackingtime_cur=0;
+		FailLocTime = 0;
 		mState = EEnemyState::Tracking;
 	}
 	else if(mState==EEnemyState::Recognition)
 	{
 		Target = NewTarget;
 		dest = Target->GetActorLocation();
-		Me->AttachUI();
+		//Me->AttachUI();
 		Trackingtime_cur=0;
+		FailLocTime = 0;
 		anim->StopRecoAnim();
 		mState = EEnemyState::Tracking;
 	}
@@ -400,16 +410,18 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 	{
 		Target = NewTarget;
 		dest = Target->GetActorLocation();
-		Me->AttachUI();
+		//Me->AttachUI();
 		Trackingtime_cur = 0;
+		FailLocTime = 0;
 		mState = EEnemyState::Tracking;
 	}
 	else if (mState==EEnemyState::Groggy)
 	{
 		Target = NewTarget;
 		dest = Target->GetActorLocation();
-		Me->AttachUI();
+		//Me->AttachUI();
 		Trackingtime_cur = 0;
+		FailLocTime = 0;
 		mState = EEnemyState::Tracking;
 	}
 }
@@ -698,16 +710,30 @@ bool UEnemyFsm::SeeTarget(class AKZGCharacter* TargetChar)
 
 void UEnemyFsm::Recognition(class AKZGCharacter* NewTarget)
 {
-	if (mState==EEnemyState::Idle||mState==EEnemyState::Sleep)
+	FPathFindingResult r;
+	FindPathByAI(NewTarget->GetActorLocation(), r);
+	if (r.Result != ENavigationQueryResult::Success) //갈수없는 위치의 소리중 
 	{
-		PremState=mState;
+		if ((NewTarget->GetActorLocation()-Me->GetActorLocation()).Size()>200)//2m이내면 감지
+		{
+			
+		}
+		else //아니면 감지안함
+		{			
+			return;
+		}
+	}
+	//갈수있는 경우는 다감지
+	if (mState == EEnemyState::Idle || mState == EEnemyState::Sleep)
+	{
+		PremState = mState;
 		anim->PlayRecoAnim();
 		ChangeToRecognitionState(NewTarget);
 	}
-	else if(mState==EEnemyState::Recognition)
+	else if (mState == EEnemyState::Recognition)
 	{
-		if (NewTarget!=Target)
-		{	
+		if (NewTarget != Target)
+		{
 			anim->PlayRecoAnim();
 			ChangeToRecognitionState(NewTarget);
 		}
@@ -722,4 +748,5 @@ void UEnemyFsm::Recognition(class AKZGCharacter* NewTarget)
 	{
 		ChangeToTrackingState(NewTarget);
 	}
+
 }

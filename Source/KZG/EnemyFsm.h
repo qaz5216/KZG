@@ -86,6 +86,9 @@ public:
 
 	void ChangeToKillState();
 
+	float FailLocTime=0;
+
+	float FailLocMaxTime = 5;
 
 	// 패트롤 하기 위해서 이동가능 위치를 랜덤하게 찾아주기
 	bool GetRandomPosInNavMesh(FVector center, float radius, FVector& dest);
