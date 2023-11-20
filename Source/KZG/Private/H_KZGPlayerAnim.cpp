@@ -36,7 +36,7 @@ void UH_KZGPlayerAnim::AnimNotify_AttackEnd1()
 	{
 		player->bIsAttacking = false;
 		player->currentStamina--;
-		player->boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		//player->boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 
 }
