@@ -23,6 +23,7 @@
 #include "H_AttackWeapons.h"
 #include <Components/AudioComponent.h>
 #include <Sound/SoundCue.h>
+#include "BP_H_Gun.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -45,6 +46,24 @@ AKZGCharacter::AKZGCharacter()
 	GetCharacterMovement()->MaxWalkSpeed = 500.f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+
+	gunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("gunMesh"));
+	gunMesh->SetupAttachment(GetMesh());
+	// Get the socket name
+	FName WeaponSocketName = FName(TEXT("WeaoponSocket"));
+	// Attach batMesh to the WeaoponSocket
+	gunMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+	 
+	ConstructorHelpers::FObjectFinder<UStaticMesh>Tempgun (TEXT("/Script/Engine.StaticMesh'/Game/HSH/AnimShooterPack/Weapons/Pistol/SM_handgun_02_main.SM_handgun_02_main'"));
+
+	if (Tempgun.Succeeded())
+	{
+		gunMesh->SetStaticMesh(Tempgun.Object);
+		gunMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		gunMesh->SetVisibility(false);
+		gunMesh->SetRelativeLocationAndRotation(FVector(-19.444434,8.078580,3.696963), FRotator(52.411667, 74.664296, 8.016663));
+
+	}
 
 	//batMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("batMesh"));
 	//batMesh->SetupAttachment(GetMesh());
@@ -650,13 +669,20 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 {
 	
 	attackWeapon = Cast<AH_AttackWeapons>(OtherActor);
+	gunWeapon = Cast<ABP_H_Gun>(OtherActor);
 
-	if (attackWeapon)
+	if (attackWeapon && !bHasWeapon && !bHasGun)
 	{
 		attackWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName(TEXT("WeaoponSocket")));
 		attackWeapon->SetActorRelativeLocation(FVector(-15.411383, -18.107558, 29.253529));
 		attackWeapon->SetActorRelativeRotation(FRotator(48.973539, -105.339813, -101.692076));
 		bHasWeapon = true;
+	}
+	else if (gunWeapon && !bHasGun && !bHasWeapon)
+	{
+		gunMesh->SetVisibility(true);
+		gunWeapon->Destroy();
+		bHasGun = true;
 	}
 
 	//if (AH_AttackWeapons* Weapon = Cast<AH_AttackWeapons>(OtherActor))
@@ -718,6 +744,11 @@ void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 		EnhancedInputComponent->BindAction(InterAction, ETriggerEvent::Completed, this, &AKZGCharacter::Server_InteractionInputEnd);
 
 		EnhancedInputComponent->BindAction(throwAction, ETriggerEvent::Triggered, this, &AKZGCharacter::ThrowAction);
+
+		EnhancedInputComponent->BindAction(pressedOne, ETriggerEvent::Triggered, this, &AKZGCharacter::PressedOneAction);
+
+		EnhancedInputComponent->BindAction(pressedTwo, ETriggerEvent::Triggered, this, &AKZGCharacter::PressedTwoAction);
+
 
 	}
 }
@@ -786,11 +817,10 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 {
 	int32 attackNum = FMath::RandRange(1, 100);
 	//if(axeMesh->IsVisible() == false && batMesh->IsVisible() == false) return;
-	if(!bHasWeapon) return;
 	if(bIsAttacking) return;
 	if(bIsFinalAttackEnded) return;
 	if (bIsDead) return;
-	if (!bIsgrabbed && currentStamina > 5) {
+	if (!bIsgrabbed && currentStamina > 5 && bHasWeapon && !bHasGun) {
 		bIsAttacking = true;
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
@@ -812,12 +842,33 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		if (comboIndex == 2 && bComboTime)
 		{
 			anim->PlayComboAnimation3();
+		}		
+	}
+	else if (!bIsgrabbed && currentStamina > 5 && !bHasWeapon && bHasGun)
+	{
+		//1. 시작점이 필요하다.
+		FVector startPos = FollowCamera->GetComponentLocation();
+		//2. 종료점이 필요하다.
+		FVector endPos = startPos + FollowCamera->GetForwardVector() * 5000;
+		//3. 선을 만들어야 한다, 나는 안맞게 만들어야 한다.
+		FHitResult hitInfo;
+		FCollisionQueryParams param;
+		param.AddIgnoredActor(this);
+		//bool bHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECC_Visibility, param);
+		bool bHit = GetWorld()->LineTraceSingleByProfile(hitInfo, startPos, endPos, TEXT("Weapon"), param);
+		//4. 선이 부딪혔으니까
+		if (bHit)
+		{	
+			AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
+
+			if (enemy)
+			{
+				enemy->Damaged(gunDamage);
+				UGameplayStatics::PlaySound2D(GetWorld(), gunShotSound, 1.0f);
+				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("%d"), enemy->HP_Cur));
+			}
+			
 		}
-
-
-		/*if (attackNum > 50) anim->PlayAttackAnimation2();
-		else if (attackNum <= 50) anim->PlayAttackAnimation3();*/
-		
 	}
 }
 
@@ -929,24 +980,37 @@ void AKZGCharacter::Multicast_ChangeView_Implementation()
 
 void AKZGCharacter::ThrowAction()
 {
-	if (attackWeapon->GetName().Contains(FString(TEXT("Bat"))))
+	if (attackWeapon != nullptr) 
 	{
-		FActorSpawnParameters Param;
-		Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_BatWeapon, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
-		weapon->WeaponHP = attackWeapon->WeaponHP;
-		attackWeapon->Destroy();
-		bHasWeapon = false;
-	}
-	else if (attackWeapon->GetName().Contains(FString(TEXT("Axe"))))
-	{
-		FActorSpawnParameters Param;
-		Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_AxeWeapon, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
+		if (attackWeapon->GetName().Contains(FString(TEXT("Bat"))))
+		{
+			FActorSpawnParameters Param;
+			Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_BatWeapon, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
+			weapon->WeaponHP = attackWeapon->WeaponHP;
+			attackWeapon->Destroy();
+			bHasWeapon = false;
+		}
+		else if (attackWeapon->GetName().Contains(FString(TEXT("Axe"))))
+		{
+			FActorSpawnParameters Param;
+			Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_AxeWeapon, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
 
-		weapon->WeaponHP = attackWeapon->WeaponHP;
-		attackWeapon->Destroy();
-		bHasWeapon = false;
+			weapon->WeaponHP = attackWeapon->WeaponHP;
+			attackWeapon->Destroy();
+			bHasWeapon = false;
+		}
+		
+	}
+	if (gunMesh->IsVisible())
+	{
+		FActorSpawnParameters Param;
+		Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		ABP_H_Gun* weapon = GetWorld()->SpawnActor<ABP_H_Gun>(BP_Gun, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
+
+		gunMesh->SetVisibility(false);
+		bHasGun = false;
 	}
 
 	
@@ -1028,6 +1092,44 @@ void AKZGCharacter::JumpInput()
 	Jump();
 }
 
+
+void AKZGCharacter::PressedOneAction()
+{
+	bHasGun = true;
+	bHasWeapon = false;
+	if (attackWeapon)
+	{
+		if (attackWeapon->GetName().Contains(FString(TEXT("Bat"))))
+		{
+			FActorSpawnParameters Param;
+			Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_BatWeapon, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
+			weapon->WeaponHP = attackWeapon->WeaponHP;
+			attackWeapon->Destroy();
+			bHasWeapon = false;
+		}
+		else if (attackWeapon->GetName().Contains(FString(TEXT("Axe"))))
+		{
+			FActorSpawnParameters Param;
+			Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_AxeWeapon, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
+
+			weapon->WeaponHP = attackWeapon->WeaponHP;
+			attackWeapon->Destroy();
+			bHasWeapon = false;
+		}
+	}
+}
+
+void AKZGCharacter::PressedTwoAction()
+{
+	bHasGun = false;
+	bHasWeapon = true;
+	if (attackWeapon)
+	{
+		
+	}
+}
 
 void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
