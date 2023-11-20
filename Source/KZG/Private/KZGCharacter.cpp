@@ -651,7 +651,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 	
 	attackWeapon = Cast<AH_AttackWeapons>(OtherActor);
 
-	if (attackWeapon)
+	if (attackWeapon && !bHasWeapon)
 	{
 		attackWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName(TEXT("WeaoponSocket")));
 		attackWeapon->SetActorRelativeLocation(FVector(-15.411383, -18.107558, 29.253529));
