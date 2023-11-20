@@ -29,6 +29,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* CamFollowComp;
 
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* gunMesh;
+
 	/*UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* boxComp;*/
 
@@ -65,6 +68,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* throwAction;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* pressedOne;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* pressedTwo;
+
 public:
 	UPROPERTY(VisibleAnywhere, Category = MySettings, Replicated, meta = (AllowPrivateAccess = "true"))
 	class UH_EWidget* EWidget;
@@ -98,6 +107,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="BGMSound")
 	class USoundBase* bgmSound;
 
+	UPROPERTY(EditDefaultsOnly, Category="gunShotSound")
+	class USoundBase* gunShotSound;
 
 	//UPROPERTY(EditDefaultsOnly, Category="audioComp")
 	//class UAudioComponent* audioComp;
@@ -159,6 +170,10 @@ protected:
 	void ThrowAction();
 
 	void JumpInput();
+
+	void PressedOneAction();
+
+	void PressedTwoAction();
  
 	class UH_KZGPlayerAnim* anim;
 protected:
@@ -218,6 +233,9 @@ public:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	bool bHasWeapon = false;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	bool bHasGun = false;
 
 	UPROPERTY(EditAnywhere, Category="AssasinationDistance")
 	float assasinationDistance = 50;
@@ -298,9 +316,14 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="Weapons")
 	TSubclassOf<class AH_AttackWeapons> BP_BatWeapon; 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="Weapons")
-	TSubclassOf<class AH_AttackWeapons> BP_AxeWeapon; 
+	TSubclassOf<class AH_AttackWeapons> BP_AxeWeapon;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category="Weapons")
+	TSubclassOf<class ABP_H_Gun> BP_Gun;
 
 	class AH_AttackWeapons* attackWeapon;
+	class ABP_H_Gun* gunWeapon;
+	UPROPERTY(EditAnywhere, Category="GunDamage")
+	int32 gunDamage = 10;
 
 	int32 killNum = 0;
 public:
