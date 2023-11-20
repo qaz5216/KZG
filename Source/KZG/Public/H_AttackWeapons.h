@@ -23,7 +23,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-
+	UPROPERTY(EditAnywhere)
+	class USceneComponent* RootComp;
+	UPROPERTY(EditAnywhere)
+	class USphereComponent* sphereComp;
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* boxComp;
 	UPROPERTY(VisibleAnywhere)

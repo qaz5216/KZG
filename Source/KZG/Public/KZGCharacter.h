@@ -293,6 +293,8 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="Weapons")
 	TSubclassOf<class AH_AttackWeapons> BP_AxeWeapon; 
 
+	class AH_AttackWeapons* attackWeapon;
+
 	int32 killNum = 0;
 public:
 	void DamagedStamina(int32 value);

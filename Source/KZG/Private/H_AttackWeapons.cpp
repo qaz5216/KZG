@@ -4,6 +4,7 @@
 #include "H_AttackWeapons.h"
 #include <Components/BoxComponent.h>
 #include "../Enemy.h"
+#include <Components/SphereComponent.h>
 
 // Sets default values
 AH_AttackWeapons::AH_AttackWeapons()
@@ -11,10 +12,18 @@ AH_AttackWeapons::AH_AttackWeapons()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	RootComp = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
+	RootComponent = RootComp;
+
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
-	RootComponent = boxComp;
+	boxComp->SetupAttachment(RootComp);
 	boxComp->SetBoxExtent(FVector(50, 10, 10));
-	boxComp->SetCollisionProfileName(TEXT("WeaponDrop"));
+	boxComp->SetCollisionProfileName(TEXT("Weapon"));
+
+	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
+	sphereComp->SetupAttachment(RootComp);
+	sphereComp->SetSphereRadius(30);
+	sphereComp->SetCollisionProfileName(TEXT("WeaponDrop"));
 
 	bReplicates = true;
 

@@ -134,8 +134,8 @@ void AKZGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FTimerHandle ActorHandle;
-	GetWorldTimerManager().SetTimer(ActorHandle, this, &AKZGCharacter::SetPlayerLocationToFirst, restartLoc, false);
+	//FTimerHandle ActorHandle;
+	//GetWorldTimerManager().SetTimer(ActorHandle, this, &AKZGCharacter::SetPlayerLocationToFirst, restartLoc, false);
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
@@ -176,7 +176,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	
 	
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("bCanAssasination: %s"), bCanAssasination ? *FString("true") : *FString("false")));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("dead: %s"), bIsDead ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("crouch: %s"), bIsCrouching ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("comboIndex: %d"), comboIndex));
 
@@ -641,32 +641,39 @@ void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	
-	if (AH_AttackWeapons* Weapon = Cast<AH_AttackWeapons>(OtherActor))
-	{
-		Weapon->Destroy();
-		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("Overlap")));
+	attackWeapon = Cast<AH_AttackWeapons>(OtherActor);
 
-		if (OtherActor->GetName().Contains(FString(TEXT("Bat"))))
-		{
-			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
-			batMesh->SetVisibility(true);
-			realWeaponHP = Weapon->WeaponHP;
-			if (axeMesh->IsVisible())
-			{
-				axeMesh->SetVisibility(false);
-			}
-		}
-		else if (OtherActor->GetName().Contains(FString(TEXT("Axe"))))
-		{
-			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
-			axeMesh->SetVisibility(true);
-			realWeaponHP = Weapon->WeaponHP;
-			if (batMesh->IsVisible())
-			{
-				batMesh->SetVisibility(false);
-			}
-		}
+	if (attackWeapon)
+	{
+		attackWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName(TEXT("WeaoponSocket")));
 	}
+
+	//if (AH_AttackWeapons* Weapon = Cast<AH_AttackWeapons>(OtherActor))
+	//{
+	//	Weapon->Destroy();
+	//	//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("Overlap")));
+
+	//	if (OtherActor->GetName().Contains(FString(TEXT("Bat"))))
+	//	{
+	//		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
+	//		batMesh->SetVisibility(true);
+	//		realWeaponHP = Weapon->WeaponHP;
+	//		if (axeMesh->IsVisible())
+	//		{
+	//			axeMesh->SetVisibility(false);
+	//		}
+	//	}
+	//	else if (OtherActor->GetName().Contains(FString(TEXT("Axe"))))
+	//	{
+	//		//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
+	//		axeMesh->SetVisibility(true);
+	//		realWeaponHP = Weapon->WeaponHP;
+	//		if (batMesh->IsVisible())
+	//		{
+	//			batMesh->SetVisibility(false);
+	//		}
+	//	}
+	//}
 }	
 
 void AKZGCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
