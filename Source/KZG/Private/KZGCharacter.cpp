@@ -46,46 +46,46 @@ AKZGCharacter::AKZGCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
-	batMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("batMesh"));
-	batMesh->SetupAttachment(GetMesh());
-	// Get the socket name
-	FName WeaponSocketName = FName(TEXT("WeaoponSocket"));
-	// Attach batMesh to the WeaoponSocket
-	batMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
-	 
-	ConstructorHelpers::FObjectFinder<UStaticMesh>TempBat (TEXT("/Script/Engine.StaticMesh'/Game/Props_MeleeWeapons/Meshes/baseballBat.baseballBat'"));
+	//batMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("batMesh"));
+	//batMesh->SetupAttachment(GetMesh());
+	//// Get the socket name
+	//FName WeaponSocketName = FName(TEXT("WeaoponSocket"));
+	//// Attach batMesh to the WeaoponSocket
+	//batMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+	// 
+	//ConstructorHelpers::FObjectFinder<UStaticMesh>TempBat (TEXT("/Script/Engine.StaticMesh'/Game/Props_MeleeWeapons/Meshes/baseballBat.baseballBat'"));
 
-	if (TempBat.Succeeded())
-	{
-		batMesh->SetStaticMesh(TempBat.Object);
-		batMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		batMesh->SetVisibility(false);
-		batMesh->SetRelativeLocationAndRotation(FVector(-13.419591, -2.414909, 9.095527), FRotator(12.700006, -15.579394, -51.744371));
+	//if (TempBat.Succeeded())
+	//{
+	//	batMesh->SetStaticMesh(TempBat.Object);
+	//	batMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//	batMesh->SetVisibility(false);
+	//	batMesh->SetRelativeLocationAndRotation(FVector(-13.419591, -2.414909, 9.095527), FRotator(12.700006, -15.579394, -51.744371));
 
-	}
+	//}
 
-	axeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AxeMesh"));
-	axeMesh->SetupAttachment(GetMesh());
-	// Attach batMesh to the WeaoponSocket
-	axeMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
-	
-	ConstructorHelpers::FObjectFinder<UStaticMesh>TempAxe(TEXT("/Script/Engine.StaticMesh'/Game/Props_MeleeWeapons/Meshes/fireAxe.fireAxe'"));
+	//axeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AxeMesh"));
+	//axeMesh->SetupAttachment(GetMesh());
+	//// Attach batMesh to the WeaoponSocket
+	//axeMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+	//
+	//ConstructorHelpers::FObjectFinder<UStaticMesh>TempAxe(TEXT("/Script/Engine.StaticMesh'/Game/Props_MeleeWeapons/Meshes/fireAxe.fireAxe'"));
 
-	if (TempAxe.Succeeded())
-	{
-		axeMesh->SetStaticMesh(TempAxe.Object);
-		axeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		axeMesh->SetVisibility(false);
-		axeMesh->SetRelativeLocationAndRotation(FVector(-11.144902, 1.984119, 4.615342), FRotator(12.700006, -15.579394, -51.744371));
-	}
+	//if (TempAxe.Succeeded())
+	//{
+	//	axeMesh->SetStaticMesh(TempAxe.Object);
+	//	axeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	//	axeMesh->SetVisibility(false);
+	//	axeMesh->SetRelativeLocationAndRotation(FVector(-11.144902, 1.984119, 4.615342), FRotator(12.700006, -15.579394, -51.744371));
+	//}
 
-	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+	/*boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	boxComp->SetupAttachment(GetCapsuleComponent());
 	boxComp->SetRelativeLocation(FVector(110.000000, 0.000000, 0.000000));
 	boxComp->SetBoxExtent(FVector(100));
 	boxComp->SetRelativeScale3D(FVector(-0.500000, 0.500000, 1.000000));
 	boxComp->SetCollisionProfileName(TEXT("Weapon"));
-	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);*/
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -109,7 +109,7 @@ AKZGCharacter::AKZGCharacter()
 	SeeScene->SetupAttachment(GetMesh());
 	SeeScene->SetRelativeLocation(FVector(0,0,50));
 
-	audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
+	/*audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	audioComp->SetupAttachment(GetCapsuleComponent());
 
 	static ConstructorHelpers::FObjectFinder<USoundCue> DefaultBGMFinder(TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Dark_Music_Pack/WAV/By_DrBorowski/BGM_Nomal_Cue.BGM_Nomal_Cue'"));
@@ -118,7 +118,7 @@ AKZGCharacter::AKZGCharacter()
 		DefaultBGM = DefaultBGMFinder.Object;
 		audioComp->SetSound(DefaultBGM);
 	}
-	audioComp->Play();
+	audioComp->Play();*/
 
 	//static ConstructorHelpers::FClassFinder<UH_PlayerInfo> TempInfo(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/CYS/UI_CYS_PlayerInfo2.UI_CYS_PlayerInfo2_C'"));
 
@@ -133,6 +133,7 @@ AKZGCharacter::AKZGCharacter()
 void AKZGCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+	UGameplayStatics::PlaySound2D(GetWorld(), bgmSound, 2.0f);
 
 	//FTimerHandle ActorHandle;
 	//GetWorldTimerManager().SetTimer(ActorHandle, this, &AKZGCharacter::SetPlayerLocationToFirst, restartLoc, false);
@@ -145,9 +146,8 @@ void AKZGCharacter::BeginPlay()
 		}
 	}
 
-	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AKZGCharacter::OnComponentBeginOverlap);
+	//boxComp->OnComponentBeginOverlap.AddDynamic(this, &AKZGCharacter::OnComponentBeginOverlap);
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AKZGCharacter::OnComponentBeginOverlapFood);
-	boxComp->OnComponentEndOverlap.AddDynamic(this, &AKZGCharacter::OnComponentEndOverlap);
 
 	GetCharacterMovement()->MaxWalkSpeed = walkSpeed;
 	returnSpeed = walkSpeed;
@@ -173,10 +173,18 @@ void AKZGCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, returnSpeed, 5 * DeltaTime);
-
+	if (attackWeapon)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("weaponHP: %d"), attackWeapon->WeaponHP));
+		if (attackWeapon->WeaponHP <= 0)
+		{
+			attackWeapon->Destroy();
+			bHasWeapon = false;
+		}
+	}
 	
 	
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("dead: %s"), bIsDead ? *FString("true") : *FString("false")));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("dead: %s"), bIsDead ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("crouch: %s"), bIsCrouching ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("comboIndex: %d"), comboIndex));
 
@@ -231,11 +239,11 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::Printf(TEXT("Weapon HP : %d"), realWeaponHP));
-	if (realWeaponHP <= 0)
+	/*if (realWeaponHP <= 0)
 	{
 		if(axeMesh->IsVisible()) axeMesh->SetVisibility(false);
 		else if(batMesh->IsVisible()) batMesh->SetVisibility(false);
-	}
+	}*/
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 	if(playerStamina > maxsize) playerStamina = maxsize;
 	if(maxsize <= 50) maxsize = 60;
@@ -284,11 +292,11 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		GrabbedCam->SetActive(true);
 		FollowCamera->SetActive(false);
-		SwitchBGMtoGrab();
+		//SwitchBGMtoGrab();
 	}
 	else if(!bIsgrabbed)
 	{
-		SwitchBGMtoDefault();
+		//SwitchBGMtoDefault();
 		FollowCamera->SetActive(true);
 		GrabbedCam->SetActive(false);
 	}
@@ -350,7 +358,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 					index=i;
 				}
 			}
-			if (WhatEnemy[index] < 100)
+			if (WhatEnemy[index] < assasinationDistance)
 			{
 				bCanAssasination=true;
 				AssaionateEnemy = hitEnemys[index];
@@ -371,121 +379,121 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 }
 
-void AKZGCharacter::SwitchBGMtoDetecting()
-{
-	// Check if the audio component and the new background music sound cue are valid
-	if (audioComp && !bIsBGMDetecting)
-	{
-		// Stop the currently playing background music
-		bIsBGMDetecting = true;
-		if(bIsBGMDiscover) bIsBGMDiscover = false;
-		if(bIsBGMGrab) bIsBGMGrab = false;
-		if(bIsBGMDefault) bIsBGMDefault = false;
-		audioComp->Stop();
-
-		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
-		USoundCue* LoadCue = LoadObject<USoundCue> (nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Dark_Music_Pack/WAV/BGM_ChaseStart_Cue.BGM_ChaseStart_Cue'"));
-		if (LoadCue)
-		{
-			audioComp->SetSound(LoadCue);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Detecting BGM Error"));
-		}
-
-		// Start playing the new background music
-		audioComp->Play();
-	}
-}
-
-
-void AKZGCharacter::SwitchBGMtoDefault()
-{
-	// Check if the audio component and the new background music sound cue are valid
-	if (audioComp && !bIsBGMDefault)
-	{
-		// Stop the currently playing background music
-
-		bIsBGMDefault = true;
-		if (bIsBGMDiscover) bIsBGMDiscover = false;
-		if (bIsBGMGrab) bIsBGMGrab = false;
-		if (bIsBGMDetecting) bIsBGMDetecting = false;
-
-		audioComp->Stop();
-
-		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
-		if (DefaultBGM)
-		{
-			audioComp->SetSound(DefaultBGM);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Default BGM Error"));
-		}
-
-		// Start playing the new background music
-		audioComp->Play();
-	}
-}
-
-void AKZGCharacter::SwitchBGMtoDiscover()
-{
-	// Check if the audio component and the new background music sound cue are valid
-	if (audioComp && !bIsBGMDiscover)
-	{
-		// Stop the currently playing background music
-		bIsBGMDiscover = true;
-		if (bIsBGMDefault) bIsBGMDefault = false;
-		if (bIsBGMGrab) bIsBGMGrab = false;
-		if (bIsBGMDetecting) bIsBGMDetecting = false;
-
-		audioComp->Stop();
-
-		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
-		USoundCue* LoadCue = LoadObject<USoundCue>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Trailer/BGM_FindZombie_Cue.BGM_FindZombie_Cue'"));
-		if (LoadCue)
-		{
-			audioComp->SetSound(LoadCue);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Detecting BGM Error"));
-		}
-
-		// Start playing the new background music
-		audioComp->Play();
-	}
-}
-
-void AKZGCharacter::SwitchBGMtoGrab()
-{
-	// Check if the audio component and the new background music sound cue are valid
-	if (audioComp && !bIsBGMGrab)
-	{
-		// Stop the currently playing background music
-		bIsBGMGrab = true;
-		if (bIsBGMDefault) bIsBGMDefault = false;
-		if (bIsBGMDiscover) bIsBGMDiscover = false;
-		if (bIsBGMDetecting) bIsBGMDetecting = false;
-
-		audioComp->Stop();
-
-		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
-		USoundCue* LoadCue = LoadObject<USoundCue>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Trailer/BGM_Discover_Cue.BGM_Discover_Cue'"));
-		if (LoadCue)
-		{
-			audioComp->SetSound(LoadCue);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Detecting BGM Error"));
-		}
-
-		// Start playing the new background music
-		audioComp->Play();
-	}
-}
+//void AKZGCharacter::SwitchBGMtoDetecting()
+//{
+//	// Check if the audio component and the new background music sound cue are valid
+//	if (audioComp && !bIsBGMDetecting)
+//	{
+//		// Stop the currently playing background music
+//		bIsBGMDetecting = true;
+//		if(bIsBGMDiscover) bIsBGMDiscover = false;
+//		if(bIsBGMGrab) bIsBGMGrab = false;
+//		if(bIsBGMDefault) bIsBGMDefault = false;
+//		audioComp->Stop();
+//
+//		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
+//		USoundCue* LoadCue = LoadObject<USoundCue> (nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Dark_Music_Pack/WAV/BGM_ChaseStart_Cue.BGM_ChaseStart_Cue'"));
+//		if (LoadCue)
+//		{
+//			audioComp->SetSound(LoadCue);
+//		}
+//		else
+//		{
+//			UE_LOG(LogTemp, Error, TEXT("Detecting BGM Error"));
+//		}
+//
+//		// Start playing the new background music
+//		audioComp->Play();
+//	}
+//}
+//
+//
+//void AKZGCharacter::SwitchBGMtoDefault()
+//{
+//	// Check if the audio component and the new background music sound cue are valid
+//	if (audioComp && !bIsBGMDefault)
+//	{
+//		// Stop the currently playing background music
+//
+//		bIsBGMDefault = true;
+//		if (bIsBGMDiscover) bIsBGMDiscover = false;
+//		if (bIsBGMGrab) bIsBGMGrab = false;
+//		if (bIsBGMDetecting) bIsBGMDetecting = false;
+//
+//		audioComp->Stop();
+//
+//		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
+//		if (DefaultBGM)
+//		{
+//			audioComp->SetSound(DefaultBGM);
+//		}
+//		else
+//		{
+//			UE_LOG(LogTemp, Error, TEXT("Default BGM Error"));
+//		}
+//
+//		// Start playing the new background music
+//		audioComp->Play();
+//	}
+//}
+//
+//void AKZGCharacter::SwitchBGMtoDiscover()
+//{
+//	// Check if the audio component and the new background music sound cue are valid
+//	if (audioComp && !bIsBGMDiscover)
+//	{
+//		// Stop the currently playing background music
+//		bIsBGMDiscover = true;
+//		if (bIsBGMDefault) bIsBGMDefault = false;
+//		if (bIsBGMGrab) bIsBGMGrab = false;
+//		if (bIsBGMDetecting) bIsBGMDetecting = false;
+//
+//		audioComp->Stop();
+//
+//		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
+//		USoundCue* LoadCue = LoadObject<USoundCue>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Trailer/BGM_FindZombie_Cue.BGM_FindZombie_Cue'"));
+//		if (LoadCue)
+//		{
+//			audioComp->SetSound(LoadCue);
+//		}
+//		else
+//		{
+//			UE_LOG(LogTemp, Error, TEXT("Detecting BGM Error"));
+//		}
+//
+//		// Start playing the new background music
+//		audioComp->Play();
+//	}
+//}
+//
+//void AKZGCharacter::SwitchBGMtoGrab()
+//{
+//	// Check if the audio component and the new background music sound cue are valid
+//	if (audioComp && !bIsBGMGrab)
+//	{
+//		// Stop the currently playing background music
+//		bIsBGMGrab = true;
+//		if (bIsBGMDefault) bIsBGMDefault = false;
+//		if (bIsBGMDiscover) bIsBGMDiscover = false;
+//		if (bIsBGMDetecting) bIsBGMDetecting = false;
+//
+//		audioComp->Stop();
+//
+//		// Set the new background music sound cue (replace "NewBGM" with your actual sound cue asset)
+//		USoundCue* LoadCue = LoadObject<USoundCue>(nullptr, TEXT("/Script/Engine.SoundCue'/Game/Sound/BGM/Trailer/BGM_Discover_Cue.BGM_Discover_Cue'"));
+//		if (LoadCue)
+//		{
+//			audioComp->SetSound(LoadCue);
+//		}
+//		else
+//		{
+//			UE_LOG(LogTemp, Error, TEXT("Detecting BGM Error"));
+//		}
+//
+//		// Start playing the new background music
+//		audioComp->Play();
+//	}
+//}
 
 
 
@@ -502,7 +510,7 @@ void AKZGCharacter::PlayStepSoundPlaying()
 				UE_LOG(LogTemp, Warning, TEXT("RecoEnemy"));
 				hitEnemy->FSM->Recognition(this);
 
-				SwitchBGMtoDetecting();
+				//SwitchBGMtoDetecting();
 
 			}
 		}
@@ -610,12 +618,16 @@ void AKZGCharacter::Multicast_PlayerDeath_Implementation()
 
 void AKZGCharacter::AttackCollisionOff()
 {
-	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	/*if (attackWeapon)
+	{
+		attackWeapon->boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	}*/
 }
 
 void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	AEnemy* Zombie = Cast<AEnemy>(OtherActor);
+	/*AEnemy* Zombie = Cast<AEnemy>(OtherActor);
 	Zombie->FSM->Target=this;
 	Zombie->Damaged(damagePower);
 	
@@ -630,12 +642,8 @@ void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 		{
 			realWeaponHP -= weaponDamage;
 		}
-	}
-	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	UE_LOG(LogTemp, Warning, TEXT("Collision OFFzz"));
+	}*/
 
-	
-	
 }
 
 void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -646,6 +654,9 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 	if (attackWeapon)
 	{
 		attackWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName(TEXT("WeaoponSocket")));
+		attackWeapon->SetActorRelativeLocation(FVector(-15.411383, -18.107558, 29.253529));
+		attackWeapon->SetActorRelativeRotation(FRotator(48.973539, -105.339813, -101.692076));
+		bHasWeapon = true;
 	}
 
 	//if (AH_AttackWeapons* Weapon = Cast<AH_AttackWeapons>(OtherActor))
@@ -676,11 +687,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 	//}
 }	
 
-void AKZGCharacter::OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
-{
-	bIsOverlapping = false;
 
-}
 
 void AKZGCharacter::SetPlayerLocationToFirst()
 {
@@ -778,7 +785,8 @@ void AKZGCharacter::Server_AttackInput_Implementation()
 void AKZGCharacter::Multicast_AttackInput_Implementation()
 {
 	int32 attackNum = FMath::RandRange(1, 100);
-	if(axeMesh->IsVisible() == false && batMesh->IsVisible() == false) return;
+	//if(axeMesh->IsVisible() == false && batMesh->IsVisible() == false) return;
+	if(!bHasWeapon) return;
 	if(bIsAttacking) return;
 	if(bIsFinalAttackEnded) return;
 	if (bIsDead) return;
@@ -786,7 +794,11 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		bIsAttacking = true;
 		//if (attackNum <= 100) anim->PlayAttackAnimation1();
 		//UE_LOG(LogTemp, Warning, TEXT("Collision ONzz"));
-		boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		//boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		if (attackWeapon)
+		{
+			attackWeapon->boxComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		}
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), batSwingSound, GetActorLocation(), FRotator(), 2.0f);
 		FTimerHandle CollisionTimerHandle;
 		GetWorldTimerManager().SetTimer(CollisionTimerHandle, this, &AKZGCharacter::AttackCollisionOff, 0.03f, false);
@@ -831,8 +843,8 @@ void AKZGCharacter::Multicast_InteractionUnput_Implementation()
 	}
 	else if(!bIsgrabbed && !bCanAssasination)
 	{
-		if (axeMesh->IsVisible() == false && batMesh->IsVisible() == false) return;
-
+		//if (axeMesh->IsVisible() == false && batMesh->IsVisible() == false) return;
+		if(!bHasWeapon) return;
 		FVector MeLoc = GetActorLocation();
 		FVector startloc = MeLoc;
 		startloc.Z += 50.0f;//´«À§Ä¡
@@ -917,7 +929,28 @@ void AKZGCharacter::Multicast_ChangeView_Implementation()
 
 void AKZGCharacter::ThrowAction()
 {
-	if (axeMesh->IsVisible())
+	if (attackWeapon->GetName().Contains(FString(TEXT("Bat"))))
+	{
+		FActorSpawnParameters Param;
+		Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_BatWeapon, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
+		weapon->WeaponHP = attackWeapon->WeaponHP;
+		attackWeapon->Destroy();
+		bHasWeapon = false;
+	}
+	else if (attackWeapon->GetName().Contains(FString(TEXT("Axe"))))
+	{
+		FActorSpawnParameters Param;
+		Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_AxeWeapon, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
+
+		weapon->WeaponHP = attackWeapon->WeaponHP;
+		attackWeapon->Destroy();
+		bHasWeapon = false;
+	}
+
+	
+	/*if (axeMesh->IsVisible())
 	{
 		axeMesh->SetVisibility(false);
 		FActorSpawnParameters Param;
@@ -943,7 +976,7 @@ void AKZGCharacter::ThrowAction()
 			weapon->WeaponHP = realWeaponHP;
 
 		}
-	}
+	}*/
 }
 
 //void AKZGCharacter::InputRun()

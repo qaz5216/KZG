@@ -29,14 +29,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USceneComponent* CamFollowComp;
 
-	UPROPERTY(VisibleAnywhere)
-	class UBoxComponent* boxComp;
+	/*UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* boxComp;*/
 
-	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* batMesh;
-	
-	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* axeMesh;
+	//UPROPERTY(VisibleAnywhere)
+	//class UStaticMeshComponent* batMesh;
+	//
+	//UPROPERTY(VisibleAnywhere)
+	//class UStaticMeshComponent* axeMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
@@ -87,30 +87,33 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="CameraShake")
 	TSubclassOf<class UCameraShakeBase> ZFinalBase;
 
-	UPROPERTY(EditDefaultsOnly, Category="PlaySound")
-	class USoundBase* batHitSound;
+	
 
-	UPROPERTY(EditDefaultsOnly, Category="swingSound")
+	UPROPERTY(EditDefaultsOnly, Category = "swingSound")
 	class USoundBase* batSwingSound;
 
 	UPROPERTY(EditDefaultsOnly, Category="AssasinationSound")
 	class USoundBase* assasinationSound;
 
-	UPROPERTY(EditDefaultsOnly, Category="audioComp")
-	class UAudioComponent* audioComp;
+	UPROPERTY(EditDefaultsOnly, Category="BGMSound")
+	class USoundBase* bgmSound;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Audio")
-    class USoundCue* DefaultBGM; // DefaultBGM 변수를 추가합니다.
 
-	void SwitchBGMtoDetecting();
+	//UPROPERTY(EditDefaultsOnly, Category="audioComp")
+	//class UAudioComponent* audioComp;
+
+	//UPROPERTY(EditDefaultsOnly, Category = "Audio")
+ //   class USoundCue* DefaultBGM; // DefaultBGM 변수를 추가합니다.
+
+	/*void SwitchBGMtoDetecting();
 	void SwitchBGMtoDefault();
 	void SwitchBGMtoDiscover();
-	void SwitchBGMtoGrab();
+	void SwitchBGMtoGrab();*/
 
-	bool bIsBGMDetecting = false;
+	/*bool bIsBGMDetecting = false;
 	bool bIsBGMDefault = true;
 	bool bIsBGMDiscover = false;
-	bool bIsBGMGrab = false;
+	bool bIsBGMGrab = false;*/
 
 public:
 	AKZGCharacter();
@@ -213,6 +216,11 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	bool bStartAssaination=false;
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	bool bHasWeapon = false;
+
+	UPROPERTY(EditAnywhere, Category="AssasinationDistance")
+	float assasinationDistance = 50;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite ,Replicated, Category="StaminaSize")
 	int32 playerStamina = 500;
@@ -274,7 +282,6 @@ public:
 
 	float lerpCurTime;
 
-	bool bIsOverlapping = false;
 
 	UPROPERTY(EditAnywhere)
 	int32 damagePower = 35;
@@ -332,9 +339,6 @@ public:
 
 	UFUNCTION()
 	void OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	UFUNCTION()
-	void OnComponentEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="SetLocation")
 	float restartLoc = 0.1f;
