@@ -13,5 +13,9 @@ UCLASS()
 class KZG_API AH_BatWeapon : public AH_AttackWeapons
 {
 	GENERATED_BODY()
-	
+public:
+	AH_BatWeapon();
+
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* meshComp;
 };
