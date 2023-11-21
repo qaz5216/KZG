@@ -105,6 +105,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="CameraShake")
 	TSubclassOf<class UCameraShakeBase> gunShakeBase;
 
+	UPROPERTY(EditDefaultsOnly, Category="Effect")
+	class UParticleSystem* BP_shotEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category="Effect")
+	class UParticleSystem* BP_shotBloodEffect;
+
 	UPROPERTY(EditDefaultsOnly, Category = "swingSound")
 	class USoundBase* batSwingSound;
 

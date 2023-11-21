@@ -874,8 +874,8 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		FHitResult hitInfo;
 		FCollisionQueryParams param;
 		param.AddIgnoredActor(this);
-		//bool bHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECC_Visibility, param);
-		bool bHit = GetWorld()->LineTraceSingleByProfile(hitInfo, startPos, endPos, TEXT("Weapon"), param);
+		bool bHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECC_Visibility, param);
+		//bool bHit = GetWorld()->LineTraceSingleByProfile(hitInfo, startPos, endPos, TEXT("Weapon"), param);
 
 		//UGameplayStatics::PlaySound2D(GetWorld(), gunShotSound, 1.0f);
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(gunShakeBase);
@@ -885,11 +885,20 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		if (bHit)
 		{	
 			AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
-			
+			FTransform trans;
+			trans.SetLocation(hitInfo.ImpactPoint);
+			trans.SetRotation(hitInfo.ImpactNormal.ToOrientationQuat());
 			if (enemy)
 			{
 				enemy->Damaged(gunDamage);
 				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("%d"), enemy->HP_Cur));
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BP_shotBloodEffect, trans);
+
+			}
+			else
+			{
+				
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BP_shotEffect, trans);
 			}
 			
 		}
