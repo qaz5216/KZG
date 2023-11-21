@@ -44,9 +44,5 @@ void ADropProp::SpawnDrop()
 
 	AActor* SmokeA=GetWorld()->SpawnActor<AActor>(SmokeActor, GetActorLocation(), FRotator(0, 0, 0));
 	FTimerHandle myTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
-		{
-			SmokeA->Destroy();
-		}), 5, false); // 반복 실행을 하고 싶으면 false 대신 true 대입
 }
 
