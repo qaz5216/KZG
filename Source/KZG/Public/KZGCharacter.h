@@ -359,6 +359,9 @@ public:
 	TSubclassOf<class ABP_H_Gun> BP_Gun;
 
 	class AH_AttackWeapons* attackWeapon;
+	class AH_BatWeapon* batWeapon;
+	class AH_AxeWeapon* axeWeapon;
+
 	class ABP_H_Gun* gunWeapon;
 	UPROPERTY(EditAnywhere, Category="GunDamage")
 	int32 gunDamage = 10;

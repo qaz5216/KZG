@@ -24,6 +24,8 @@
 #include <Components/AudioComponent.h>
 #include <Sound/SoundCue.h>
 #include "BP_H_Gun.h"
+#include "H_BatWeapon.h"
+#include "H_AxeWeapon.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -653,7 +655,8 @@ void AKZGCharacter::Multicast_PlayerDeath_Implementation()
 void AKZGCharacter::AssasinationDeath()
 {
 	bIsDead = true;
-	anim->playAssasinationDeathAnimation();
+	//anim->playAssasinationDeathAnimation();
+	anim->PlayDeathGrabMontage();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -691,13 +694,26 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 {
 	
 	attackWeapon = Cast<AH_AttackWeapons>(OtherActor);
+	batWeapon = Cast<AH_BatWeapon>(OtherActor);
+	axeWeapon = Cast<AH_AxeWeapon>(OtherActor);
 	gunWeapon = Cast<ABP_H_Gun>(OtherActor);
 
-	if (attackWeapon && !bHasWeapon && !bHasGun)
+	if (batWeapon && !bHasWeapon && !bHasGun)
 	{
-		attackWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName(TEXT("WeaoponSocket")));
-		attackWeapon->SetActorRelativeLocation(FVector(-15.411383, -18.107558, 29.253529));
-		attackWeapon->SetActorRelativeRotation(FRotator(48.973539, -105.339813, -101.692076));
+		//batWeapon->meshComp->SetSimulatePhysics(false);
+		//batWeapon->meshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		batWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName(TEXT("WeaoponSocket")));
+		batWeapon->SetActorRelativeLocation(FVector(-15.411383, -18.107558, 29.253529));
+		batWeapon->SetActorRelativeRotation(FRotator(48.973539, -105.339813, -101.692076));
+		bHasWeapon = true;
+	}
+	else if (axeWeapon && !bHasWeapon && !bHasGun)
+	{
+		/*axeWeapon->meshComp->SetSimulatePhysics(false);
+		axeWeapon->meshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);*/
+		axeWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName(TEXT("WeaoponSocket")));
+		axeWeapon->SetActorRelativeLocation(FVector(-15.411383, -18.107558, 29.253529));
+		axeWeapon->SetActorRelativeRotation(FRotator(48.973539, -105.339813, -101.692076));
 		bHasWeapon = true;
 	}
 	else if (gunWeapon && !bHasGun && !bHasWeapon)

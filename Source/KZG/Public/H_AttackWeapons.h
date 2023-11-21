@@ -29,8 +29,7 @@ public:
 	class USphereComponent* sphereComp;
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* boxComp;
-	UPROPERTY(VisibleAnywhere)
-	class UStaticMeshComponent* meshComp;
+	
 
 	UPROPERTY(EditDefaultsOnly, Category="HitPlaySound")
 	class USoundBase* batHitSound;
