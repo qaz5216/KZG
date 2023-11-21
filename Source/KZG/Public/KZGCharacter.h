@@ -111,6 +111,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="Effect")
 	class UParticleSystem* BP_shotBloodEffect;
 
+	UPROPERTY(EditDefaultsOnly, Category="Effect")
+	class UParticleSystem* BP_gunEffect;
+
 	UPROPERTY(EditDefaultsOnly, Category = "swingSound")
 	class USoundBase* batSwingSound;
 
