@@ -74,6 +74,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* pressedTwo;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* zoomAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	class UInputAction* reloadAction;
+
 public:
 	UPROPERTY(VisibleAnywhere, Category = MySettings, Replicated, meta = (AllowPrivateAccess = "true"))
 	class UH_EWidget* EWidget;
@@ -96,7 +102,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="CameraShake")
 	TSubclassOf<class UCameraShakeBase> ZFinalBase;
 
-	
+	UPROPERTY(EditDefaultsOnly, Category="CameraShake")
+	TSubclassOf<class UCameraShakeBase> gunShakeBase;
 
 	UPROPERTY(EditDefaultsOnly, Category = "swingSound")
 	class USoundBase* batSwingSound;
@@ -174,6 +181,14 @@ protected:
 	void PressedOneAction();
 
 	void PressedTwoAction();
+
+	void StartedZoom();
+
+	void FinishedZoom();
+
+	void ReloadAmmo();
+
+	void FinishedReloading();
  
 	class UH_KZGPlayerAnim* anim;
 protected:
@@ -219,7 +234,9 @@ public:
 	bool bOnDamaged = false;
 
 	UPROPERTY(Replicated)
-	bool bIsAttacking = false;	UPROPERTY(Replicated)
+	bool bIsAttacking = false;	
+
+	UPROPERTY(Replicated)
 	bool bIsFinalAttackEnded = false;
 
 	UPROPERTY(Replicated)
@@ -236,6 +253,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	bool bHasGun = false;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	bool bIsZooming = false;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	bool bIsReloading = false;
 
 	UPROPERTY(EditAnywhere, Category="AssasinationDistance")
 	float assasinationDistance = 50;
@@ -257,6 +280,12 @@ public:
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
 	int32 weaponDamage = 5;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Ammo")
+	int32 curAmmo = 15;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Ammo")
+	int32 maxAmmo = 30;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
 	int32 pursuitEnemy = 0;

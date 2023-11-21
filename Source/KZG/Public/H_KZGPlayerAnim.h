@@ -58,6 +58,12 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
 	class UAnimMontage* comboMontage3;
 
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* gunShootMon;
+
+	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
+	class UAnimMontage* reloadMon;
+
 	UPROPERTY(EditDefaultsOnly, Category="StepSound")
 	USoundBase* stepSound;
 
@@ -99,6 +105,10 @@ public:
 	void PlayDeathGrabMontage();
 	void playAssasinationDeathAnimation();
 	void playPushAnimation();
+
+	void playGunShootAnim();
+	void playReloadAnim();
+
 
 	class AKZGCharacter* player;
 
