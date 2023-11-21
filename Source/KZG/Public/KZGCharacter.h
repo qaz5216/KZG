@@ -377,6 +377,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_PlayerDeath();
 
+	UFUNCTION()
+	void AssasinationDeath();
+
 	void AttackCollisionOff();
 	//UFUNCTION(NetMulticast, Reliable)
 	//void Multicast_GrabbedWidget();

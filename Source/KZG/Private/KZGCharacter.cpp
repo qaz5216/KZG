@@ -650,6 +650,13 @@ void AKZGCharacter::Multicast_PlayerDeath_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void AKZGCharacter::AssasinationDeath()
+{
+	bIsDead = true;
+	anim->playAssasinationDeathAnimation();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
 void AKZGCharacter::AttackCollisionOff()
 {
 	/*if (attackWeapon)
