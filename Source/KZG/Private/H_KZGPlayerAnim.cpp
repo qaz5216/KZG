@@ -179,3 +179,15 @@ void UH_KZGPlayerAnim::playPushAnimation()
 {
 	Montage_Play(pushMontage);
 }
+
+void UH_KZGPlayerAnim::playGunShootAnim()
+{
+	Montage_Play(gunShootMon);
+
+}
+
+void UH_KZGPlayerAnim::playReloadAnim()
+{
+	Montage_Play(reloadMon);
+
+}

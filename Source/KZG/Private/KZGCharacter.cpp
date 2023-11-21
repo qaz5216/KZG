@@ -256,6 +256,18 @@ void AKZGCharacter::Tick(float DeltaTime)
 		}
 	}
 
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::Printf(TEXT("Ammo: %d , Max: %d"), curAmmo, maxAmmo));
+
+	if (curAmmo <= 0)
+	{	
+		if(bIsReloading) return;
+		bIsReloading = true;
+		anim->playReloadAnim();
+		maxAmmo -= 15 - curAmmo;
+		FTimerHandle reloadHandle1;
+		GetWorldTimerManager().SetTimer(reloadHandle1, this, &AKZGCharacter::FinishedReloading, 1.1f, false);
+	}
+	if(maxAmmo <= 0) bIsReloading = true;
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::Printf(TEXT("Weapon HP : %d"), realWeaponHP));
 	/*if (realWeaponHP <= 0)
@@ -327,7 +339,9 @@ void AKZGCharacter::Tick(float DeltaTime)
 		curHungtime = 0;
 	}
 	
-	if (bIsAttacking)
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%f"), CameraBoom->TargetArmLength));
+
+	if (bIsAttacking || bIsZooming)
 	{
 		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, 100, 0.2f);
 	}
@@ -335,6 +349,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		CameraBoom->TargetArmLength = FMath::Lerp(CameraBoom->TargetArmLength, 200, 0.2f);
 	}
+	
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Black, FString::Printf(TEXT("%s"), bIsAttacking ? *FString("true") : *FString("false")));
 
@@ -635,6 +650,13 @@ void AKZGCharacter::Multicast_PlayerDeath_Implementation()
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
+void AKZGCharacter::AssasinationDeath()
+{
+	bIsDead = true;
+	anim->playAssasinationDeathAnimation();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+}
+
 void AKZGCharacter::AttackCollisionOff()
 {
 	/*if (attackWeapon)
@@ -749,6 +771,10 @@ void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInput
 
 		EnhancedInputComponent->BindAction(pressedTwo, ETriggerEvent::Triggered, this, &AKZGCharacter::PressedTwoAction);
 
+		EnhancedInputComponent->BindAction(zoomAction, ETriggerEvent::Started, this, &AKZGCharacter::StartedZoom);
+		EnhancedInputComponent->BindAction(zoomAction, ETriggerEvent::Completed, this, &AKZGCharacter::FinishedZoom);
+
+		EnhancedInputComponent->BindAction(reloadAction, ETriggerEvent::Triggered, this, &AKZGCharacter::ReloadAmmo);
 
 	}
 }
@@ -844,8 +870,9 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 			anim->PlayComboAnimation3();
 		}		
 	}
-	else if (!bIsgrabbed && currentStamina > 5 && !bHasWeapon && bHasGun)
+	else if (!bIsgrabbed && currentStamina > 5 && !bHasWeapon && bHasGun && bIsZooming)
 	{
+		if(bIsReloading) return;
 		//1. 시작점이 필요하다.
 		FVector startPos = FollowCamera->GetComponentLocation();
 		//2. 종료점이 필요하다.
@@ -854,18 +881,31 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		FHitResult hitInfo;
 		FCollisionQueryParams param;
 		param.AddIgnoredActor(this);
-		//bool bHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECC_Visibility, param);
-		bool bHit = GetWorld()->LineTraceSingleByProfile(hitInfo, startPos, endPos, TEXT("Weapon"), param);
+		bool bHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECC_Visibility, param);
+		//bool bHit = GetWorld()->LineTraceSingleByProfile(hitInfo, startPos, endPos, TEXT("Weapon"), param);
+
+		//UGameplayStatics::PlaySound2D(GetWorld(), gunShotSound, 1.0f);
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(gunShakeBase);
+		anim->playGunShootAnim();
+		curAmmo--;
 		//4. 선이 부딪혔으니까
 		if (bHit)
 		{	
 			AEnemy* enemy = Cast<AEnemy>(hitInfo.GetActor());
-
+			FTransform trans;
+			trans.SetLocation(hitInfo.ImpactPoint);
+			trans.SetRotation(hitInfo.ImpactNormal.ToOrientationQuat());
 			if (enemy)
 			{
 				enemy->Damaged(gunDamage);
-				UGameplayStatics::PlaySound2D(GetWorld(), gunShotSound, 1.0f);
 				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("%d"), enemy->HP_Cur));
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BP_shotBloodEffect, trans);
+
+			}
+			else
+			{
+				
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BP_shotEffect, trans);
 			}
 			
 		}
@@ -1095,40 +1135,40 @@ void AKZGCharacter::JumpInput()
 
 void AKZGCharacter::PressedOneAction()
 {
-	bHasGun = true;
-	bHasWeapon = false;
-	if (attackWeapon)
-	{
-		if (attackWeapon->GetName().Contains(FString(TEXT("Bat"))))
-		{
-			FActorSpawnParameters Param;
-			Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_BatWeapon, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
-			weapon->WeaponHP = attackWeapon->WeaponHP;
-			attackWeapon->Destroy();
-			bHasWeapon = false;
-		}
-		else if (attackWeapon->GetName().Contains(FString(TEXT("Axe"))))
-		{
-			FActorSpawnParameters Param;
-			Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			AH_AttackWeapons* weapon = GetWorld()->SpawnActor<AH_AttackWeapons>(BP_AxeWeapon, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
-
-			weapon->WeaponHP = attackWeapon->WeaponHP;
-			attackWeapon->Destroy();
-			bHasWeapon = false;
-		}
-	}
+	
 }
 
 void AKZGCharacter::PressedTwoAction()
 {
-	bHasGun = false;
-	bHasWeapon = true;
-	if (attackWeapon)
+	
+}
+
+void AKZGCharacter::StartedZoom()
+{
+	if(bHasGun) bIsZooming = true;
+}
+
+void AKZGCharacter::FinishedZoom()
+{
+	if (bHasGun) bIsZooming = false;
+}
+
+void AKZGCharacter::ReloadAmmo()
+{
+	if(!bIsReloading) 
 	{
-		
+		bIsReloading = true;
+		anim->playReloadAnim();
+		maxAmmo -= 15 - curAmmo;
+		FTimerHandle reloadHandle;
+		GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.1f, false);
 	}
+}
+
+void AKZGCharacter::FinishedReloading()
+{
+	bIsReloading = false;
+	curAmmo = 15;
 }
 
 void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
