@@ -100,6 +100,12 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	case EEnemyState::Die:
 		DieState(DeltaTime);
 		break;
+	case EEnemyState::DeepSleep:
+		DeepSleepState();
+		break;
+	case EEnemyState::Eating:
+		EatingState();
+		break;
 	case EEnemyState::Sleep:
 		SleepState();
 		break;
@@ -329,6 +335,16 @@ void UEnemyFsm::DieState(float DeltaTime)
 void UEnemyFsm::SleepState()
 {
 	//자는중
+}
+
+void UEnemyFsm::DeepSleepState()
+{
+	//딥슬립중
+}
+
+void UEnemyFsm::EatingState()
+{
+	//식사중
 }
 
 void UEnemyFsm::GroggyState(float DeltaTime)

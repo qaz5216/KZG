@@ -20,6 +20,8 @@ enum class EEnemyState : uint8
 	Damage,
 	Die,
 	Sleep,
+	DeepSleep,
+	Eating,
 	Groggy,
 	kill,
 };
@@ -49,6 +51,8 @@ public:
 	void DamageState(float DeltaTime);
 	void DieState(float DeltaTime);
 	void SleepState();
+	void DeepSleepState();
+	void EatingState();
 	void GroggyState(float DeltaTime);
 
 
