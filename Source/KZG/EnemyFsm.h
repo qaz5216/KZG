@@ -87,6 +87,12 @@ public:
 	void killingplay();
 
 	void ChangeToTrackingState(class AKZGCharacter* NewTarget);
+	UFUNCTION(BlueprintCallable)
+	void DeepSleepToTrackingState(class AKZGCharacter* NewTarget);
+	UFUNCTION(BlueprintCallable)
+	void EatingToTrackingState(class AKZGCharacter* NewTarget);
+	bool bDeepSleep=false;
+	bool bEating=false;
 
 	void ChangeToKillState();
 

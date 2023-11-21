@@ -58,6 +58,21 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
 	void StopGroogyAnim();
 
+	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
+	void PlayGetUpAnim();
+
+	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
+	void PlayWakeUpAnim();
+
+	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
+	void StopGetUpAnim();
+
+	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
+	void StopWakeUpAnim();
+
+	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
+	void StopDamageAnim();
+	
 
 	// DieEndNoti 이벤트가 들어오면 그때서야 DieState 가 동작하도록 하고싶다.
 	UFUNCTION()

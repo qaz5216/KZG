@@ -46,7 +46,14 @@ void UEnemyFsm::BeginPlay()
 	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
 	start=true;
 	mState=StartState;
-	
+	if (StartState==EEnemyState::DeepSleep)
+	{
+		bDeepSleep=true;
+	}
+	if (StartState == EEnemyState::Eating)
+	{
+		bEating = true;
+	}
 }
 
 
@@ -67,7 +74,7 @@ void UEnemyFsm::TickComponent(float DeltaTime, ELevelTick TickType, FActorCompon
 	if (start)
 	{
 		//시야는 계속작동하니까
-		if (mState==EEnemyState::Damage||mState==EEnemyState::Groggy||mState==EEnemyState::Die||mState==EEnemyState::Sleep||mState==EEnemyState::kill)
+		if (mState==EEnemyState::Damage||mState==EEnemyState::Groggy||mState==EEnemyState::Die||mState==EEnemyState::Sleep||mState==EEnemyState::kill || mState == EEnemyState::DeepSleep || mState == EEnemyState::Eating)//이때는 빼고
 		{
 		}
 		else
@@ -431,7 +438,7 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 		FailLocTime = 0;
 		mState = EEnemyState::Tracking;
 	}
-	else if (mState==EEnemyState::Groggy)
+	else if (mState == EEnemyState::Eating)
 	{
 		Target = NewTarget;
 		dest = Target->GetActorLocation();
@@ -439,6 +446,63 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 		Trackingtime_cur = 0;
 		FailLocTime = 0;
 		mState = EEnemyState::Tracking;
+	}
+	else if (mState == EEnemyState::DeepSleep)
+	{
+		Target = NewTarget;
+		dest = Target->GetActorLocation();
+		//Me->AttachUI();
+		Trackingtime_cur = 0;
+		FailLocTime = 0;
+		mState = EEnemyState::Tracking;
+	}
+
+	else if (mState==EEnemyState::Groggy)
+	{
+		Target = NewTarget;
+		if (Target!=nullptr)
+		{
+			dest = Target->GetActorLocation();
+
+		}
+		//Me->AttachUI();
+		Trackingtime_cur = 0;
+		FailLocTime = 0;
+		mState = EEnemyState::Tracking;
+	}
+}
+
+void UEnemyFsm::DeepSleepToTrackingState(class AKZGCharacter* NewTarget)
+{
+	if (bDeepSleep)
+	{
+		bDeepSleep=false;
+		anim->PlayWakeUpAnim();
+		FTimerHandle myTimerHandle;
+		Target = NewTarget;
+		GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				anim->StopWakeUpAnim();
+				ChangeToTrackingState(Target);
+			}), 2.4, false); // 반복 실행을 하고 싶으면 false 대신 true 대입
+	}
+}
+
+void UEnemyFsm::EatingToTrackingState(class AKZGCharacter* NewTarget)
+{
+	if (bEating)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("EatingToTrack")));
+		bEating=false;
+		anim->PlayGetUpAnim();
+		FTimerHandle myTimerHandle;
+		Target = NewTarget;
+		GetWorld()->GetTimerManager().SetTimer(myTimerHandle, FTimerDelegate::CreateLambda([&]()
+			{
+				
+				anim->StopGetUpAnim();
+				ChangeToTrackingState(Target);
+			}), 2.5, false); // 반복 실행을 하고 싶으면 false 대신 true 대입
 	}
 }
 
@@ -550,14 +614,16 @@ void UEnemyFsm::ChangeToDamageState()
 	{
 		return;
 	}
-	int32 index = FMath::RandRange(0, 1);
+	int32 index = FMath::RandRange(0,1);
+	index=0;
 	FString sectionName = FString::Printf(TEXT("Damage%d"), index);
-	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Section Name:%s"), *sectionName));
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Section Name:%s"), *sectionName));
 	//anim->PlayDamageAnim(FName(*sectionName));
-	anim->PlayDamageAnim(FName(*sectionName));
 	if (mState==EEnemyState::Damage)
 	{
 		damagetime_cur=0;
+		anim->StopDamageAnim();
+		anim->PlayDamageAnim(FName(*sectionName));
 	}
 	else if (mState == EEnemyState::Groggy)
 	{
@@ -572,6 +638,7 @@ void UEnemyFsm::ChangeToDamageState()
 		damagetime_cur=0;
 		PremState = mState;
 		mState = EEnemyState::Damage;
+		anim->PlayDamageAnim(FName(*sectionName));
 	}
 }
 
@@ -765,4 +832,12 @@ void UEnemyFsm::Recognition(class AKZGCharacter* NewTarget)
 		ChangeToTrackingState(NewTarget);
 	}
 
+	/*if (mState==EEnemyState::DeepSleep)
+	{
+		DeepSleepToTrackingState(NewTarget);
+	}
+	if (mState == EEnemyState::Eating)
+	{
+		EatingToTrackingState(NewTarget);
+	}*/
 }
