@@ -202,7 +202,7 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 			double DotP = FVector::DotProduct(Me->GetActorForwardVector(), Target->GetActorForwardVector());
 			if (DotP > 0.5)
 			{
-				Target->DamagedStamina(Target->currentStamina);
+				Target->AssasinationDeath();
 				ai->StopMovement();
 				anim->PlayKillAnim();
 				FTimerHandle myTimerHandle;
