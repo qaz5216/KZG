@@ -26,6 +26,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MySettings")
 	TSubclassOf<class AActor> DropActor;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MySettings")
+	TSubclassOf<class AActor> SmokeActor;
+
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "MySettings")
 	FVector SpawnLoc;
