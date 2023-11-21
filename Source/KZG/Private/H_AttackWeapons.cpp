@@ -24,7 +24,7 @@ AH_AttackWeapons::AH_AttackWeapons()
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	sphereComp = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComp"));
-	sphereComp->SetupAttachment(RootComp);
+	sphereComp->SetupAttachment(boxComp);
 	sphereComp->SetSphereRadius(30);
 	sphereComp->SetCollisionProfileName(TEXT("WeaponDrop"));
 

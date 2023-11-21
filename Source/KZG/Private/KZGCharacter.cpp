@@ -61,7 +61,7 @@ AKZGCharacter::AKZGCharacter()
 		gunMesh->SetStaticMesh(Tempgun.Object);
 		gunMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		gunMesh->SetVisibility(false);
-		gunMesh->SetRelativeLocationAndRotation(FVector(-19.444434,8.078580,3.696963), FRotator(52.411667, 74.664296, 8.016663));
+		gunMesh->SetRelativeLocationAndRotation(FVector(-20.137923, 8.897582, 2.340531), FRotator(1.669609, 68.438939, 8.796659));
 
 	}
 
@@ -883,6 +883,9 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		param.AddIgnoredActor(this);
 		bool bHit = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECC_Visibility, param);
 		//bool bHit = GetWorld()->LineTraceSingleByProfile(hitInfo, startPos, endPos, TEXT("Weapon"), param);
+		FTransform trans1;
+		trans1.SetLocation(gunMesh->GetSocketLocation(FName(FString(TEXT("ParticleSocket")))));
+		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BP_gunEffect, trans1);
 
 		//UGameplayStatics::PlaySound2D(GetWorld(), gunShotSound, 1.0f);
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(gunShakeBase);
