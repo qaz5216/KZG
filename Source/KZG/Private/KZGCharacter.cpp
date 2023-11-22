@@ -325,11 +325,21 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		GrabbedCam->SetActive(true);
 		FollowCamera->SetActive(false);
+		if (bHasGun)
+		{
+			bHasGun = false;
+			bGotGun = true;
+		}
 		//SwitchBGMtoGrab();
 	}
 	else if(!bIsgrabbed)
 	{
 		//SwitchBGMtoDefault();
+		if (bGotGun)
+		{
+			bHasGun = true;
+			bGotGun = false;
+		}
 		FollowCamera->SetActive(true);
 		GrabbedCam->SetActive(false);
 	}
@@ -655,8 +665,8 @@ void AKZGCharacter::Multicast_PlayerDeath_Implementation()
 void AKZGCharacter::AssasinationDeath()
 {
 	bIsDead = true;
-	//anim->playAssasinationDeathAnimation();
-	anim->PlayDeathGrabMontage();
+	anim->playAssasinationDeathAnimation();
+	//anim->PlayDeathGrabMontage();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -1177,6 +1187,7 @@ void AKZGCharacter::ReloadAmmo()
 	if(!bIsReloading) 
 	{
 		bIsReloading = true;
+		if (curAmmo >= 15) return;
 		anim->playReloadAnim();
 		maxAmmo -= 15 - curAmmo;
 		FTimerHandle reloadHandle;

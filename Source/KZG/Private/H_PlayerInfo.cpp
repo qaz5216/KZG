@@ -61,9 +61,9 @@ void UH_PlayerInfo::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		}
 
 		if (player->curHungerP < 30) Image_Hungry->SetVisibility(ESlateVisibility::Visible);
-		else Image_Hungry->SetVisibility(ESlateVisibility::Hidden);
+		else if(player->curHungerP >= 30) Image_Hungry->SetVisibility(ESlateVisibility::Hidden);
 		if (player->currentStamina < 50) Image_Sleep->SetVisibility(ESlateVisibility::Visible);
-		else Image_Sleep->SetVisibility(ESlateVisibility::Hidden);
+		else if (player->currentStamina >= 50) Image_Sleep->SetVisibility(ESlateVisibility::Hidden);
 
 	}
 }

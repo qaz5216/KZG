@@ -264,6 +264,9 @@ public:
 	bool bHasGun = false;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
+	bool bGotGun = false;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
 	bool bIsZooming = false;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadOnly)
