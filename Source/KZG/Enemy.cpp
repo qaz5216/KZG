@@ -66,7 +66,7 @@ void AEnemy::Damaged(int32 damage)
 		HP_Cur=0;
 		FSM->ChangeToDieState();
 	}
-	StatUI->SetHPBar(HP_Cur,HP_Max);
+	//StatUI->SetHPBar(HP_Cur,HP_Max);
 }
 
 void AEnemy::StaminaDamaged(int32 value)
