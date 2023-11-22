@@ -27,6 +27,12 @@ void UH_KZGPlayerAnim::NativeUpdateAnimation(float DeltaSeconds)
 
 		auto movement = player->GetCharacterMovement();
 		isInAir = movement->IsFalling();
+
+		deltaRot = (player->GetActorRotation() - player->GetBaseAimRotation()).GetNormalized();
+
+		deltaPitch = deltaRot.Pitch;
+		deltaRoll = deltaRot.Roll;
+		deltaYaw = deltaRot.Yaw;
 	}
 }
 

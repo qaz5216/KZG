@@ -24,6 +24,15 @@ public:
 	float direction = 0;
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Settings")
 	bool isInAir = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Settings")
+	FRotator deltaRot;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Settings")
+	float deltaPitch;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Settings")
+	float deltaYaw;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Settings")
+	float deltaRoll;
+
 
 	UPROPERTY(EditDefaultsOnly, Category="AnimMontage")
 	class UAnimMontage* deathMontage;
