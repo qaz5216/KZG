@@ -204,7 +204,6 @@ void AKZGCharacter::Tick(float DeltaTime)
 		}
 	}
 	
-	
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("dead: %s"), bIsDead ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("crouch: %s"), bIsCrouching ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("comboIndex: %d"), comboIndex));
@@ -323,6 +322,11 @@ void AKZGCharacter::Tick(float DeltaTime)
 	//Server_ChangeView();
 	if (bIsgrabbed)
 	{
+		if (attackWeapon)
+		{
+			attackWeapon->boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		}
+
 		GrabbedCam->SetActive(true);
 		FollowCamera->SetActive(false);
 		if (bHasGun)
@@ -697,7 +701,6 @@ void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 			realWeaponHP -= weaponDamage;
 		}
 	}*/
-
 }
 
 void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
