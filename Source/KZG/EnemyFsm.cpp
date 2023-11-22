@@ -614,16 +614,14 @@ void UEnemyFsm::ChangeToDamageState()
 	{
 		return;
 	}
-	int32 index = FMath::RandRange(0,1);
-	index=0;
-	FString sectionName = FString::Printf(TEXT("Damage%d"), index);
-	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("Section Name:%s"), *sectionName));
+	//FString sectionName = FString::Printf(TEXT("Damage%d"), index);
+	GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("hizzzz")));
 	//anim->PlayDamageAnim(FName(*sectionName));
 	if (mState==EEnemyState::Damage)
 	{
 		damagetime_cur=0;
 		anim->StopDamageAnim();
-		anim->PlayDamageAnim(FName(*sectionName));
+		anim->PlayDamageAnim();
 	}
 	else if (mState == EEnemyState::Groggy)
 	{
@@ -638,7 +636,7 @@ void UEnemyFsm::ChangeToDamageState()
 		damagetime_cur=0;
 		PremState = mState;
 		mState = EEnemyState::Damage;
-		anim->PlayDamageAnim(FName(*sectionName));
+		anim->PlayDamageAnim();
 	}
 }
 
