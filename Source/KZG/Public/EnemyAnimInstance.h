@@ -32,7 +32,7 @@ public:
 
 	// 피격 몽타주 처리함수 선언
 	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
-	void PlayDamageAnim(FName sectionName);
+	void PlayDamageAnim();
 	
 	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
 	void PlayStaminaAnim(FName sectionName);
