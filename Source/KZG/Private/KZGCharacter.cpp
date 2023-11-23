@@ -82,7 +82,7 @@ AKZGCharacter::AKZGCharacter()
 		batMesh->SetStaticMesh(TempBat.Object);
 		batMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		batMesh->SetVisibility(false);
-		batMesh->SetRelativeLocationAndRotation(FVector(-13.419591, -2.414909, 9.095527), FRotator(12.700006, -15.579394, -51.744371));
+		batMesh->SetRelativeLocationAndRotation(FVector(-13.419591, -2.414909, 9.095527), FRotator(12.700006, -15.579394, -41.744371));
 
 	}
 
@@ -98,7 +98,7 @@ AKZGCharacter::AKZGCharacter()
 		axeMesh->SetStaticMesh(TempAxe.Object);
 		axeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		axeMesh->SetVisibility(false);
-		axeMesh->SetRelativeLocationAndRotation(FVector(-11.144902, 1.984119, 4.615342), FRotator(12.700006, -15.579394, -51.744371));
+		axeMesh->SetRelativeLocationAndRotation(FVector(-11.144902, 1.984119, 4.615342), FRotator(12.700006, -15.579394, -41.744371));
 	}
 
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
@@ -351,10 +351,6 @@ void AKZGCharacter::Tick(float DeltaTime)
 	}
 	else if(!bIsgrabbed)
 	{
-		if (APlayerController* pc = Cast<APlayerController>(Controller))
-		{
-			//pc->SetViewTargetWithBlend(this, blendTime);
-		}
 		if (bGotGun)
 		{
 			bHasGun = true;
@@ -591,6 +587,7 @@ void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
 	bIsgrabbed = true;
 	bCangrabbed = false;
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ZGrabbedBase);
+	if (bIsCrouching) bIsCrouching = false;
 	GrabbedEnemy=Enemy;
 	FVector meLoc = GetActorLocation();
 	if (Enemy)
@@ -603,9 +600,13 @@ void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
 
 void AKZGCharacter::EscapebyZombie()
 {
+	if (APlayerController* pc = Cast<APlayerController>(Controller))
+	{
+		pc->SetViewTargetWithBlend(this, blendTime);
+
+	}
 	bIsgrabbed=false;   
 	GrabbedEnemy=nullptr;
-	if (bIsCrouching) bIsCrouching = false;
 	//UE_LOG(LogTemp, Warning, TEXT("Escapezz"));
 	anim->playPushAnimation();
 	FTimerHandle myhandle;
