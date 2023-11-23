@@ -897,7 +897,7 @@ void AKZGCharacter::Server_AttackInput_Implementation()
 void AKZGCharacter::Multicast_AttackInput_Implementation()
 {
 	int32 attackNum = FMath::RandRange(1, 100);
-	if(axeMesh->IsVisible() == false && batMesh->IsVisible() == false) return;
+	//if(axeMesh->IsVisible() == false && batMesh->IsVisible() == false) return;
 	if(bIsAttacking) return;
 	if(bIsFinalAttackEnded) return;
 	if (bIsDead) return;
