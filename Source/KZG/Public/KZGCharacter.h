@@ -32,14 +32,14 @@ public:
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* gunMesh;
 
-	/*UPROPERTY(VisibleAnywhere)
-	class UBoxComponent* boxComp;*/
+	UPROPERTY(VisibleAnywhere)
+	class UBoxComponent* boxComp;
 
-	//UPROPERTY(VisibleAnywhere)
-	//class UStaticMeshComponent* batMesh;
-	//
-	//UPROPERTY(VisibleAnywhere)
-	//class UStaticMeshComponent* axeMesh;
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* batMesh;
+	
+	UPROPERTY(VisibleAnywhere)
+	class UStaticMeshComponent* axeMesh;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputMappingContext* DefaultMappingContext;
@@ -125,6 +125,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="gunShotSound")
 	class USoundBase* gunShotSound;
+
+	UPROPERTY(EditDefaultsOnly, Category="HitPlaySound")
+	class USoundBase* batHitSound;
 
 	//UPROPERTY(EditDefaultsOnly, Category="audioComp")
 	//class UAudioComponent* audioComp;
@@ -291,7 +294,7 @@ public:
 	int32 realWeaponHP = 0;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
-	int32 weaponDamage = 5;
+	int32 weaponDamage = 18;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Ammo")
 	int32 curAmmo = 15;
@@ -344,8 +347,7 @@ public:
 
 	float lerpCurTime;
 
-
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, Category ="Damage")
 	int32 damagePower = 35;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -367,8 +369,6 @@ public:
 	TSubclassOf<class AH_AttackCamActor> BP_Cam;
 
 	class AH_AttackWeapons* attackWeapon;
-	class AH_BatWeapon* batWeapon;
-	class AH_AxeWeapon* axeWeapon;
 
 	class ABP_H_Gun* gunWeapon;
 	class AH_AttackCamActor* camActor;

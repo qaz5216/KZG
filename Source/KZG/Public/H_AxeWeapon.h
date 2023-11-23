@@ -17,6 +17,5 @@ class KZG_API AH_AxeWeapon : public AH_AttackWeapons
 public:
 	AH_AxeWeapon();
 
-	UPROPERTY(EditAnywhere)
-	class UStaticMeshComponent* meshComp;
+	
 };

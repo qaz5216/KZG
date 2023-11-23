@@ -19,7 +19,7 @@ AH_AttackWeapons::AH_AttackWeapons()
 
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	boxComp->SetupAttachment(RootComp);
-	boxComp->SetBoxExtent(FVector(70, 10, 10));
+	boxComp->SetBoxExtent(FVector(70, 12, 12));
 	boxComp->SetCollisionProfileName(TEXT("Weapon"));
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
@@ -27,6 +27,11 @@ AH_AttackWeapons::AH_AttackWeapons()
 	sphereComp->SetupAttachment(boxComp);
 	sphereComp->SetSphereRadius(30);
 	sphereComp->SetCollisionProfileName(TEXT("WeaponDrop"));
+
+	meshComp = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("meshComp"));
+	meshComp->SetupAttachment(RootComp);
+	meshComp->SetSimulatePhysics(true);
+	//meshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	bReplicates = true;
 
@@ -36,7 +41,7 @@ AH_AttackWeapons::AH_AttackWeapons()
 void AH_AttackWeapons::BeginPlay()
 {
 	Super::BeginPlay();
-	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AH_AttackWeapons::OnComponentBeginOverlap);
+	//boxComp->OnComponentBeginOverlap.AddDynamic(this, &AH_AttackWeapons::OnComponentBeginOverlap);
 	
 	
 }
@@ -48,20 +53,20 @@ void AH_AttackWeapons::Tick(float DeltaTime)
 	
 }
 
-void AH_AttackWeapons::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	AEnemy* Zombie = Cast<AEnemy>(OtherActor);
-	//Zombie->FSM->Target = this;
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("Overlap")));
-
-
-	if (OtherActor == Zombie)
-	{
-		UGameplayStatics::PlaySound2D(GetWorld(), batHitSound);
-		Zombie->Damaged(zombieDamage);
-		WeaponHP -= weaponDamage;
-		boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	}
-}
+//void AH_AttackWeapons::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+//{
+//	AEnemy* Zombie = Cast<AEnemy>(OtherActor);
+//	//Zombie->FSM->Target = this;
+//	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("Overlap")));
+//
+//
+//	if (OtherActor == Zombie)
+//	{
+//		UGameplayStatics::PlaySound2D(GetWorld(), batHitSound);
+//		Zombie->Damaged(zombieDamage);
+//		WeaponHP -= weaponDamage;
+//		boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+//	}
+//}
 
 

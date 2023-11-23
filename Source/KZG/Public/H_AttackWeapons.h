@@ -29,10 +29,9 @@ public:
 	class USphereComponent* sphereComp;
 	UPROPERTY(VisibleAnywhere)
 	class UBoxComponent* boxComp;
-	
+	UPROPERTY(EditAnywhere)
+	class UStaticMeshComponent* meshComp;
 
-	UPROPERTY(EditDefaultsOnly, Category="HitPlaySound")
-	class USoundBase* batHitSound;
 
 	bool bIsOverlapping = false;
 
@@ -43,13 +42,13 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
 	int32 WeaponHP = 100;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Damage")
+	/*UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Damage")
 	int32 weaponDamage = 20;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Damage")
-	int32 zombieDamage = 35;
+	int32 zombieDamage = 35;*/
 	
-	UFUNCTION()
-	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	//UFUNCTION()
+	//void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 public:
 };
