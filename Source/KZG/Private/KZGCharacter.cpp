@@ -353,7 +353,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		if (APlayerController* pc = Cast<APlayerController>(Controller))
 		{
-			pc->SetViewTargetWithBlend(this, blendTime);
+			//pc->SetViewTargetWithBlend(this, blendTime);
 		}
 		if (bGotGun)
 		{
