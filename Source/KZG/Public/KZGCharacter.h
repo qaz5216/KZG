@@ -420,6 +420,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="SetLocation")
 	float restartLoc = 0.1f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="WidgetDelay")
+	float widgetDelay = 2.0f;
+
 	void SetPlayerLocationToFirst();
+	void WidgetDelay();
 };
 

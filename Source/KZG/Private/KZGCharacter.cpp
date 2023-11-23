@@ -177,10 +177,10 @@ void AKZGCharacter::BeginPlay()
 
 	EWidget = CreateWidget<UH_EWidget>(GetWorld(), BP_EWidget);
 	InfoWidget = CreateWidget<UH_PlayerInfo>(GetWorld(), BP_InfoWidget);
-	if (InfoWidget != nullptr)
-	{
-		InfoWidget->AddToViewport();
-	}
+
+	FTimerHandle widgetHandle;
+	GetWorldTimerManager().SetTimer(widgetHandle, this, &AKZGCharacter::WidgetDelay, widgetDelay, false);
+	
 	currentStamina = playerStamina;
 	curHungerP = maxHungerP;
 	CameraLocation = FollowCamera->GetComponentLocation();
@@ -212,7 +212,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 		}
 	}*/
 	
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("Reload: %s"), bIsReloading ? *FString("true") : *FString("false")));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("Reload: %s"), bIsReloading ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("crouch: %s"), bIsCrouching ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("comboIndex: %d"), comboIndex));
 
@@ -795,6 +795,16 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 void AKZGCharacter::SetPlayerLocationToFirst()
 {
 	SetActorLocation(FVector(-6113.896223, 17158.341344, 4187.370783));
+}
+
+void AKZGCharacter::WidgetDelay()
+{
+	if (InfoWidget != nullptr)
+	{
+		InfoWidget->AddToViewport();
+		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("2.0f")));
+
+	}
 }
 
 void AKZGCharacter::SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent)
