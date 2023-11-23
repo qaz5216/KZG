@@ -26,6 +26,7 @@
 #include "BP_H_Gun.h"
 #include "H_BatWeapon.h"
 #include "H_AxeWeapon.h"
+#include "H_AttackCamActor.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -129,7 +130,6 @@ AKZGCharacter::AKZGCharacter()
 	SeeScene = CreateDefaultSubobject<USceneComponent>(TEXT("SeeScene"));
 	SeeScene->SetupAttachment(GetMesh());
 	SeeScene->SetRelativeLocation(FVector(0,0,50));
-
 	/*audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	audioComp->SetupAttachment(GetCapsuleComponent());
 
@@ -186,7 +186,11 @@ void AKZGCharacter::BeginPlay()
 	CameraLocation = FollowCamera->GetComponentLocation();
 	CameraRot = FollowCamera->GetComponentRotation();
 	camArmLen = CameraBoom->TargetArmLength;
-
+	
+	FActorSpawnParameters Param;
+	Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	camActor = GetWorld()->SpawnActor<AH_AttackCamActor>(BP_Cam, GetActorLocation(), GetActorRotation(), Param);
+	//camActor = Cast<AH_AttackCamActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AH_AttackCamActor::StaticClass()));
 }
 
 void AKZGCharacter::Tick(float DeltaTime)
@@ -194,6 +198,10 @@ void AKZGCharacter::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	GetCharacterMovement()->MaxWalkSpeed = FMath::Lerp(GetCharacterMovement()->MaxWalkSpeed, returnSpeed, 5 * DeltaTime);
+	if (camActor)
+	{
+		camActor->SetActorLocationAndRotation(GrabbedCam->GetComponentLocation(), GrabbedCam->GetComponentRotation());
+	}
 	if (attackWeapon)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("weaponHP: %d"), attackWeapon->WeaponHP));
@@ -204,7 +212,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 		}
 	}
 	
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("dead: %s"), bIsDead ? *FString("true") : *FString("false")));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("Reload: %s"), bIsReloading ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("crouch: %s"), bIsCrouching ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("comboIndex: %d"), comboIndex));
 
@@ -326,26 +334,35 @@ void AKZGCharacter::Tick(float DeltaTime)
 		{
 			attackWeapon->boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		}
-
-		GrabbedCam->SetActive(true);
-		FollowCamera->SetActive(false);
+		if (APlayerController* pc = Cast<APlayerController>(Controller))
+		{
+			if (camActor)
+			{
+				//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%s"), *camActor->GetName()));
+				pc->SetViewTargetWithBlend(camActor, blendTime);
+			}
+		}
+		//GrabbedCam->SetActive(true);
+		//FollowCamera->SetActive(false);
 		if (bHasGun)
 		{
 			bHasGun = false;
 			bGotGun = true;
 		}
-		//SwitchBGMtoGrab();
 	}
 	else if(!bIsgrabbed)
 	{
-		//SwitchBGMtoDefault();
+		if (APlayerController* pc = Cast<APlayerController>(Controller))
+		{
+			pc->SetViewTargetWithBlend(this, blendTime);
+		}
 		if (bGotGun)
 		{
 			bHasGun = true;
 			bGotGun = false;
 		}
-		FollowCamera->SetActive(true);
-		GrabbedCam->SetActive(false);
+		//FollowCamera->SetActive(true);
+		//GrabbedCam->SetActive(false);
 	}
 	
 	curHungtime += DeltaTime;
@@ -714,7 +731,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 	if (batWeapon && !bHasWeapon && !bHasGun)
 	{
 		//batWeapon->meshComp->SetSimulatePhysics(false);
-		//batWeapon->meshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	    //batWeapon->meshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		batWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName(TEXT("WeaoponSocket")));
 		batWeapon->SetActorRelativeLocation(FVector(-15.411383, -18.107558, 29.253529));
 		batWeapon->SetActorRelativeRotation(FRotator(48.973539, -105.339813, -101.692076));
@@ -1189,8 +1206,8 @@ void AKZGCharacter::ReloadAmmo()
 {
 	if(!bIsReloading) 
 	{
-		bIsReloading = true;
 		if (curAmmo >= 15) return;
+		bIsReloading = true;
 		anim->playReloadAnim();
 		maxAmmo -= 15 - curAmmo;
 		FTimerHandle reloadHandle;

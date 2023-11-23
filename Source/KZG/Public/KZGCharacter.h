@@ -302,6 +302,9 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
 	int32 pursuitEnemy = 0;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "BlendTime")
+	float blendTime = 0.5;
+
 	float camArmLen;
 
 	UPROPERTY(Replicated)
@@ -360,12 +363,16 @@ public:
 	TSubclassOf<class AH_AttackWeapons> BP_AxeWeapon;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category="Weapons")
 	TSubclassOf<class ABP_H_Gun> BP_Gun;
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category="Cam")
+	TSubclassOf<class AH_AttackCamActor> BP_Cam;
 
 	class AH_AttackWeapons* attackWeapon;
 	class AH_BatWeapon* batWeapon;
 	class AH_AxeWeapon* axeWeapon;
 
 	class ABP_H_Gun* gunWeapon;
+	class AH_AttackCamActor* camActor;
+
 	UPROPERTY(EditAnywhere, Category="GunDamage")
 	int32 gunDamage = 10;
 
