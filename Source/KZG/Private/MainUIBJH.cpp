@@ -11,6 +11,5 @@ void UMainUIBJH::NativeConstruct()
 
 void UMainUIBJH::SwitchCanvas(int32 index)
 {
-	
-	ws_SessionUISwitch->SetActiveWidgetIndex(index);
+	ws_SessionUISwitch->SetActiveWidgetIndex(++cur_index);
 }
