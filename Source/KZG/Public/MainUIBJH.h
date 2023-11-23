@@ -17,12 +17,12 @@ class KZG_API UMainUIBJH : public UUserWidget
 protected:
 	virtual void NativeConstruct() override;
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SwitchCanvas(int32 index);
 
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
 	class UWidgetSwitcher* ws_SessionUISwitch;
 
-	UPROPERTY(VisibleAnywhere, Category=MySettings)
-	int32 cur_index;
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category=MySettings)
+	int32 cur_index=0;
 };
