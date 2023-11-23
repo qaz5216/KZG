@@ -302,6 +302,9 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
 	int32 pursuitEnemy = 0;
 
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "BlendTime")
+	float blendTime = 0.5;
+
 	float camArmLen;
 
 	UPROPERTY(Replicated)

@@ -187,10 +187,10 @@ void AKZGCharacter::BeginPlay()
 	CameraRot = FollowCamera->GetComponentRotation();
 	camArmLen = CameraBoom->TargetArmLength;
 	
-	/*FActorSpawnParameters Param;
+	FActorSpawnParameters Param;
 	Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	camActor = GetWorld()->SpawnActor<AH_AttackCamActor>(BP_Cam, GetActorLocation(), GetActorRotation(), Param);*/
-	camActor = Cast<AH_AttackCamActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AH_AttackCamActor::StaticClass()));
+	camActor = GetWorld()->SpawnActor<AH_AttackCamActor>(BP_Cam, GetActorLocation(), GetActorRotation(), Param);
+	//camActor = Cast<AH_AttackCamActor>(UGameplayStatics::GetActorOfClass(GetWorld(), AH_AttackCamActor::StaticClass()));
 }
 
 void AKZGCharacter::Tick(float DeltaTime)
@@ -212,7 +212,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 		}
 	}
 	
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("dead: %s"), bIsDead ? *FString("true") : *FString("false")));
+	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("Reload: %s"), bIsReloading ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("crouch: %s"), bIsCrouching ? *FString("true") : *FString("false")));
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("comboIndex: %d"), comboIndex));
 
@@ -338,8 +338,8 @@ void AKZGCharacter::Tick(float DeltaTime)
 		{
 			if (camActor)
 			{
-				GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%s"), *camActor->GetName()));
-				pc->SetViewTargetWithBlend(camActor, 0.5);
+				//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Green, FString::Printf(TEXT("%s"), *camActor->GetName()));
+				pc->SetViewTargetWithBlend(camActor, blendTime);
 			}
 		}
 		//GrabbedCam->SetActive(true);
@@ -354,7 +354,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 	{
 		if (APlayerController* pc = Cast<APlayerController>(Controller))
 		{
-			pc->SetViewTargetWithBlend(this, 0.5);
+			pc->SetViewTargetWithBlend(this, blendTime);
 		}
 		if (bGotGun)
 		{
@@ -731,7 +731,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 	if (batWeapon && !bHasWeapon && !bHasGun)
 	{
 		//batWeapon->meshComp->SetSimulatePhysics(false);
-		//batWeapon->meshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	    //batWeapon->meshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		batWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, FName(TEXT("WeaoponSocket")));
 		batWeapon->SetActorRelativeLocation(FVector(-15.411383, -18.107558, 29.253529));
 		batWeapon->SetActorRelativeRotation(FRotator(48.973539, -105.339813, -101.692076));
@@ -1206,8 +1206,8 @@ void AKZGCharacter::ReloadAmmo()
 {
 	if(!bIsReloading) 
 	{
-		bIsReloading = true;
 		if (curAmmo >= 15) return;
+		bIsReloading = true;
 		anim->playReloadAnim();
 		maxAmmo -= 15 - curAmmo;
 		FTimerHandle reloadHandle;
