@@ -14,4 +14,15 @@ class KZG_API UMainUIBJH : public UUserWidget
 {
 	GENERATED_BODY()
 	
+protected:
+	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void SwitchCanvas(int32 index);
+
+	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	class UWidgetSwitcher* ws_SessionUISwitch;
+
+	UPROPERTY(VisibleAnywhere, Category=MySettings)
+	int32 cur_index;
 };

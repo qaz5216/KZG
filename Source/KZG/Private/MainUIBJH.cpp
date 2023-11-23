@@ -2,4 +2,15 @@
 
 
 #include "MainUIBJH.h"
+#include <UMG/Public/Components/WidgetSwitcher.h>
 
+void UMainUIBJH::NativeConstruct()
+{
+
+}
+
+void UMainUIBJH::SwitchCanvas(int32 index)
+{
+	
+	ws_SessionUISwitch->SetActiveWidgetIndex(index);
+}

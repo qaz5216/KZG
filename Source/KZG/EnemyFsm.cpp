@@ -626,6 +626,8 @@ void UEnemyFsm::ChangeToDamageState()
 	else if (mState == EEnemyState::Groggy)
 	{
 		//그로기일때 맞으면 어떻게하죠?
+		anim->StopDamageAnim();
+		anim->PlayDamageAnim();
 	}
 	else
 	{
