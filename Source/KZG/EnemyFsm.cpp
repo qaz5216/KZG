@@ -46,6 +46,7 @@ void UEnemyFsm::BeginPlay()
 	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
 	start=true;
 	mState=StartState;
+	anim->AnimState=mState;
 	if (StartState==EEnemyState::DeepSleep)
 	{
 		bDeepSleep=true;
@@ -211,6 +212,7 @@ void UEnemyFsm::TrackingState(float DeltaTime)
 						killingplay();
 					}), 4.6, false); // 반복 실행을 하고 싶으면 false 대신 true 대입
 				mState = EEnemyState::kill;
+				anim->AnimState = mState;
 				return;
 			}
 			else{
@@ -268,6 +270,7 @@ void UEnemyFsm::RecognitionState(float DeltaTime)
 		else if (PremState==EEnemyState::Sleep)
 		{
 			mState=EEnemyState::Sleep;
+			anim->AnimState = mState;
 		}
 		return;
 	}
@@ -303,6 +306,7 @@ void UEnemyFsm::AttackState(float DeltaTime)
 						killingplay();
 					}),4.6 ,false); // 반복 실행을 하고 싶으면 false 대신 true 대입
 				mState=EEnemyState::kill;
+				anim->AnimState = mState;
 			}
 		}
 		else
@@ -326,6 +330,10 @@ void UEnemyFsm::DamageState(float DeltaTime)
 		if (Target!=nullptr)
 		{
 			ChangeToTrackingState(Target);
+		}
+		else
+		{
+			ChangeToIdleState();
 		}
 	}
 }
@@ -418,6 +426,7 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 		Trackingtime_cur=0;
 		FailLocTime = 0;
 		mState = EEnemyState::Tracking;
+		anim->AnimState = mState;
 	}
 	else if(mState==EEnemyState::Recognition)
 	{
@@ -428,6 +437,7 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 		FailLocTime = 0;
 		anim->StopRecoAnim();
 		mState = EEnemyState::Tracking;
+		anim->AnimState = mState;
 	}
 	else if (mState==EEnemyState::Damage)
 	{
@@ -437,6 +447,7 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 		Trackingtime_cur = 0;
 		FailLocTime = 0;
 		mState = EEnemyState::Tracking;
+		anim->AnimState = mState;
 	}
 	else if (mState == EEnemyState::Eating)
 	{
@@ -446,6 +457,7 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 		Trackingtime_cur = 0;
 		FailLocTime = 0;
 		mState = EEnemyState::Tracking;
+		anim->AnimState = mState;
 	}
 	else if (mState == EEnemyState::DeepSleep)
 	{
@@ -455,6 +467,7 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 		Trackingtime_cur = 0;
 		FailLocTime = 0;
 		mState = EEnemyState::Tracking;
+		anim->AnimState = mState;
 	}
 
 	else if (mState==EEnemyState::Groggy)
@@ -469,6 +482,7 @@ void UEnemyFsm::ChangeToTrackingState(class AKZGCharacter* NewTarget)
 		Trackingtime_cur = 0;
 		FailLocTime = 0;
 		mState = EEnemyState::Tracking;
+		anim->AnimState = mState;
 	}
 }
 
@@ -515,6 +529,7 @@ void UEnemyFsm::ChangeToKillState()
 			killingplay();
 		}), 4.6, false); // 반복 실행을 하고 싶으면 false 대신 true 대입
 	mState = EEnemyState::kill;
+	anim->AnimState = mState;
 }
 
 bool UEnemyFsm::GetRandomPosInNavMesh(FVector center, float radius, FVector& Rdest)
@@ -558,6 +573,7 @@ void UEnemyFsm::ChangeToIdleState()
 	GetRandomPosInNavMesh(SearchLoc, SearchDist, SearchDest);
 	Me->GetCharacterMovement()->MaxWalkSpeed = speed;
 	mState=EEnemyState::Idle;
+	anim->AnimState = mState;
 }
 
 void UEnemyFsm::ChangeToAttackState()
@@ -575,6 +591,7 @@ void UEnemyFsm::ChangeToAttackState()
 	//UE_LOG(LogTemp, Warning, TEXT("GoAttackzz"));
 	Target->GrabbedbyZombie(Me);
 	mState=EEnemyState::Attack;
+	anim->AnimState = mState;
 	Me->StatUI->EImageShow();
 }
 
@@ -587,6 +604,7 @@ void UEnemyFsm::ChangeToGroggyState()
 	groggytime_cur=0;
 	anim->PlayGroogyAnim();
 	mState=EEnemyState::Groggy;
+	anim->AnimState = mState;
 	Me->StatUI->EImageShow();
 }
 
@@ -606,6 +624,7 @@ void UEnemyFsm::ChangeToRecognitionState(class AKZGCharacter* NewTarget)
 	//UE_LOG(LogTemp, Warning, TEXT("Turnzz"));
 	Me->SetActorRotation((Target->GetActorLocation()-Me->GetActorLocation()).Rotation().Quaternion());
 	mState=EEnemyState::Recognition;
+	anim->AnimState = mState;
 }
 
 void UEnemyFsm::ChangeToDamageState()
@@ -638,6 +657,7 @@ void UEnemyFsm::ChangeToDamageState()
 		damagetime_cur=0;
 		PremState = mState;
 		mState = EEnemyState::Damage;
+		anim->AnimState = mState;
 		anim->PlayDamageAnim();
 	}
 }
@@ -647,6 +667,7 @@ void UEnemyFsm::ChangeToDieState()
 	if(mState==EEnemyState::Die)
 	return;
 	mState=EEnemyState::Die;
+	anim->AnimState = mState;
 	anim->PlayDieAnim();
 	Me->HP_Cur=0;
 	dietime=0;
@@ -659,8 +680,10 @@ void UEnemyFsm::ChangeToAssasinDieState()
 	if (mState == EEnemyState::Die)
 		return;
 	mState = EEnemyState::Die;
+	anim->AnimState = mState;
 	anim->PlayAssaineDieAnim();
 	bAssassinDie = true;
+	anim->bADie=true;
 	Me->HP_Cur = 0;
 	dietime = 0;
 	Me->CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -674,7 +697,7 @@ void UEnemyFsm::ChangeToSleepState()
 		return;
 	}
 	mState=EEnemyState::Sleep;
-
+	anim->AnimState = mState;
 }
 
 void UEnemyFsm::Viewing()

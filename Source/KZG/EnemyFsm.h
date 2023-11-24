@@ -79,7 +79,7 @@ public:
 	bool bAssassinDie=false;
 
 	UPROPERTY(EditAnywhere, Category = "FSM")
-		EEnemyState StartState = EEnemyState::Idle;
+	EEnemyState StartState = EEnemyState::Idle;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "FSM")
 	bool killing=false;
