@@ -777,7 +777,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 		{
 			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
 			batMesh->SetVisibility(true);
-			UGameplayStatics::PlaySound2D(GetWorld(), batEquipSound, 1.0f);
+			UGameplayStatics::PlaySound2D(GetWorld(), batEquipSound, batEquipSoundVolume);
 			realWeaponHP = attackWeapon->WeaponHP;
 			if (axeMesh->IsVisible())
 			{

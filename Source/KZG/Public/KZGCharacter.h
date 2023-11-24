@@ -136,6 +136,9 @@ public:
 	class USoundBase* batDestSound;
 	UPROPERTY(EditDefaultsOnly, Category="batEquipSound")
 	class USoundBase* batEquipSound;
+	UPROPERTY(EditDefaultsOnly, Category="batEquipSound")
+	float batEquipSoundVolume = 2.0f;
+
 
 	//UPROPERTY(EditDefaultsOnly, Category="audioComp")
 	//class UAudioComponent* audioComp;
