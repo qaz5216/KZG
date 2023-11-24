@@ -1083,7 +1083,6 @@ void AKZGCharacter::Server_InteractionInputEnd_Implementation()
 {
 	//Multicast_InteractionUnputEnd();
 	bIsInteractionInput = false;
-
 }
 
 void AKZGCharacter::Multicast_InteractionUnputEnd_Implementation()
