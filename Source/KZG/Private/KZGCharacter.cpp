@@ -267,24 +267,23 @@ void AKZGCharacter::Tick(float DeltaTime)
 
 	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::Printf(TEXT("Ammo: %d , Max: %d"), curAmmo, maxAmmo));
 
-	if (curAmmo <= 0)
-	{	
+	/*if (curAmmo <= 0)
+	{
 		if(bIsReloading) return;
 		bIsReloading = true;
 		anim->playReloadAnim();
 		maxAmmo -= 15 - curAmmo;
 		FTimerHandle reloadHandle1;
 		GetWorldTimerManager().SetTimer(reloadHandle1, this, &AKZGCharacter::FinishedReloading, 1.1f, false);
-	}
-	if(maxAmmo <= 0) bIsReloading = true;
+	}*/
 
 	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::Printf(TEXT("Weapon HP : %d"), realWeaponHP));
-	if (realWeaponHP <= 0)
+	/*if (realWeaponHP <= 0)
 	{
 		if (axeMesh->IsVisible()) axeMesh->SetVisibility(false);
 		else if (batMesh->IsVisible()) batMesh->SetVisibility(false);
 		bHasWeapon = false;
-	}
+	}*/
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 	if(playerStamina > maxsize) playerStamina = maxsize;
 	if(maxsize <= 50) maxsize = 60;
@@ -708,6 +707,8 @@ void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 	Zombie->FSM->Target = this;
 	Zombie->Damaged(damagePower);
 
+	
+
 	if (OtherActor == Zombie)
 	{
 		UGameplayStatics::PlaySoundAtLocation(GetWorld(), batHitSound, GetActorLocation(), FRotator(), 0.4f);
@@ -720,6 +721,15 @@ void AKZGCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 			realWeaponHP -= weaponDamage;
 		}
 	}
+
+	if (realWeaponHP <= 0)
+	{
+		if (axeMesh->IsVisible()) axeMesh->SetVisibility(false);
+		else if (batMesh->IsVisible()) batMesh->SetVisibility(false);
+		UGameplayStatics::PlaySound2D(GetWorld(), batDestSound, 1.0f);
+		bHasWeapon = false;
+	}
+
 	boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 }
 
@@ -767,6 +777,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 		{
 			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
 			batMesh->SetVisibility(true);
+			UGameplayStatics::PlaySound2D(GetWorld(), batEquipSound, 1.0f);
 			realWeaponHP = attackWeapon->WeaponHP;
 			if (axeMesh->IsVisible())
 			{
@@ -777,6 +788,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 		{
 			//GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Blue, FString::Printf(TEXT("%s"), *Weapon->GetName()));
 			axeMesh->SetVisibility(true);
+			UGameplayStatics::PlaySound2D(GetWorld(), batEquipSound, 1.0f);
 			realWeaponHP = attackWeapon->WeaponHP;
 			if (batMesh->IsVisible())
 			{
@@ -788,6 +800,7 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 	{
 		gunMesh->SetVisibility(true);
 		gunWeapon->Destroy();
+		UGameplayStatics::PlaySound2D(GetWorld(), gunEquipSound, 1.0f);
 		bHasGun = true;
 	}
 }	
@@ -940,6 +953,16 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 	else if (!bIsgrabbed && currentStamina > 5 && !bHasWeapon && bHasGun && bIsZooming)
 	{
 		if(bIsReloading) return;
+		
+		if(curAmmo <= 0) 
+		{
+			UGameplayStatics::PlaySound2D(GetWorld(), gunEmptySound, 1.0f);
+			return;
+		}
+		else UGameplayStatics::PlaySound2D(GetWorld(), gunShotSound, 1.0f);
+
+		if(maxAmmo <= -14) curAmmo = 0;
+		
 		//1. 시작점이 필요하다.
 		FVector startPos = FollowCamera->GetComponentLocation();
 		//2. 종료점이 필요하다.
@@ -954,7 +977,6 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 		trans1.SetLocation(gunMesh->GetSocketLocation(FName(FString(TEXT("ParticleSocket")))));
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BP_gunEffect, trans1);
 
-		//UGameplayStatics::PlaySound2D(GetWorld(), gunShotSound, 1.0f);
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(gunShakeBase);
 		anim->playGunShootAnim();
 		curAmmo--;
@@ -970,7 +992,7 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 				enemy->Damaged(gunDamage);
 				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("%d"), enemy->HP_Cur));
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BP_shotBloodEffect, trans);
-
+				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BP_shotEffect, trans);
 			}
 			else
 			{

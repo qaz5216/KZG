@@ -125,9 +125,17 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category="gunShotSound")
 	class USoundBase* gunShotSound;
+	UPROPERTY(EditDefaultsOnly, Category="gunShotSound")
+	class USoundBase* gunEmptySound;
+	UPROPERTY(EditDefaultsOnly, Category="gunEquipSound")
+	class USoundBase* gunEquipSound;
 
 	UPROPERTY(EditDefaultsOnly, Category="HitPlaySound")
 	class USoundBase* batHitSound;
+	UPROPERTY(EditDefaultsOnly, Category="HitDestSound")
+	class USoundBase* batDestSound;
+	UPROPERTY(EditDefaultsOnly, Category="batEquipSound")
+	class USoundBase* batEquipSound;
 
 	//UPROPERTY(EditDefaultsOnly, Category="audioComp")
 	//class UAudioComponent* audioComp;
