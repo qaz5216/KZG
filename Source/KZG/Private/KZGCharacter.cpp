@@ -278,11 +278,12 @@ void AKZGCharacter::Tick(float DeltaTime)
 	}
 	if(maxAmmo <= 0) bIsReloading = true;
 
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::Printf(TEXT("Weapon HP : %d"), realWeaponHP));
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::Printf(TEXT("Weapon HP : %d"), realWeaponHP));
 	if (realWeaponHP <= 0)
 	{
 		if (axeMesh->IsVisible()) axeMesh->SetVisibility(false);
 		else if (batMesh->IsVisible()) batMesh->SetVisibility(false);
+		bHasWeapon = false;
 	}
 	if(currentStamina > playerStamina) currentStamina = playerStamina;
 	if(playerStamina > maxsize) playerStamina = maxsize;
