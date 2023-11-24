@@ -990,7 +990,7 @@ void AKZGCharacter::Multicast_AttackInput_Implementation()
 			if (enemy)
 			{
 				enemy->Damaged(gunDamage);
-				GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("%d"), enemy->HP_Cur));
+				//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Red, FString::Printf(TEXT("%d"), enemy->HP_Cur));
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BP_shotBloodEffect, trans);
 				UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), BP_shotEffect, trans);
 			}
