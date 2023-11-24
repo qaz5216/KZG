@@ -17,6 +17,8 @@ class KZG_API UEnemyAnimInstance : public UAnimInstance
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "FSM")
+	EEnemyState AnimState = EEnemyState::Idle;
 
 	// 공격 재생할지 여부
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="FSM")
@@ -29,6 +31,10 @@ public:
 	// 피격 상태 전환 여부
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="FSM")
 	bool bDamage = false;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category="FSM")
+	bool bADie = false;
+
 
 	// 피격 몽타주 처리함수 선언
 	UFUNCTION(BlueprintImplementableEvent, Category="FSM")
