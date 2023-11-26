@@ -53,9 +53,7 @@ AKZGCharacter::AKZGCharacter()
 	gunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("gunMesh"));
 	gunMesh->SetupAttachment(GetMesh());
 	// Get the socket name
-	FName WeaponSocketName = FName(TEXT("WeaoponSocket"));
-	// Attach batMesh to the WeaoponSocket
-	gunMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+	
 	 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>Tempgun (TEXT("/Script/Engine.StaticMesh'/Game/HSH/AnimShooterPack/Weapons/Pistol/SM_handgun_02_main.SM_handgun_02_main'"));
 
@@ -72,9 +70,7 @@ AKZGCharacter::AKZGCharacter()
 	batMesh->SetupAttachment(GetMesh());
 	// Get the socket name
 	//FName WeaponSocketName = FName(TEXT("WeaoponSocket"));
-	// Attach batMesh to the WeaoponSocket
-	batMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
-	 
+
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>TempBat (TEXT("/Script/Engine.StaticMesh'/Game/Props_MeleeWeapons/Meshes/baseballBat.baseballBat'"));
 
 	if (TempBat.Succeeded())
@@ -82,14 +78,13 @@ AKZGCharacter::AKZGCharacter()
 		batMesh->SetStaticMesh(TempBat.Object);
 		batMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		batMesh->SetVisibility(false);
-		batMesh->SetRelativeLocationAndRotation(FVector(-13.419591, -2.414909, 9.095527), FRotator(12.700006, -15.579394, -41.744371));
+		
 
 	}
 
 	axeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("AxeMesh"));
 	axeMesh->SetupAttachment(GetMesh());
-	// Attach batMesh to the WeaoponSocket
-	axeMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+	
 	
 	static ConstructorHelpers::FObjectFinder<UStaticMesh>TempAxe(TEXT("/Script/Engine.StaticMesh'/Game/Props_MeleeWeapons/Meshes/fireAxe.fireAxe'"));
 
@@ -98,7 +93,7 @@ AKZGCharacter::AKZGCharacter()
 		axeMesh->SetStaticMesh(TempAxe.Object);
 		axeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		axeMesh->SetVisibility(false);
-		axeMesh->SetRelativeLocationAndRotation(FVector(-11.144902, 1.984119, 4.615342), FRotator(12.700006, -15.579394, -41.744371));
+		
 	}
 
 	boxComp = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
@@ -158,6 +153,20 @@ void AKZGCharacter::BeginPlay()
 
 	//FTimerHandle ActorHandle;
 	//GetWorldTimerManager().SetTimer(ActorHandle, this, &AKZGCharacter::SetPlayerLocationToFirst, restartLoc, false);
+
+	FName WeaponSocketName = FName(TEXT("WeaoponSocket"));
+	
+	// Attach batMesh to the WeaoponSocket
+	gunMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+	gunMesh->SetRelativeLocationAndRotation(FVector(-20.137923, 8.897582, 2.340531), FRotator(1.669609, 68.438939, 8.796659));
+	
+	// Attach batMesh to the WeaoponSocket
+	batMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+	batMesh->SetRelativeLocationAndRotation(FVector(-13.419591, -2.414909, 9.095527), FRotator(12.700006, -15.579394, -41.744371));
+	
+	// Attach batMesh to the WeaoponSocket
+	axeMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
+	axeMesh->SetRelativeLocationAndRotation(FVector(-11.144902, 1.984119, 4.615342), FRotator(12.700006, -15.579394, -41.744371));
 
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
