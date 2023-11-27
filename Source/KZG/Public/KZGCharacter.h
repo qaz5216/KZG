@@ -311,6 +311,9 @@ public:
 	int32 curAmmo = 15;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Ammo")
+	int32 curMaxAmmo = 15;
+
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Ammo")
 	int32 maxAmmo = 30;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
