@@ -1270,20 +1270,20 @@ void AKZGCharacter::ReloadAmmo()
 		{
 			if (maxAmmo <= 0) return;
 			bIsReloading = true;
-			anim->playReloadAnim();
+			//anim->playReloadAnim();
 			maxAmmo -= curMaxAmmo - curAmmo;
 			curAmmo = maxAmmo;
 			FTimerHandle reloadHandle;
-			GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.1f, false);
+			GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.66f, false);
 		}
 		else
 		{
 			if (maxAmmo <= 0) return;
 			bIsReloading = true;
-			anim->playReloadAnim();
+			//anim->playReloadAnim();
 			maxAmmo -= curMaxAmmo - curAmmo;
 			FTimerHandle reloadHandle;
-			GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.1f, false);
+			GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.66f, false);
 		}
 
 		
