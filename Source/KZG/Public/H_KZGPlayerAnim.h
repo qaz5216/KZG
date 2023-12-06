@@ -86,6 +86,8 @@ public:
 	void AnimNotify_SoundStep();
 	UFUNCTION()
 	void AnimNotify_AssasinationEnd();
+	UFUNCTION()
+	void AnimNotify_ReloadEnd();
 
 	UFUNCTION()
 	void AnimNotify_Combo1();

@@ -78,6 +78,15 @@ void UH_KZGPlayerAnim::AnimNotify_AssasinationEnd()
 	}
 }
 
+void UH_KZGPlayerAnim::AnimNotify_ReloadEnd()
+{
+	if (player)
+	{
+		player->bIsReloading = false;
+		player->curAmmo = 15;
+	}
+}
+
 void UH_KZGPlayerAnim::AnimNotify_Combo1()
 {	
 	player->comboIndex = 1;

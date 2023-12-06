@@ -81,7 +81,7 @@ public:
 	class UInputAction* reloadAction;
 
 public:
-	UPROPERTY(VisibleAnywhere, Category = MySettings, Replicated, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = MySettings, meta = (AllowPrivateAccess = "true"))
 	class UH_EWidget* EWidget;
 	
 	UPROPERTY(EditAnywhere, Category = MySettings)
@@ -307,13 +307,13 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
 	int32 weaponDamage = 18;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "Ammo")
 	int32 curAmmo = 15;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "Ammo")
 	int32 curMaxAmmo = 15;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "Ammo")
 	int32 maxAmmo = 30;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")

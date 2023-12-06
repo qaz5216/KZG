@@ -160,7 +160,7 @@ void AKZGCharacter::BeginPlay()
 	gunMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
 	gunMesh->SetRelativeLocationAndRotation(FVector(-20.137923, 8.897582, 2.340531), FRotator(1.669609, 68.438939, 8.796659));
 	
-	// Attach batMesh to the WeaoponSocket
+	// Attach batMesh to the WeaoponSocketa
 	batMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
 	batMesh->SetRelativeLocationAndRotation(FVector(-13.419591, -2.414909, 9.095527), FRotator(12.700006, -15.579394, -41.744371));
 	
@@ -659,6 +659,11 @@ void AKZGCharacter::DamagedStamina(int32 value)
 
 void AKZGCharacter::Server_GrabbedWidget_Implementation()
 {
+	Multicast_GrabbedWidget();
+}
+
+void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
+{
 	if (bIsgrabbed)
 	{
 		if (EWidget != nullptr)
@@ -673,11 +678,6 @@ void AKZGCharacter::Server_GrabbedWidget_Implementation()
 			EWidget->RemoveFromParent();
 		}
 	}
-}
-
-void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
-{
-	
 }
 
 void AKZGCharacter::Server_PlayerDeath_Implementation()
@@ -1273,8 +1273,8 @@ void AKZGCharacter::ReloadAmmo()
 			//anim->playReloadAnim();
 			maxAmmo -= curMaxAmmo - curAmmo;
 			curAmmo = maxAmmo;
-			FTimerHandle reloadHandle;
-			GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.66f, false);
+			//FTimerHandle reloadHandle;
+			//GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.67f, false);
 		}
 		else
 		{
@@ -1282,11 +1282,9 @@ void AKZGCharacter::ReloadAmmo()
 			bIsReloading = true;
 			//anim->playReloadAnim();
 			maxAmmo -= curMaxAmmo - curAmmo;
-			FTimerHandle reloadHandle;
-			GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.66f, false);
+			//FTimerHandle reloadHandle;
+			//GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.67f, false);
 		}
-
-		
 	}
 }
 
@@ -1311,6 +1309,7 @@ void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	//DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
 	DOREPLIFETIME(AKZGCharacter, bIsInteractionInput);
 	DOREPLIFETIME(AKZGCharacter, maxsize);
-	DOREPLIFETIME(AKZGCharacter, EWidget);
-
+	DOREPLIFETIME(AKZGCharacter, curAmmo);
+	DOREPLIFETIME(AKZGCharacter, curMaxAmmo);
+	DOREPLIFETIME(AKZGCharacter, maxAmmo);
 }
