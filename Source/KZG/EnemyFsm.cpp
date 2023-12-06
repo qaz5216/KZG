@@ -673,6 +673,7 @@ void UEnemyFsm::ChangeToDieState()
 	dietime=0;
 	Me->CapsuleComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	//Me->GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 }
 
 void UEnemyFsm::ChangeToAssasinDieState()

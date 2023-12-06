@@ -212,6 +212,8 @@ protected:
 	void ReloadAmmo();
 
 	void FinishedReloading();
+
+	void SetViewTarget();
  
 	class UH_KZGPlayerAnim* anim;
 protected:
@@ -243,6 +245,8 @@ public:
 	bool bComboTime = false;
 
 	float curComTime = 0;
+
+	bool bIsTarget = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	int32 damageNumber = 5;

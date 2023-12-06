@@ -339,7 +339,23 @@ void AKZGCharacter::Tick(float DeltaTime)
 	//Server_ChangeView();
 	if (bIsgrabbed)
 	{
+		bIsTarget = false;
+		//1. 시작점이 필요하다.
+		FVector startPos = GetActorLocation();
+		//2. 종료점이 필요하다.
+		FVector endPos = startPos + GetActorForwardVector() * 100;
+		//3. 선을 만들어야 한다, 나는 안맞게 만들어야 한다.
+		FHitResult hitInfo;
+		FCollisionQueryParams param;
+		param.AddIgnoredActor(this);
+		bool bEnemy = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECC_Visibility, param);
 		
+		if (!bEnemy)
+		{
+			
+			bIsgrabbed = false;
+		}
+
 		boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		
 		if (APlayerController* pc = Cast<APlayerController>(Controller))
@@ -358,13 +374,14 @@ void AKZGCharacter::Tick(float DeltaTime)
 			bGotGun = true;
 		}
 	}
-	else if(!bIsgrabbed)
+	else
 	{
 		if (bGotGun)
 		{
 			bHasGun = true;
 			bGotGun = false;
 		}
+		SetViewTarget();
 		//FollowCamera->SetActive(true);
 		//GrabbedCam->SetActive(false);
 	}
@@ -609,11 +626,11 @@ void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
 
 void AKZGCharacter::EscapebyZombie()
 {
-	if (APlayerController* pc = Cast<APlayerController>(Controller))
+	/*if (APlayerController* pc = Cast<APlayerController>(Controller))
 	{
 		pc->SetViewTargetWithBlend(this, blendTime);
 
-	}
+	}*/
 	bIsgrabbed=false;   
 	GrabbedEnemy=nullptr;
 	//UE_LOG(LogTemp, Warning, TEXT("Escapezz"));
@@ -1292,6 +1309,18 @@ void AKZGCharacter::FinishedReloading()
 {
 	bIsReloading = false;
 	curAmmo = 15;
+}
+
+void AKZGCharacter::SetViewTarget()
+{
+	if (APlayerController* pc = Cast<APlayerController>(Controller))
+	{
+		if (!bIsTarget)
+		{
+			pc->SetViewTargetWithBlend(this, blendTime);
+		}
+	}
+	bIsTarget = true;
 }
 
 void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
