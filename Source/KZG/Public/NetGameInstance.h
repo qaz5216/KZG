@@ -50,4 +50,13 @@ public:
 	void OnFindOtherSessions(bool bWasSuccessful);
 	void JoinSelectedSession(int32 index);
 	void OnJoinSelectedSession(FName sessionName, EOnJoinSessionCompleteResult::Type result);
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category=MySettings)
+	FText BackGroundText;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category=MySettings)
+	int32 Charidx=0;
+
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category=MySettings)
+	bool HaveGun=false;
 };
