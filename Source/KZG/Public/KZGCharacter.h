@@ -81,7 +81,7 @@ public:
 	class UInputAction* reloadAction;
 
 public:
-	UPROPERTY(VisibleAnywhere, Category = MySettings, Replicated, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, Category = MySettings, meta = (AllowPrivateAccess = "true"))
 	class UH_EWidget* EWidget;
 	
 	UPROPERTY(EditAnywhere, Category = MySettings)
@@ -212,6 +212,8 @@ protected:
 	void ReloadAmmo();
 
 	void FinishedReloading();
+
+	void SetViewTarget();
  
 	class UH_KZGPlayerAnim* anim;
 protected:
@@ -243,6 +245,8 @@ public:
 	bool bComboTime = false;
 
 	float curComTime = 0;
+
+	bool bIsTarget = false;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage")
 	int32 damageNumber = 5;
@@ -307,13 +311,13 @@ public:
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
 	int32 weaponDamage = 18;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "Ammo")
 	int32 curAmmo = 15;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "Ammo")
 	int32 curMaxAmmo = 15;
 
-	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "Ammo")
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "Ammo")
 	int32 maxAmmo = 30;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")

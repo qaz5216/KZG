@@ -160,7 +160,7 @@ void AKZGCharacter::BeginPlay()
 	gunMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
 	gunMesh->SetRelativeLocationAndRotation(FVector(-20.137923, 8.897582, 2.340531), FRotator(1.669609, 68.438939, 8.796659));
 	
-	// Attach batMesh to the WeaoponSocket
+	// Attach batMesh to the WeaoponSocketa
 	batMesh->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, WeaponSocketName);
 	batMesh->SetRelativeLocationAndRotation(FVector(-13.419591, -2.414909, 9.095527), FRotator(12.700006, -15.579394, -41.744371));
 	
@@ -339,7 +339,23 @@ void AKZGCharacter::Tick(float DeltaTime)
 	//Server_ChangeView();
 	if (bIsgrabbed)
 	{
+		bIsTarget = false;
+		//1. 시작점이 필요하다.
+		FVector startPos = GetActorLocation();
+		//2. 종료점이 필요하다.
+		FVector endPos = startPos + GetActorForwardVector() * 100;
+		//3. 선을 만들어야 한다, 나는 안맞게 만들어야 한다.
+		FHitResult hitInfo;
+		FCollisionQueryParams param;
+		param.AddIgnoredActor(this);
+		bool bEnemy = GetWorld()->LineTraceSingleByChannel(hitInfo, startPos, endPos, ECC_Visibility, param);
 		
+		if (!bEnemy)
+		{
+			
+			bIsgrabbed = false;
+		}
+
 		boxComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		
 		if (APlayerController* pc = Cast<APlayerController>(Controller))
@@ -358,13 +374,14 @@ void AKZGCharacter::Tick(float DeltaTime)
 			bGotGun = true;
 		}
 	}
-	else if(!bIsgrabbed)
+	else
 	{
 		if (bGotGun)
 		{
 			bHasGun = true;
 			bGotGun = false;
 		}
+		SetViewTarget();
 		//FollowCamera->SetActive(true);
 		//GrabbedCam->SetActive(false);
 	}
@@ -609,11 +626,11 @@ void AKZGCharacter::GrabbedbyZombie(class AEnemy* Enemy)
 
 void AKZGCharacter::EscapebyZombie()
 {
-	if (APlayerController* pc = Cast<APlayerController>(Controller))
+	/*if (APlayerController* pc = Cast<APlayerController>(Controller))
 	{
 		pc->SetViewTargetWithBlend(this, blendTime);
 
-	}
+	}*/
 	bIsgrabbed=false;   
 	GrabbedEnemy=nullptr;
 	//UE_LOG(LogTemp, Warning, TEXT("Escapezz"));
@@ -659,6 +676,11 @@ void AKZGCharacter::DamagedStamina(int32 value)
 
 void AKZGCharacter::Server_GrabbedWidget_Implementation()
 {
+	Multicast_GrabbedWidget();
+}
+
+void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
+{
 	if (bIsgrabbed)
 	{
 		if (EWidget != nullptr)
@@ -673,11 +695,6 @@ void AKZGCharacter::Server_GrabbedWidget_Implementation()
 			EWidget->RemoveFromParent();
 		}
 	}
-}
-
-void AKZGCharacter::Multicast_GrabbedWidget_Implementation()
-{
-	
 }
 
 void AKZGCharacter::Server_PlayerDeath_Implementation()
@@ -1273,8 +1290,8 @@ void AKZGCharacter::ReloadAmmo()
 			//anim->playReloadAnim();
 			maxAmmo -= curMaxAmmo - curAmmo;
 			curAmmo = maxAmmo;
-			FTimerHandle reloadHandle;
-			GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.66f, false);
+			//FTimerHandle reloadHandle;
+			//GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.67f, false);
 		}
 		else
 		{
@@ -1282,11 +1299,9 @@ void AKZGCharacter::ReloadAmmo()
 			bIsReloading = true;
 			//anim->playReloadAnim();
 			maxAmmo -= curMaxAmmo - curAmmo;
-			FTimerHandle reloadHandle;
-			GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.66f, false);
+			//FTimerHandle reloadHandle;
+			//GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.67f, false);
 		}
-
-		
 	}
 }
 
@@ -1294,6 +1309,18 @@ void AKZGCharacter::FinishedReloading()
 {
 	bIsReloading = false;
 	curAmmo = 15;
+}
+
+void AKZGCharacter::SetViewTarget()
+{
+	if (APlayerController* pc = Cast<APlayerController>(Controller))
+	{
+		if (!bIsTarget)
+		{
+			pc->SetViewTargetWithBlend(this, blendTime);
+		}
+	}
+	bIsTarget = true;
 }
 
 void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -1311,6 +1338,7 @@ void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	//DOREPLIFETIME(AKZGCharacter, bIsgrabbed);
 	DOREPLIFETIME(AKZGCharacter, bIsInteractionInput);
 	DOREPLIFETIME(AKZGCharacter, maxsize);
-	DOREPLIFETIME(AKZGCharacter, EWidget);
-
+	DOREPLIFETIME(AKZGCharacter, curAmmo);
+	DOREPLIFETIME(AKZGCharacter, curMaxAmmo);
+	DOREPLIFETIME(AKZGCharacter, maxAmmo);
 }
