@@ -185,7 +185,7 @@ void AKZGCharacter::BeginPlay()
 
 
 
-	FStringAssetReference MeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/HSH/PlayerAsset/MCP_Characters/Modular_soldier_01/Meshes/SM_Modular_soldier_02.SM_Modular_soldier_02'"));
+	/*FStringAssetReference MeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/HSH/PlayerAsset/MCP_Characters/Modular_soldier_01/Meshes/SM_Modular_soldier_02.SM_Modular_soldier_02'"));
 
 	MeshRef.TryLoad();
 
@@ -194,7 +194,7 @@ void AKZGCharacter::BeginPlay()
 	if (NewMesh)
 	{
 		GetMesh()->SetSkeletalMesh(NewMesh);
-	}
+	}*/
 
 
 	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AKZGCharacter::OnComponentBeginOverlap);
