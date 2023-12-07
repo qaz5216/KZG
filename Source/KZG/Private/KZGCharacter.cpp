@@ -50,6 +50,13 @@ AKZGCharacter::AKZGCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh>TempMesh1(TEXT("/Script/Engine.SkeletalMesh'/Game/HSH/PlayerAsset/MCP_Characters/Detective_01/Meshes/CH_Detective_9.CH_Detective_9'"));
+
+	if (TempMesh1.Succeeded())
+	{
+		GetMesh()->SetSkeletalMesh(TempMesh1.Object);
+	}
+
 	gunMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("gunMesh"));
 	gunMesh->SetupAttachment(GetMesh());
 	// Get the socket name
@@ -175,6 +182,20 @@ void AKZGCharacter::BeginPlay()
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
+
+
+
+	FStringAssetReference MeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/HSH/PlayerAsset/MCP_Characters/Modular_soldier_01/Meshes/SM_Modular_soldier_02.SM_Modular_soldier_02'"));
+
+	MeshRef.TryLoad();
+
+	USkeletalMesh* NewMesh = Cast<USkeletalMesh>(MeshRef.ResolveObject());
+
+	if (NewMesh)
+	{
+		GetMesh()->SetSkeletalMesh(NewMesh);
+	}
+
 
 	boxComp->OnComponentBeginOverlap.AddDynamic(this, &AKZGCharacter::OnComponentBeginOverlap);
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AKZGCharacter::OnComponentBeginOverlapFood);
