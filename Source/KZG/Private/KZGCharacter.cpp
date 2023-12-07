@@ -27,6 +27,7 @@
 #include "H_BatWeapon.h"
 #include "H_AxeWeapon.h"
 #include "H_AttackCamActor.h"
+#include "NetGameInstance.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -204,6 +205,24 @@ void AKZGCharacter::BeginPlay()
 	returnSpeed = walkSpeed;
 
 	anim = Cast<UH_KZGPlayerAnim>(GetMesh()->GetAnimInstance());
+	gi = Cast<UNetGameInstance>(GetGameInstance());
+
+	if (gi != nullptr)
+	{
+		if (gi->HaveGun)
+		{
+			gunMesh->SetVisibility(true);
+			bHasGun = true;
+		}
+
+		
+		USkeletalMesh* selectedMesh = LoadObject<USkeletalMesh>(NULL, *meshPathList[gi->Charidx], NULL, LOAD_None, NULL);
+		if (selectedMesh != nullptr)
+		{
+			GetMesh()->SetSkeletalMesh(selectedMesh);
+		}
+		
+	}
 
 	EWidget = CreateWidget<UH_EWidget>(GetWorld(), BP_EWidget);
 	InfoWidget = CreateWidget<UH_PlayerInfo>(GetWorld(), BP_InfoWidget);
@@ -848,6 +867,9 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 		gunMesh->SetVisibility(true);
 		gunWeapon->Destroy();
 		UGameplayStatics::PlaySound2D(GetWorld(), gunEquipSound, 1.0f);
+		curAmmo = 12;
+		curMaxAmmo = 12;
+		maxAmmo = 24;
 		bHasGun = true;
 	}
 }	
