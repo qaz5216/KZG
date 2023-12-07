@@ -27,4 +27,7 @@ public:
 	class USphereComponent* sphereComp;
 	UPROPERTY(VisibleAnywhere)
 	class UStaticMeshComponent* meshComp;
+
+	int32 curAmmo = 12;
+	int32 maxAmmo = 24;
 };

@@ -867,9 +867,8 @@ void AKZGCharacter::OnComponentBeginOverlapFood(UPrimitiveComponent* OverlappedC
 		gunMesh->SetVisibility(true);
 		gunWeapon->Destroy();
 		UGameplayStatics::PlaySound2D(GetWorld(), gunEquipSound, 1.0f);
-		curAmmo = 12;
-		curMaxAmmo = 12;
-		maxAmmo = 24;
+		curAmmo = gunWeapon->curAmmo;
+		maxAmmo = gunWeapon->maxAmmo;
 		bHasGun = true;
 	}
 }	
@@ -1246,6 +1245,12 @@ void AKZGCharacter::ThrowAction()
 		Param.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		ABP_H_Gun* weapon = GetWorld()->SpawnActor<ABP_H_Gun>(BP_Gun, GetActorLocation() + GetActorForwardVector() * 100, FRotator(), Param);
 
+		if (weapon)
+		{
+			weapon->curAmmo = curAmmo;
+			weapon->maxAmmo = maxAmmo;
+		}
+
 		gunMesh->SetVisibility(false);
 		bHasGun = false;
 	}
@@ -1325,14 +1330,13 @@ void AKZGCharacter::ReloadAmmo()
 {
 	if(!bIsReloading) 
 	{
-		if (curAmmo >= 15) return;
+		if (curAmmo >= curMaxAmmo) return;
 		if (maxAmmo < curMaxAmmo)
 		{
 			if (maxAmmo <= 0) return;
 			bIsReloading = true;
 			//anim->playReloadAnim();
-			maxAmmo -= curMaxAmmo - curAmmo;
-			curAmmo = maxAmmo;
+			
 			//FTimerHandle reloadHandle;
 			//GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.67f, false);
 		}
@@ -1341,7 +1345,6 @@ void AKZGCharacter::ReloadAmmo()
 			if (maxAmmo <= 0) return;
 			bIsReloading = true;
 			//anim->playReloadAnim();
-			maxAmmo -= curMaxAmmo - curAmmo;
 			//FTimerHandle reloadHandle;
 			//GetWorldTimerManager().SetTimer(reloadHandle, this, &AKZGCharacter::FinishedReloading, 1.67f, false);
 		}
@@ -1351,7 +1354,6 @@ void AKZGCharacter::ReloadAmmo()
 void AKZGCharacter::FinishedReloading()
 {
 	bIsReloading = false;
-	curAmmo = 15;
 }
 
 void AKZGCharacter::SetViewTarget()

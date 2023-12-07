@@ -82,8 +82,18 @@ void UH_KZGPlayerAnim::AnimNotify_ReloadEnd()
 {
 	if (player)
 	{
+		if (player->maxAmmo < player->curMaxAmmo)
+		{
+			player->curAmmo += player->maxAmmo;
+			player->maxAmmo = 0;
+		}
+		else
+		{
+			player->maxAmmo -= player->curMaxAmmo - player->curAmmo;
+			player->curAmmo = player->curMaxAmmo;
+		}
 		player->bIsReloading = false;
-		player->curAmmo = 15;
+
 	}
 }
 

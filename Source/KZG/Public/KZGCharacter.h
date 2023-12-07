@@ -319,13 +319,13 @@ public:
 	int32 weaponDamage = 18;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "Ammo")
-	int32 curAmmo = 15;
+	int32 curAmmo = 12;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "Ammo")
-	int32 curMaxAmmo = 15;
+	int32 curMaxAmmo = 12;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Replicated, Category = "Ammo")
-	int32 maxAmmo = 30;
+	int32 maxAmmo = 24;
 
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite, Category = "weaponHP")
 	int32 pursuitEnemy = 0;
