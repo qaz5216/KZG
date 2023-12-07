@@ -39,7 +39,7 @@ protected:
 	void BackIndex();
 
 	UPROPERTY(EditAnywhere, Category = "MyFactory2")
-	FSlateBrush ImageArray[3];
+	FSlateBrush ImageArray[4];
 	//Switcher
 	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
 	class UWidgetSwitcher* ws_SessionUISwitch;
