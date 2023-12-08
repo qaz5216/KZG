@@ -80,6 +80,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* reloadAction;
 
+
 public:
 	class UNetGameInstance* gi;
 
@@ -203,6 +204,18 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void Multicast_ChangeView();
+
+	UFUNCTION(Server, Reliable)
+	void Server_ChangeMesh();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ChangeMesh();
+
+	UFUNCTION(Server, Reliable)
+	void Server_ChangeMesh1();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void Multicast_ChangeMesh1();
 
 	UFUNCTION()
 	void ThrowAction();

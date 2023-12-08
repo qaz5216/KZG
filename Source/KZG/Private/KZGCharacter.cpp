@@ -458,7 +458,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 		for (const FOverlapResult& hitInfo : hitInfos)
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("2"));
-			if (AEnemy* hitEnemy = Cast<AEnemy>(hitInfo.GetActor()))//이거 되긴하냐..?
+			if (AEnemy* hitEnemy = Cast<AEnemy>(hitInfo.GetActor()))
 			{	
 				//에너미의 뒤인가?
 				FVector CheckDir=GetActorLocation()-hitEnemy->GetActorLocation();
@@ -1176,6 +1176,42 @@ void AKZGCharacter::Multicast_ChangeView_Implementation()
 	
 }
 
+void AKZGCharacter::Server_ChangeMesh_Implementation()
+{
+	Multicast_ChangeMesh();
+}
+
+void AKZGCharacter::Multicast_ChangeMesh_Implementation()
+{
+	if (gi != nullptr)
+	{
+		USkeletalMesh* selectedMesh = LoadObject<USkeletalMesh>(NULL, *meshPathList[2], NULL, LOAD_None, NULL);
+		if (selectedMesh != nullptr)
+		{
+			GetMesh()->SetSkeletalMesh(selectedMesh);
+		}
+
+	}
+}
+
+void AKZGCharacter::Server_ChangeMesh1_Implementation()
+{
+	Multicast_ChangeMesh1();
+}
+
+void AKZGCharacter::Multicast_ChangeMesh1_Implementation()
+{
+	if (gi != nullptr)
+	{
+		USkeletalMesh* selectedMesh = LoadObject<USkeletalMesh>(NULL, *meshPathList[1], NULL, LOAD_None, NULL);
+		if (selectedMesh != nullptr)
+		{
+			GetMesh()->SetSkeletalMesh(selectedMesh);
+		}
+
+	}
+}
+
 void AKZGCharacter::ThrowAction()
 {
 	/*if (attackWeapon != nullptr)
@@ -1307,12 +1343,12 @@ void AKZGCharacter::JumpInput()
 
 void AKZGCharacter::PressedOneAction()
 {
-	
+	Server_ChangeMesh1();
 }
 
 void AKZGCharacter::PressedTwoAction()
 {
-	
+	Server_ChangeMesh();
 }
 
 void AKZGCharacter::StartedZoom()
