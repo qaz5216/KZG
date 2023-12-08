@@ -54,7 +54,7 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category=MySettings)
 	FText BackGroundText;
 
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category=MySettings)
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Replicated, Category=MySettings)
 	int32 Charidx=0;
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category=MySettings)

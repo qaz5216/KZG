@@ -214,9 +214,8 @@ void AKZGCharacter::BeginPlay()
 			gunMesh->SetVisibility(true);
 			bHasGun = true;
 		}
-		charIDX = gi->Charidx;
 		
-		USkeletalMesh* selectedMesh = LoadObject<USkeletalMesh>(NULL, *meshPathList[charIDX], NULL, LOAD_None, NULL);
+		USkeletalMesh* selectedMesh = LoadObject<USkeletalMesh>(NULL, *meshPathList[gi->Charidx], NULL, LOAD_None, NULL);
 		if (selectedMesh != nullptr)
 		{
 			GetMesh()->SetSkeletalMesh(selectedMesh);
@@ -1387,5 +1386,4 @@ void AKZGCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	DOREPLIFETIME(AKZGCharacter, curMaxAmmo);
 	DOREPLIFETIME(AKZGCharacter, maxAmmo);
 	DOREPLIFETIME(AKZGCharacter, meshPathList);
-	DOREPLIFETIME(AKZGCharacter, charIDX);
 }

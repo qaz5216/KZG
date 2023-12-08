@@ -175,3 +175,9 @@ void UNetGameInstance::Init()
 //
 //}
 
+void UNetGameInstance::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UNetGameInstance, Charidx);
+
+}

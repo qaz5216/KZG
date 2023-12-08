@@ -84,9 +84,6 @@ public:
 	class UNetGameInstance* gi;
 
 	UPROPERTY(Replicated)
-	int32 charIDX;
-
-	UPROPERTY(Replicated)
 	TArray<FString> meshPathList = { TEXT("/Script/Engine.SkeletalMesh'/Game/HSH/PlayerAsset/MCP_Characters/Detective_01/Meshes/										  CH_Detective_9.CH_Detective_9'"),
 									TEXT("/Script/Engine.SkeletalMesh'/Game/HSH/PlayerAsset/MCP_Characters/Private_military_contractor_01/Meshes/SK_PMC_02.SK_PMC_02'"),
 									TEXT("/Script/Engine.SkeletalMesh'/Game/HSH/PlayerAsset/MCP_Characters/Modular_soldier_01/Meshes/SM_Modular_soldier_02.SM_Modular_soldier_02'"),
