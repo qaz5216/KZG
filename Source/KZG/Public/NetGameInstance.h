@@ -24,8 +24,8 @@ struct FSessionSlotInfo
 	FORCEINLINE void Set(FString rName, FString hName, FString pCount, int32 ping, int32 index) { roomName = rName; hostName = hName; playerCount = pCount; pingSpeed = ping; sessionIndex = index; }
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSearchSignature, FSessionSlotInfo, sessionInfo);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFindButtonSignature, bool, bIsActivation);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FSearchSignature, FSessionSlotInfo, sessionInfo);
+//DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FFindButtonSignature, bool, bIsActivation);
 
 UCLASS()
 class KZG_API UNetGameInstance : public UGameInstance
@@ -37,8 +37,8 @@ public:
 
 	virtual void Init() override;
 
-	UPROPERTY()
-	FString mySessionName;
+	//UPROPERTY()
+	/*FString mySessionName;
 
 	IOnlineSessionPtr sessionInterface;
 	TSharedPtr<FOnlineSessionSearch> sessionSearch;
@@ -49,7 +49,7 @@ public:
 	void FindOtherSession();
 	void OnFindOtherSessions(bool bWasSuccessful);
 	void JoinSelectedSession(int32 index);
-	void OnJoinSelectedSession(FName sessionName, EOnJoinSessionCompleteResult::Type result);
+	void OnJoinSelectedSession(FName sessionName, EOnJoinSessionCompleteResult::Type result);*/
 
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite, Category=MySettings)
 	FText BackGroundText;

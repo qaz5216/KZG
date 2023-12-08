@@ -18,46 +18,46 @@ protected:
 
 
 public:
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	/*UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UEditableText* edit_roomName;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class USlider* slider_playerCount;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UTextBlock* text_sliderCount;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UButton* btn_CreateSession;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UScrollBox* sb_RoomListBox;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UButton* btn_FindSession;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UWidgetSwitcher* ws_SessionUISwitch;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UButton* btn_CreateSelection;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UButton* btn_FindSelection;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UButton* btn_BackFromCreate;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UButton* btn_BackFromFind;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UEditableText* edit_userName;
 
-	UPROPERTY(VisibleAnywhere, meta=(BindWidget), Category=MySettings)
+	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = MySettings)
 	class UButton* btn_Next;
 
-	UPROPERTY(EditAnywhere, Category=MySettings)
+	UPROPERTY(EditAnywhere, Category = MySettings)
 	TSubclassOf<class USessionInfoWidget> sessionInfoWidget;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidgetAnim), Transient, Category = MySettings)
@@ -93,12 +93,12 @@ private:
 
 	UPROPERTY()
 	class USessionInfoWidget* sessionSlot;
-	
+
 	UFUNCTION()
 	void BackToFirstCanvas();
 
 	void SwitchCanvas(int32 index);
 
 	UFUNCTION()
-	void PlayStartAnim();
+	void PlayStartAnim();*/
 };
