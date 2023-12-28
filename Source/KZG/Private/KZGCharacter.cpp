@@ -467,7 +467,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 				if (DotP<0&&hitEnemy->FSM->mState!=EEnemyState::Die)
 				{
 					hitEnemys.Add(hitEnemy);
-					FVector CheckDir2 = hitEnemy->GetActorLocation()- GetActorLocation();
+					CheckDir2 = hitEnemy->GetActorLocation()- GetActorLocation();
 					double DotP2 = FVector::DotProduct(CheckDir2,FollowCamera->GetForwardVector());
 					WhatEnemy.Add(DotP2);
 					findEnemy = true;
@@ -485,7 +485,7 @@ void AKZGCharacter::Tick(float DeltaTime)
 					index=i;
 				}
 			}
-			if (WhatEnemy[index] < assasinationDistance)
+			if (CheckDir2.Size() < assasinationDistance)
 			{
 				bCanAssasination=true;
 				AssaionateEnemy = hitEnemys[index];

@@ -174,6 +174,7 @@ protected:
 	void Move(const FInputActionValue& Value);
 
 	void Look(const FInputActionValue& Value);
+
 			
 	UFUNCTION(Server, Reliable)
 	void Server_InputRun();
@@ -257,6 +258,8 @@ public:
 	float runSpeed = 600;
 	// 다시 바뀔속도
 	float returnSpeed = 0;
+
+	FVector CheckDir2;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Combo")
 	int32 curComboSec = 3;
