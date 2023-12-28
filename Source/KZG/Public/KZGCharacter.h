@@ -84,6 +84,8 @@ public:
 public:
 	class UNetGameInstance* gi;
 
+	class UDataTable* meshData;
+
 	UPROPERTY(Replicated)
 	TArray<FString> meshPathList = { TEXT("/Script/Engine.SkeletalMesh'/Game/HSH/PlayerAsset/MCP_Characters/Detective_01/Meshes/										  CH_Detective_9.CH_Detective_9'"),
 									TEXT("/Script/Engine.SkeletalMesh'/Game/HSH/PlayerAsset/MCP_Characters/Private_military_contractor_01/Meshes/SK_PMC_02.SK_PMC_02'"),

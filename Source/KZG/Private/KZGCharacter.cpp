@@ -28,6 +28,8 @@
 #include "H_AxeWeapon.h"
 #include "H_AttackCamActor.h"
 #include "NetGameInstance.h"
+#include "H_MeshDataTableActor.h"
+#include "UObject/ConstructorHelpers.h"
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -133,6 +135,16 @@ AKZGCharacter::AKZGCharacter()
 	SeeScene = CreateDefaultSubobject<USceneComponent>(TEXT("SeeScene"));
 	SeeScene->SetupAttachment(GetMesh());
 	SeeScene->SetRelativeLocation(FVector(0,0,50));
+	static ConstructorHelpers::FObjectFinder<UDataTable> DT_Mesh(TEXT("/Script/Engine.DataTable'/Game/HSH/DataTable/MeshTable.MeshTable'"));
+
+	if (DT_Mesh.Succeeded())
+	{
+		meshData = DT_Mesh.Object;
+	}
+
+
+
+
 	/*audioComp = CreateDefaultSubobject<UAudioComponent>(TEXT("AudioComponent"));
 	audioComp->SetupAttachment(GetCapsuleComponent());
 
@@ -214,8 +226,10 @@ void AKZGCharacter::BeginPlay()
 			gunMesh->SetVisibility(true);
 			bHasGun = true;
 		}
+
+		FMeshDataTableRow* meshRow = meshData->FindRow<FMeshDataTableRow>(FName(*(FString::FormatAsNumber(gi->Charidx))), FString(""));
 		
-		USkeletalMesh* selectedMesh = LoadObject<USkeletalMesh>(NULL, *meshPathList[gi->Charidx], NULL, LOAD_None, NULL);
+		USkeletalMesh* selectedMesh = LoadObject<USkeletalMesh>(NULL, *meshRow->MeshRoot, NULL, LOAD_None, NULL);
 		if (selectedMesh != nullptr)
 		{
 			GetMesh()->SetSkeletalMesh(selectedMesh);
